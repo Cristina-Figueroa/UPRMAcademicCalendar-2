@@ -34,7 +34,7 @@ export default function HolidaysPage() {
       they can be adjusted to meet the unique requirements of your institution.
       </Paragraph>
 
-      <HolidaysTable/>
+      {/* <HolidaysTable/> */}
 
     </PageContainer>
 

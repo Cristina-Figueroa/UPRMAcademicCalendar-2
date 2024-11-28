@@ -14,14 +14,6 @@ const TableContainer = styled.div`
   border-radius: 10px;
 `;
 
-const TableTitle = styled.h3`
-  color: ${({ theme }) => theme.palette.primary.main};
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 15px;
-`;
-
 const StyledTable = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -41,6 +33,15 @@ const TableHeader = styled.thead`
     theme.palette.mode === 'dark'
       ? theme.palette.text.primary
       : theme.palette.text.primary};
+`;
+
+const TableHeaderRow = styled.tr`
+  text-align: left;
+  padding: 12px 18px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 `;
 
 const TableHeaderCell = styled.th`
@@ -118,16 +119,20 @@ const GuidelinesTable = () => {
         {/* <TableTitle theme={theme}>Guidelines</TableTitle> */}
         <StyledTable>
           <TableHeader theme={theme}>
-            <tr>
-              <TableHeaderCell theme={theme}>Date</TableHeaderCell>
-              <TableHeaderCell theme={theme}>Description</TableHeaderCell>
-            </tr>
+            <TableHeaderRow>
+              <TableHeaderCell theme={theme}>Name</TableHeaderCell>
+              <TableHeaderCell theme={theme}>shift_days</TableHeaderCell>
+              <TableHeaderCell theme={theme}>day_type</TableHeaderCell>
+              <TableHeaderCell theme={theme}>start</TableHeaderCell>
+            </TableHeaderRow>
           </TableHeader>
           <TableBody>
             {guidelines.map((guideline, index) => (
               <TableRow key={index} theme={theme}>
                 <DateCell theme={theme}>{guideline[1]}</DateCell> {/* Date */}
                 <TableCell theme={theme}>{guideline[2]}</TableCell> {/* Description */}
+                <DateCell theme={theme}>{guideline[3]}</DateCell> {/* Date */}
+                <TableCell theme={theme}>{guideline[4]}</TableCell> {/* Description */}
               </TableRow>
             ))}
           </TableBody>
