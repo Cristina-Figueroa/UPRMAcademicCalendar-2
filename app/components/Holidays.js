@@ -4,12 +4,12 @@ import React, { useEffect, useState , useCallback} from 'react';
 import { useTheme } from '@mui/material/styles';
 import PaginationComponent from './Pagination';
 import RowsPerPage from './RowsPerPage'; 
-import AddHolidayModal from './AddModal';
-import EditHolidayModal from './UpdateFormModal';
-import DeleteHoliday from './Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Button } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import TableFilters from './HolidayFiltering';
+import ConfirmationModal from './ConfirmDelete';
 import {
   TableContainer,
   StyledTable,
@@ -35,6 +35,8 @@ import {
   StyledInput,
   AddButton,
   CancelButton,
+  EditButton,
+  DeleteButton,
 } from './TableStyles';
 
 
@@ -370,18 +372,42 @@ const HolidaysTable = () => {
     };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+    // Delete Holiday
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [holidayToDelete, setHolidayToDelete] = useState(null);
+    
+    const handleDeleteClick = (holidayId) => {
+      setHolidayToDelete(holidayId);
+      setIsModalOpen(true);
+    };
+    
+    const handleConfirmDelete = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/holidays/${holidayToDelete}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        showNotification("Holiday deleted successfully!", "success");
+    
+        // Refresh holidays in state after deletion
+        setHolidays((prevHolidays) =>
+          prevHolidays.filter((holiday) => holiday[0] !== holidayToDelete)
+        );
+      } catch (error) {
+        console.error('Error deleting holiday:', error);
+        showNotification("Failed to delete the holiday. Please try again.", "error");
+      } finally {
+        setIsModalOpen(false); // Close the modal
+        setHolidayToDelete(null);
+      }
+    };
 
     return (
       <>
@@ -391,6 +417,15 @@ const HolidaysTable = () => {
           </Notification>
         )}
       {/* <TableFilters filters={filters} setFilters={setFilters} /> */}
+
+      {isModalOpen && (
+        <ConfirmationModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={handleConfirmDelete}
+          message="Are you sure you want to delete this holiday? This action cannot be undone."
+        />
+      )}
 
       <TableContainer theme={theme}>
         <StyledTable>
@@ -522,11 +557,17 @@ const HolidaysTable = () => {
                                         <DateCell>{holiday[1]}</DateCell>
                                         <DescriptionCell>{holiday[2]}</DescriptionCell>
                                         <ActionCell>
-                                            <Button
+                                            <EditButton
                                                 onClick={() => handleEditClick(holiday)}
                                             >
-                                                Edit
-                                            </Button>
+                                              Edit
+                                                {/* <EditIcon/> */}
+                                            </EditButton>
+                                            <DeleteButton onClick={() => handleDeleteClick(holiday[0])} style={{ color: 'red' }}>
+                                            
+                                              <DeleteForeverIcon/>
+                                            </DeleteButton>
+
                                         </ActionCell>
                                     </>
                                 )}

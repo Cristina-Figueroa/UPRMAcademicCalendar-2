@@ -100,7 +100,7 @@ export const TableHeaderCell = styled.th`
 
   }
   &:nth-child(3) {
-    width: 20%; /* Actions column */
+    width: 30%; /* Actions column */
     text-align: center;
   }
 `;
@@ -238,4 +238,18 @@ export const Notification = styled.div`
       transform: translateY(-10px);
     }
   }
+`;
+
+export const EditButton = styled(Button)`
+  // font-size: 30px;
+  border-radius: 100px;
+  height: 40px;
+  min-width: 40px;
+`;
+
+export const DeleteButton = styled(Button)`
+  font-size: 30px;
+  border-radius: 100px;
+  height: 40px;
+  min-width: 40px;
 `;
