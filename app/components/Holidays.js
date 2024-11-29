@@ -33,25 +33,26 @@ import {
   Notification,
   StyledSelect,
   StyledInput,
+  AddButton,
+  CancelButton,
 } from './TableStyles';
 
 
 
 
 const HolidaysTable = () => {
-    const [holidays, setHolidays] = useState([]);
+    const [holidays, setHolidays] = useState([]); //State to get holidays
     const [error, setError] = useState(null);
 
     const theme = useTheme(); 
+
+
+    // Table Components
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(5); // Set 5 as default number of rows per page
-    // const rowsPerPage = 5; // Number of rows per page
-
-    // Calculate the current holidays to display
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
     const currentHolidays = holidays.slice(indexOfFirstRow, indexOfLastRow);
-
     const totalPages = Math.ceil(holidays.length / rowsPerPage);
 
     const handlePageChange = useCallback((newPage) => {
@@ -67,6 +68,16 @@ const HolidaysTable = () => {
     
     const [loading, setLoading] = useState(true);
 
+    // Filtering Holidays
+
+
+
+
+
+
+
+
+    // Fetch Holidays from db
     useEffect(() => {
       const fetchHolidays = async () => {
         setLoading(true);
@@ -95,6 +106,10 @@ const HolidaysTable = () => {
       fetchHolidays();
   }, []);
   
+
+
+    // Adding a Holiday
+
     const [isAdding, setIsAdding] = useState(false); // Toggle for input row
     const [newHoliday, setNewHoliday] = useState({ date: '', description: '', formattedDate: ''}); // Temp state for new holiday
   
@@ -108,7 +123,7 @@ const HolidaysTable = () => {
       setIsAdding(false); // Exit the add mode
     };
     
-    const getDaysInMonth = (month, year) => {
+    const getDaysInMonth = (month, year = new Date().getFullYear()) => {
       // Month is 1-based: January = 1, February = 2, etc.
       return new Date(year, month, 0).getDate();
     };
@@ -124,6 +139,7 @@ const HolidaysTable = () => {
       }
     }, [newHoliday.month, selectedYear]);
 
+    // Variables for Select Components for Month & Day
     const handleMonthChange = (value) => {
       setNewHoliday((prev) => ({ ...prev, month: value, day: "" })); // Reset day when month changes
       const daysInMonth = getDaysInMonth(value);
@@ -266,41 +282,104 @@ const HolidaysTable = () => {
     };
     
 
-      // Filtering Holidays
-      const [filters, setFilters] = useState({
-        academicPeriod: "",
-        month: "",
-        search: "",
+
+    // Editing a Holiday
+    const [editHoliday, setEditHoliday] = useState(null); // State for the holiday being edited
+
+    const monthNames = [
+      "January", "February", "March", "April", "May",
+      "June", "July", "August", "September", "October",
+      "November", "December"
+  ];
+
+
+    const handleEditClick = (holiday) => {
+      const [monthName, day] = holiday[1].split(' '); // Assuming holiday[1] is "November 2"
+      const monthIndex = monthNames.findIndex((m) => m === monthName) + 1;
+    
+      setEditHoliday({
+        ...holiday,
+        month: monthIndex, // Store as 1-based month index
+        day: parseInt(day),
       });
+    };
+
+    const handleEditMonthChange = (value) => {
+      setEditHoliday((prev) => ({
+        ...prev,
+        month: value, // Update month
+        day: prev.day > getDaysInMonth(value, selectedYear) ? 1 : prev.day, // Reset day if it exceeds max days
+      }));
+    };
     
-      const filteredHolidays = currentHolidays.filter((holiday) => {
-        const { academicPeriod, month, search } = filters;
-    
-        // Filter by academic period
-        if (academicPeriod) {
-          const academicPeriodMonths = {
-            Spring: [1, 2, 3, 4, 5], // January to May
-            Summer: [6, 7, 8],       // June to August
-            Fall: [9, 10, 11, 12],   // September to December
-          };
-    
-          if (!academicPeriodMonths[academicPeriod].includes(parseInt(holiday.month))) {
-            return false;
-          }
+    const handleEditDayChange = (value) => {
+      setEditHoliday((prev) => ({
+        ...prev,
+        day: value, // Update day
+      }));
+    };
+
+    useEffect(() => {
+      if (editHoliday?.month && selectedYear) {
+        const daysInMonth = getDaysInMonth(editHoliday.month, selectedYear);
+        setMaxDays(daysInMonth); // Update maxDays based on the selected month and year
+      }
+    }, [editHoliday?.month, selectedYear]);
+
+    const handleEditSave = async (updatedHoliday) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/holidays/${updatedHoliday[0]}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  holiday_date: `${monthNames[updatedHoliday.month - 1]} ${updatedHoliday.day}`,
+                  holiday_name: updatedHoliday[2],
+                  formatted_date: `${String(updatedHoliday.month).padStart(2, '0')}-${String(updatedHoliday.day).padStart(2, '0')}`,
+              }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            // Refresh the holidays list
+            const refreshedHolidays = await response.json();
+            setHolidays((prev) =>
+                prev.map((holiday) =>
+                    holiday[0] === updatedHoliday[0] ? updatedHoliday : holiday
+                )
+            );
+
+            setEditHoliday(null); // Exit edit mode
+        } catch (err) {
+            console.error('Error saving holiday:', err);
         }
-    
-        // Filter by month
-        if (month && parseInt(holiday.month) !== parseInt(month)) {
-          return false;
+        try {
+          const response = await fetch("http://127.0.0.1:5000/holidays/");
+          const data = await response.json();
+          setHolidays(data);
+        } catch (error) {
+          console.error("Error refreshing holidays:", error);
         }
-    
-        // Filter by description (case-insensitive search)
-        if (search && !holiday.description.toLowerCase().includes(search.toLowerCase())) {
-          return false;
-        }
-    
-        return true; // Include the holiday if all criteria match
-      });
+    };
+
+    const handleEditCancel = () => {
+        setEditHoliday(null); // Exit edit mode without saving
+    };
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -311,7 +390,7 @@ const HolidaysTable = () => {
             {notification}
           </Notification>
         )}
-      <TableFilters filters={filters} setFilters={setFilters} />
+      {/* <TableFilters filters={filters} setFilters={setFilters} /> */}
 
       <TableContainer theme={theme}>
         <StyledTable>
@@ -327,76 +406,130 @@ const HolidaysTable = () => {
           <TableBody>
 
 
-            { isAdding && (
-              <TableRow theme={theme}>
-                <TableCell theme={theme}>
-                  <StyledSelect
-                    hasError={errors.month}
-                    value={newHoliday.month || ""}
-                    onChange={(e) => handleMonthChange(e.target.value)}
-                  >
-                    <option value="" disabled>Select Month</option>
-                    {[
-                      "January",
-                      "February",
-                      "March",
-                      "April",
-                      "May",
-                      "June",
-                      "July",
-                      "August",
-                      "September",
-                      "October",
-                      "November",
-                      "December",
-                    ].map((month, index) => (
-                      <option key={index} value={index + 1}>
-                        {month}
-                      </option>
-                    ))}
-                  </StyledSelect>
-                  <StyledSelect
-                    hasError={errors.day}
-                    value={newHoliday.day || ""}
-                    onChange={(e) => handleDayChange(e.target.value)}
-                  >
-                    <option value="" disabled>Select Day</option>
-                    {Array.from({ length: maxDays }, (_, i) => i + 1).map((day) => (
-                      <option key={day} value={day}>
-                        {day}
-                      </option>
-                    ))}
-                  </StyledSelect>
-                </TableCell>
-                <TableCell>
-                  <StyledInput
-                    hasError={errors.description}
-                    value={newHoliday.description}
-                    onChange={(e) =>
-                      handleInputChange('description', e.target.value)
-                    }
-                    placeholder="Description"
-                  />
-                </TableCell>
-                <SaveButtonCell>
-                  <Button onClick={handleSaveClick}>Save</Button>
-                </SaveButtonCell>
+            { isAdding && (<TableRow theme={theme}>
+              <TableCell theme={theme}>
+                <StyledSelect
+                  hasError={errors.month}
+                  value={newHoliday.month || ""}
+                  onChange={(e) => handleMonthChange(e.target.value)}
+                >
+                  <option value="" disabled>Select Month</option>
+                  {[
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December",
+                  ].map((month, index) => (
+                    <option key={index} value={index + 1}>
+                      {month}
+                    </option>
+                  ))}
+                </StyledSelect>
+                <StyledSelect
+                  hasError={errors.day}
+                  value={newHoliday.day || ""}
+                  onChange={(e) => handleDayChange(e.target.value)}
+                >
+                  <option value="" disabled>Select Day</option>
+                  {Array.from({ length: maxDays }, (_, i) => i + 1).map((day) => (
+                    <option key={day} value={day}>
+                      {day}
+                    </option>
+                  ))}
+                </StyledSelect>
+              </TableCell>
+              <TableCell>
+                <StyledInput
+                  hasError={errors.description}
+                  value={newHoliday.description}
+                  onChange={(e) =>
+                    handleInputChange('description', e.target.value)
+                  }
+                  placeholder="Description"
+                />
+              </TableCell>
+              <SaveButtonCell>
+                <Button onClick={handleSaveClick}>Save</Button>
+              </SaveButtonCell>
               </TableRow>)}
 
 
 
-            {filteredHolidays.map((holiday, index) => (
+            {currentHolidays.map((holiday, index) => (
               <TableRow key={index} theme={theme}>
-                <DateCell theme={theme}>{holiday[1]}</DateCell> {/* Date */}
-                <DescriptionCell theme={theme}>{holiday[2]}</DescriptionCell> {/* Description */}
-                {/* <TableCell theme={theme}>{holiday[3]}</TableCell> Description */}
-                <ActionCell  theme={theme} >
-                  <Container>
-                    {/* <AddHolidayModal isOpen={open} holidayrow={index}/>   */}
-                    <EditHolidayModal isOpen={open} holidayrow={index}/>  
-                    <DeleteHoliday isOpen={open} holidayrow={index}/>
-                  </Container>
-                </ActionCell>
+
+                  {editHoliday && editHoliday[0] === holiday[0] ? (
+                                    <>
+                                        <TableCell>
+
+                                        <StyledSelect
+                                          value={editHoliday.month || ""}
+                                          onChange={(e) => handleEditMonthChange(e.target.value)}
+                                        >
+                                          <option value="" disabled>Select Month</option>
+                                          {monthNames.map((month, index) => (
+                                            <option key={index} value={index + 1}>
+                                              {month}
+                                            </option>
+                                          ))}
+                                        </StyledSelect>
+                                        <StyledSelect
+                                          value={editHoliday.day || ""}
+                                          onChange={(e) => handleEditDayChange(e.target.value)}
+                                        >
+                                          <option value="" disabled>Select Day</option>
+                                          {Array.from({ length: maxDays }, (_, i) => i + 1).map((day) => (
+                                            <option key={day} value={day}>
+                                              {day}
+                                            </option>
+                                          ))}
+                                        </StyledSelect>
+
+
+
+
+                                        </TableCell>
+                                        <TableCell>
+                                            <StyledInput
+                                                value={editHoliday[2]}
+                                                onChange={(e) =>
+                                                    setEditHoliday((prev) => ({
+                                                        ...prev,
+                                                        [2]: e.target.value,
+                                                    }))
+                                                }
+                                            />
+                                        </TableCell>
+                                        <ActionCell>
+                                            <Button
+                                                onClick={() => handleEditSave(editHoliday)}
+                                            >
+                                                Save
+                                            </Button>
+                                            <Button onClick={handleEditCancel}>Cancel</Button>
+                                        </ActionCell>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DateCell>{holiday[1]}</DateCell>
+                                        <DescriptionCell>{holiday[2]}</DescriptionCell>
+                                        <ActionCell>
+                                            <Button
+                                                onClick={() => handleEditClick(holiday)}
+                                            >
+                                                Edit
+                                            </Button>
+                                        </ActionCell>
+                                    </>
+                                )}
               </TableRow>
             ))}
 
@@ -425,42 +558,21 @@ const HolidaysTable = () => {
       </TableContainer>
 
 
-      {!isAdding ? (
-                                  <Button
-                                    onClick={handleAddClick}
-                                    variant="contained"
-                                    style={{
-                                      marginLeft: '10px',
-                                      position: 'absolute',
-                                      bottom: 50,
-                                      right: 50,
-                                      fontSize: '30px',
-                                      borderRadius: '100px',
-                                      height: '40px',
-                                      minWidth: '40px',
-                                    }}
-                                  >
-                                    +
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    onClick={handleCancelClick}
-                                    variant="contained"
-                                    style={{
-                                      marginLeft: '10px',
-                                      position: 'absolute',
-                                      bottom: 50,
-                                      right: 50,
-                                      fontSize: '20px',
-                                      borderRadius: '100px',
-                                      height: '40px',
-                                      minWidth: '40px',
-                                      backgroundColor: '#ff6b6b', // Optional: Set a red color for cancel button
-                                    }}
-                                  >
-                                    ✕
-                                  </Button>
-                                )}
+      {!isAdding ? ( <AddButton
+                        onClick={handleAddClick}
+                        variant="contained"
+                      >
+                        +
+                      </AddButton>
+                    ) : (
+                      <CancelButton
+                        onClick={handleCancelClick}
+                        variant="contained"
+                        sx = {{backgroundColor: '#ff6b6b',}}
+                      >
+                        ✕
+                      </CancelButton>
+                    )}
 
       </>    
       );

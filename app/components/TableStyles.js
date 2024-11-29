@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
+import { Button } from "@mui/material";
 
 export const StyledSelect = styled.select`
   border: ${({ hasError }) => (hasError ? "2px solid red" : "1px solid #ccc")};
@@ -17,6 +18,29 @@ export const StyledInput = styled.input`
   border-radius: 4px;
   width: 100%;
   transition: border 0.3s ease, box-shadow 0.3s ease;
+`;
+
+export const AddButton = styled(Button)`
+  margin-left: 10px;
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  font-size: 30px;
+  border-radius: 100px;
+  height: 40px;
+  min-width: 40px;
+`;
+
+export const CancelButton = styled(Button)`
+  margin-left: 10px;
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  font-size: 20px;
+  border-radius: 100px;
+  height: 40px;
+  min-width: 40px;
+  background-color: '#ff6b6b', // Red color for cancel button
 `;
 
 export const TableContainer = styled.div`
