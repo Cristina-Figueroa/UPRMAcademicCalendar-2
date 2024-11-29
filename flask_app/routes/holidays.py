@@ -12,9 +12,15 @@ def get_holidays():
 
 @bp.route('/', methods=['POST'])
 def add_holiday():
-    data = request.json
-    add_holiday_to_db(data)
-    return jsonify({'message': 'Holiday added successfully'}), 201
+    data = request.json  # Extract JSON payload
+    if not data.get('holiday_date') or not data.get('holiday_name') or not data.get('formatted_date'):
+        return jsonify({'error': 'Missing fields'}), 400
+
+    try:
+        add_holiday_to_db(data)  # Add to the database
+        return jsonify({'message': 'Holiday added successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @bp.route('/<int:holiday_id>', methods=['PUT'])
 def update_holiday(holiday_id):

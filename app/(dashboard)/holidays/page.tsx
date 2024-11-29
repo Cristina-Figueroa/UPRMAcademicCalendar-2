@@ -4,7 +4,8 @@ import * as React from 'react';
 import HolidaysTable from '@/app/components/Holidays'
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
-
+import { ThemeProvider } from '@mui/material/styles';
+import theme from '../../../theme';
 
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -34,7 +35,9 @@ export default function HolidaysPage() {
       they can be adjusted to meet the unique requirements of your institution.
       </Paragraph>
 
-      {/* <HolidaysTable/> */}
+      <ThemeProvider theme={theme}>
+        <HolidaysTable/>
+      </ThemeProvider>
 
     </PageContainer>
 

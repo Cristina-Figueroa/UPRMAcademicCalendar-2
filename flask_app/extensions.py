@@ -1,7 +1,12 @@
 # Flask extensions (e.g., CORS)
 from flask_cors import CORS
+from flask import Flask
 
-cors = CORS()
+
+app = Flask(__name__)
+
+cors = CORS(app) #react corre aqui
+
 
 # from flask_sqlalchemy import SQLAlchemy
 # from flask_migrate import Migrate
