@@ -4,6 +4,8 @@ import * as React from 'react';
 import GuidelinesTable from '@/app/components/Guidelines'
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from '../../../theme';
 
 
 const PageContainer = styled.div`
@@ -33,10 +35,12 @@ export default function GuidelinesPage() {
       These guidelines ensure that the calendar meets institutional standards 
       and includes key events such as exam periods and academic deadlines. 
       Please note that this is not an exhaustive list, and other internal 
-      guidelines and considerations may also be taken into account.
+      guidelines and considerations should also be taken into account.
       </Paragraph>
 
-    <GuidelinesTable/>
+      <ThemeProvider theme={theme}>
+        <GuidelinesTable/>
+      </ThemeProvider>
 
     </PageContainer>
 

@@ -1,160 +1,157 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import styled from "styled-components";
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, TextField, Select, MenuItem } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
 
-import Box from '@mui/material/Box';
-import AddForm from './AddForm'
-import AddIcon from '@mui/icons-material/Add';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+const AddGuidelineModal = ({ show, onClose, onSave }) => {
+  const theme = useTheme();
 
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    // width: 400,
-    bgcolor: 'background.paper',
-    boxShadow: 4,
-    p: 4,
+  const defaultFormData = {
+    guideline_name: '',
+    shift_days: '',
+    day_type: 'NORMAL',
+    start: '',
   };
 
-const Container = styled.div`
-  margin-left: 30px;
-`;
+  const [formData, setFormData] = useState(defaultFormData);
+  const [errors, setErrors] = useState({});
+  const [notification, setNotification] = useState('');
 
+  // Reset formData and errors whenever the modal opens
+  useEffect(() => {
+    if (show) {
+      setFormData(defaultFormData);
+      setErrors({});
+      setNotification();
+    }
+  }, [show]);
 
-const AddHolidayModal = ({isOpen, holidayrow}) => {
-
-    const theme = useTheme();
-
-    const [selectedHoliday, setSelectedHoliday] = useState(null);
-    const [isModalOpen, setModalOpen] = useState(false);
-    const handleEditClick = (holiday) => {
-      setSelectedHoliday(holiday);
-      setModalOpen(true);
-    };
-
-
-    const handleSave = (e) => {
-      e.preventDefault();b 
-
-      // Update the holidays list locally
-      setHolidays((prevHolidays) =>
-        prevHolidays.map((holiday) =>
-          holiday[0] === selectedHoliday[0] ? selectedHoliday : holiday
-        )
-      );
-
-    // Optionally, send updated holiday to the backend
-    fetch(`http://127.0.0.1:5000/holidays/${selectedHoliday[0]}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        date: selectedHoliday[1],
-        description: selectedHoliday[2],
-      }),
-    }).catch((error) => console.error('Error saving holiday:', error));
-
-    setModalOpen(false); // Close the modal
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+    if (!formData.guideline_name.trim()) {
+      newErrors.guideline_name = 'Guideline name is required';
+    }
+    if (!formData.shift_days.trim()) {
+      newErrors.shift_days = 'Shift days is required';
+    }
+    if (!formData.start.trim()) {
+      newErrors.start = 'Start is required';
+    }
 
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    return (
-        <Container>        
-        {/* <Button onClick={handleOpen}>Edit</Button>
-        <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            >
-            <Box sx={style} >
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                Text in a modal
-                </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                </Typography>
-            </Box>
-        </Modal> */}
+  const handleSave = () => {
+    if (validateForm()) {
+      onSave(formData);
+      onClose();
+    } else {
+      setNotification('Please fill out all required fields.');
+    }
+  };
 
-
-
-
-        
-      {/* Modal for editing */}
-        <Button 
-          // variant='contained' 
-          onClick={handleOpen} 
-          sx={{borderRadius: '500px', color: theme.palette.background.default }}
+  return (
+    <Modal open={show} onClose={onClose}>
+      <div
+        style={{
+          padding: '20px',
+          background: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+          margin: '10% auto',
+          width: '400px',
+          borderRadius: '8px',
+          boxShadow: theme.shadows[5],
+        }}
+      >
+        <h2 style={{ color: theme.palette.text.primary }}>Add New Guideline</h2>
+        {notification && (
+          <p style={{ color: 'red', marginBottom: '15px' }}>{notification}</p>
+        )}
+        <TextField
+          name="guideline_name"
+          label="Guideline Name"
+          fullWidth
+          value={formData.guideline_name}
+          onChange={handleChange}
+          style={{
+            marginBottom: '15px',
+            borderColor: errors.guideline_name ? 'red' : undefined,
+          }}
+          error={!!errors.guideline_name}
+          helperText={errors.guideline_name || ''}
+        />
+        <TextField
+          name="shift_days"
+          label="Shift Days"
+          type="number"
+          fullWidth
+          value={formData.shift_days}
+          onChange={handleChange}
+          style={{
+            marginBottom: '15px',
+            borderColor: errors.shift_days ? 'red' : undefined,
+          }}
+          error={!!errors.shift_days}
+          helperText={errors.shift_days || ''}
+        />
+        <Select
+          name="day_type"
+          value={formData.day_type}
+          onChange={handleChange}
+          fullWidth
+          style={{
+            marginBottom: '15px',
+            color: theme.palette.text.primary,
+          }}
         >
-          <AddCircleOutlineIcon fontSize='large' sx={{color: theme.palette.text.primary }}/>
-        </Button>
-
-        <Modal
-            open={open}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            >
-            <Box sx={style} >
-
-              <AddForm closeEvent={handleClose}/>
-
-            </Box>
-            
-          {/* <ModalContent>
-            <h2>Edit Holiday</h2>
-            <form onSubmit={handleSave}>
-              <div>
-                <label>Date:</label>
-                <input
-                  type="date"
-                  value={selectedHoliday[1] || ''}
-                  onChange={(e) =>
-                    setSelectedHoliday({ ...selectedHoliday, 1: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Description:</label>
-                <input
-                  type="text"
-                  value={selectedHoliday[2] || ''}
-                  onChange={(e) =>
-                    setSelectedHoliday({
-                      ...selectedHoliday,
-                      2: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <ModalButtons>
-                <Button type="submit">Save</Button>
-                <Button
-                  onClick={() => setModalOpen(false)}
-                  style={{ marginLeft: '10px' }}
-                >
-                  Cancel
-                </Button>
-              </ModalButtons>
-            </form>
-          </ModalContent> */}
-        </Modal>
-      
-
-    </Container>
-    );
+          <MenuItem value="NORMAL">Normal</MenuItem>
+          <MenuItem value="LABOR">Labor</MenuItem>
+          <MenuItem value="SABADOS">Saturdays</MenuItem>
+        </Select>
+        <TextField
+          name="start"
+          label="Start"
+          fullWidth
+          value={formData.start}
+          onChange={handleChange}
+          style={{
+            marginBottom: '15px',
+            borderColor: errors.start ? 'red' : undefined,
+          }}
+          error={!!errors.start}
+          helperText={errors.start || ''}
+        />
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button
+            onClick={onClose}
+            color="secondary"
+            style={{
+              backgroundColor: theme.palette.action.hover,
+              color: theme.palette.text.primary,
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            color="primary"
+            variant="contained"
+            style={{
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+            }}
+          >
+            Save
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
 };
 
-export default AddHolidayModal;
+export default AddGuidelineModal;

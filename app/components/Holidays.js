@@ -37,7 +37,7 @@ import {
   CancelButton,
   EditButton,
   DeleteButton,
-} from './TableStyles';
+} from './HolidayTableStyles';
 
 
 
@@ -79,7 +79,7 @@ const HolidaysTable = () => {
 
 
 
-    // Fetch Holidays from db
+    // Fetch Holidays from DB
     useEffect(() => {
       const fetchHolidays = async () => {
         setLoading(true);
@@ -345,6 +345,7 @@ const HolidaysTable = () => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
+            showNotification("Holiday updated successfully!", "success");
 
             // Refresh the holidays list
             const refreshedHolidays = await response.json();
@@ -353,7 +354,6 @@ const HolidaysTable = () => {
                     holiday[0] === updatedHoliday[0] ? updatedHoliday : holiday
                 )
             );
-
             setEditHoliday(null); // Exit edit mode
         } catch (err) {
             console.error('Error saving holiday:', err);
@@ -364,6 +364,7 @@ const HolidaysTable = () => {
           setHolidays(data);
         } catch (error) {
           console.error("Error refreshing holidays:", error);
+          showNotification("Failed to update the holiday. Please try again.", "error");
         }
     };
 
@@ -433,9 +434,7 @@ const HolidaysTable = () => {
             <TableHeaderRow>
               <TableHeaderCell theme={theme}>Date</TableHeaderCell>
               <TableHeaderCell theme={theme}>Description</TableHeaderCell>
-              <TableHeaderActionCell theme={theme}>Actions 
-
-              </TableHeaderActionCell>
+              <TableHeaderActionCell theme={theme}>Actions</TableHeaderActionCell>
             </TableHeaderRow>
           </TableHeader>
           <TableBody>
