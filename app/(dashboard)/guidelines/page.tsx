@@ -30,12 +30,15 @@ export default function GuidelinesPage() {
   return (
     <PageContainer theme={theme}>
       <Paragraph theme={theme}>
-      This page provides an <strong>overview</strong> of the <strong>guidelines </strong> 
-      followed in the <strong>academic calendar generation process</strong>. 
-      These guidelines ensure that the calendar meets institutional standards 
-      and includes key events such as exam periods and academic deadlines. 
-      Please note that this is not an exhaustive list, and other internal 
-      guidelines and considerations should also be taken into account.
+      Esta página proporciona una <strong>visión general </strong> 
+      de las <strong>directrices</strong> seguidas en el <strong>
+        proceso de generación del calendario académico</strong>. 
+        Estas directrices aseguran que el calendario cumpla con 
+        los estándares institucionales e incluya eventos clave 
+        como los períodos de exámenes y los plazos académicos. 
+        Ten en cuenta que esta no es una lista exhaustiva, y 
+        también se deben considerar otras directrices internas y 
+        aspectos a tener en cuenta.
       </Paragraph>
 
       <ThemeProvider theme={theme}>

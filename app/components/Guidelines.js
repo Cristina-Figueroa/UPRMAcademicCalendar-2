@@ -35,8 +35,9 @@ import {
   StyledInput,
   AddButton,
   CancelButton,
-  EditButton,
+  EditRowButton,
   DeleteButton,
+  EditButton,
 } from './GuidelinesTableStyles';
 
 
@@ -98,12 +99,6 @@ const GuidelinesTable = () => {
 
     // Add Modal Components
     const [showModal, setShowModal] = useState(false);
-
-    // const handleAddGuideline = (newGuideline) => {
-    //   // Add the new guideline to the table and database
-    //   setGuidelines((prev) => [...prev, newGuideline]);
-    // };
-
 
 
 
@@ -350,13 +345,12 @@ const GuidelinesTable = () => {
       )}
 
         <TableContainer theme={theme}>
-        {/* <TableTitle theme={theme}>Guidelines</TableTitle> */}
         <StyledTable>
           <TableHeader theme={theme}>
             <TableHeaderRow>
-              <TableHeaderCell theme={theme}>Guideline</TableHeaderCell>
-              <TableHeaderCell theme={theme}>Description</TableHeaderCell>
-                {isEditing && <TableHeaderActionCell theme={theme}>Actions</TableHeaderActionCell> } {/* Conditionally render action column */}
+              <TableHeaderCell theme={theme}>Directriz</TableHeaderCell>
+              <TableHeaderCell theme={theme}>Descripción</TableHeaderCell>
+                {isEditing && <TableHeaderActionCell theme={theme}>Acciones</TableHeaderActionCell> } {/* Conditionally render action column */}
             </TableHeaderRow>
           </TableHeader>
           <TableBody>
@@ -409,7 +403,7 @@ const GuidelinesTable = () => {
                   </DescriptionCell> 
                   {isEditing && (
                     <TableCell>
-                      <EditButton onClick={() => handleEditClick(index, guideline)}>Edit</EditButton>
+                      <EditRowButton onClick={() => handleEditClick(index, guideline)}>Edit</EditRowButton>
                       <DeleteButton
                         onClick={() => handleDeleteClick(guideline[0])}
                         style={{ color: 'red' }}
@@ -447,35 +441,28 @@ const GuidelinesTable = () => {
       </TableContainer>
 
       {/* Floating Button */}
-      <button
+      <EditButton
+        theme={theme}
+        variant='contained'
         style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          padding: "10px 15px",
-          backgroundColor: isEditing ? "red" : "green",
-          color: "white",
-          border: "none",
-          borderRadius: "50%",
-          cursor: "pointer",
+          color: 'white',
+          backgroundColor: isEditing
+            ? 'red' // Red background when in editing mode
+            : theme.palette.mode === 'dark'
+            ? theme.palette.primary.main
+            : theme.palette.primary.main,
         }}
         onClick={toggleEditingMode}
       >
         {isEditing ? <> <ArrowBackIcon sx={{fontSize:'xxlarge'}}/> 
         </> : <EditIcon/>}
-      </button>
+      </EditButton>
 
         <AddButton
+          theme={theme}
+          variant='contained'
           style={{
-            position: 'fixed',
-            bottom: '75px',
-            right: '23px',
-            padding: '10px 15px',
-            backgroundColor: 'green',
             color: 'white',
-            border: 'none',
-            borderRadius: '50%',
-            cursor: 'pointer',
           }}
           onClick={() => setShowModal(true)}
         >

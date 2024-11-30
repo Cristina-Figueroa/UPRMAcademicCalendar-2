@@ -16,31 +16,32 @@ export const StyledInput = styled.input`
   box-shadow: ${({ hasError }) => (hasError ? "0 0 5px red" : "none")};
   padding: 8px;
   border-radius: 4px;
-  width: 100%;
+  width: 95%;
   transition: border 0.3s ease, box-shadow 0.3s ease;
 `;
 
 export const AddButton = styled(Button)`
-  margin-left: 10px;
-  position: absolute;
-  bottom: 50px;
-  right: 50px;
+  position: fixed;
+  bottom: 75px;
+  right: 23px;
+  padding: 10px 15px;
   font-size: 30px;
-  border-radius: 100px;
+  border-radius: 50%;
   height: 40px;
   min-width: 40px;
+  cursor: 'pointer';
 `;
 
 export const CancelButton = styled(Button)`
   margin-left: 10px;
-  position: absolute;
-  bottom: 50px;
-  right: 50px;
+  position: fixed;
+  bottom: 75px;
+  right: 23px;
   font-size: 20px;
   border-radius: 100px;
   height: 40px;
   min-width: 40px;
-  background-color: '#ff6b6b', // Red color for cancel button
+  background-color: 'red', // Red color for cancel button
 `;
 
 export const TableContainer = styled.div`
@@ -99,10 +100,10 @@ export const TableHeaderCell = styled.th`
     // text-align: center;
 
   }
-  &:nth-child(3) {
-    width: 30%; /* Actions column */
-    text-align: center;
-  }
+  // &:nth-child(3) {
+  //   width: 30%; /* Actions column */
+  //   text-align: center;
+  // }
 `;
 
 export const TableHeaderActionCell = styled(TableHeaderCell)`
@@ -147,9 +148,6 @@ export const DescriptionCell = styled(TableCell)`
   white-space: wrap; /* Prevent wrapping */
   overflow: hidden; /* Truncate overflowing text */
   text-overflow: ellipsis; /* Add ellipsis for long text */
-  // background-color:pink;
-  // text-align: center;
-
 `;
 
 export const ActionCell = styled(TableCell)`
@@ -241,10 +239,29 @@ export const Notification = styled.div`
 `;
 
 export const EditButton = styled(Button)`
+  position: fixed;
+  bottom: 21px;
+  right: 20px;
+  padding: 10px 15px;
+  border-radius: 50%;
+  border: none;
+  height: 46px;
+  min-width: 46px;
+  cursor: 'pointer';
+`;
+
+export const EditRowButton = styled(Button)`
   // font-size: 30px;
   border-radius: 100px;
   height: 40px;
   min-width: 40px;
+`;
+
+export const CancelRowButton = styled(Button)`
+  margin-left: 10px;
+  height: 40px;
+  min-width: 40px;
+  background-color: '#ff6b6b', // Red color for cancel button
 `;
 
 export const DeleteButton = styled(Button)`

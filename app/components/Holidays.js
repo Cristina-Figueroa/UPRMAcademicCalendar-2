@@ -6,8 +6,9 @@ import PaginationComponent from './Pagination';
 import RowsPerPage from './RowsPerPage'; 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TableFilters from './HolidayFiltering';
 import ConfirmationModal from './ConfirmDelete';
 import {
@@ -34,9 +35,11 @@ import {
   StyledSelect,
   StyledInput,
   AddButton,
-  CancelButton,
-  EditButton,
+  CancelRowButton,
+  EditRowButton,
   DeleteButton,
+  EditButton,
+  CancelButton,
 } from './HolidayTableStyles';
 
 
@@ -69,6 +72,49 @@ const HolidaysTable = () => {
     }, []);
     
     const [loading, setLoading] = useState(true);
+
+
+    // Notification
+    const [notification, setNotification] = useState(null); // Pop-up notification state
+    const [notificationType, setNotificationType] = useState(""); // 'success' or 'error'
+
+    const showNotification = (message, type) => {
+      setNotification(message);
+      setNotificationType(type);
+    
+      // Automatically hide the notification after 3 seconds
+      setTimeout(() => {
+        setNotification(null);
+        setNotificationType("");
+      }, 3000);
+    };
+    
+
+    // Toggle Editing Mode
+    const [isEditing, setIsEditing] = useState(false);
+    const [showConfirmLeaveEdit, setShowConfirmLeaveEdit] = useState(false); 
+    const [editRowIndex, setEditRowIndex] = useState(null);  
+
+    const toggleEditingMode = () => {
+      if (editRowIndex !== null) {
+        setShowConfirmLeaveEdit(true); // Show confirmation dialog if a row is being edited
+      } else {
+        setIsEditing((prev) => !prev); // Toggle directly if no row is being edited
+      }
+    };
+
+    // Confirm leave editing mode
+    const confirmLeaveEditingMode = () => {
+      setShowConfirmLeaveEdit(false); // Close the confirmation dialog
+      setEditRowIndex(null); // Exit editing mode for the row
+      setEditHoliday({}); // Reset the edited guideline
+      setIsEditing(false); // Exit overall editing mode
+    };
+
+    // Cancel leaving editing mode
+    const cancelLeaveEditingMode = () => {
+      setShowConfirmLeaveEdit(false); // Close the confirmation dialog
+    };
 
     // Filtering Holidays
 
@@ -110,11 +156,49 @@ const HolidaysTable = () => {
   
 
 
-    // Adding a Holiday
+    // Delete Holiday
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [holidayToDelete, setHolidayToDelete] = useState(null);
+    
+    const handleDeleteClick = (holidayId) => {
+      setHolidayToDelete(holidayId);
+      setIsModalOpen(true);
+    };
+    
+    const handleConfirmDelete = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/holidays/${holidayToDelete}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        showNotification("Holiday deleted successfully!", "success");
+    
+        // Refresh holidays in state after deletion
+        setHolidays((prevHolidays) =>
+          prevHolidays.filter((holiday) => holiday[0] !== holidayToDelete)
+        );
+      } catch (error) {
+        console.error('Error deleting holiday:', error);
+        showNotification("Failed to delete the holiday. Please try again.", "error");
+      } finally {
+        setIsModalOpen(false); // Close the modal
+        setHolidayToDelete(null);
+      }
+    };
 
+
+    // Add a Holiday
     const [isAdding, setIsAdding] = useState(false); // Toggle for input row
     const [newHoliday, setNewHoliday] = useState({ date: '', description: '', formattedDate: ''}); // Temp state for new holiday
   
+    // Open Inline Adding feature
     const handleAddClick = () => {
       setIsAdding(true);
     };
@@ -264,29 +348,21 @@ const HolidaysTable = () => {
       }
     };
 
+    const handleSaveCancel = () => {
+      setIsAdding(false);
+      setErrors(false);
+    };
+
     const handleInputChange = (field, value) => {
       setNewHoliday((prev) => ({ ...prev, [field]: value }));
     };
 
-    // Notification for Adding Holiday 
-    const [notification, setNotification] = useState(null); // Pop-up notification state
-    const [notificationType, setNotificationType] = useState(""); // 'success' or 'error'
 
-    const showNotification = (message, type) => {
-      setNotification(message);
-      setNotificationType(type);
-    
-      // Automatically hide the notification after 3 seconds
-      setTimeout(() => {
-        setNotification(null);
-        setNotificationType("");
-      }, 3000);
-    };
-    
 
 
     // Editing a Holiday
     const [editHoliday, setEditHoliday] = useState(null); // State for the holiday being edited
+
 
     const monthNames = [
       "January", "February", "March", "April", "May",
@@ -295,10 +371,12 @@ const HolidaysTable = () => {
   ];
 
 
-    const handleEditClick = (holiday) => {
+    // Handle editing a specific row
+    const handleEditClick = (holiday,index) => {
       const [monthName, day] = holiday[1].split(' '); // Assuming holiday[1] is "November 2"
       const monthIndex = monthNames.findIndex((m) => m === monthName) + 1;
-    
+      
+      setEditRowIndex(index); // Track the currently edited row
       setEditHoliday({
         ...holiday,
         month: monthIndex, // Store as 1-based month index
@@ -370,45 +448,10 @@ const HolidaysTable = () => {
 
     const handleEditCancel = () => {
         setEditHoliday(null); // Exit edit mode without saving
+        setEditRowIndex(null); // Exit editing mode without saving
     };
 
 
-    // Delete Holiday
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [holidayToDelete, setHolidayToDelete] = useState(null);
-    
-    const handleDeleteClick = (holidayId) => {
-      setHolidayToDelete(holidayId);
-      setIsModalOpen(true);
-    };
-    
-    const handleConfirmDelete = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:5000/holidays/${holidayToDelete}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-    
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-    
-        showNotification("Holiday deleted successfully!", "success");
-    
-        // Refresh holidays in state after deletion
-        setHolidays((prevHolidays) =>
-          prevHolidays.filter((holiday) => holiday[0] !== holidayToDelete)
-        );
-      } catch (error) {
-        console.error('Error deleting holiday:', error);
-        showNotification("Failed to delete the holiday. Please try again.", "error");
-      } finally {
-        setIsModalOpen(false); // Close the modal
-        setHolidayToDelete(null);
-      }
-    };
 
     return (
       <>
@@ -427,14 +470,23 @@ const HolidaysTable = () => {
           message="Are you sure you want to delete this holiday? This action cannot be undone."
         />
       )}
+      {showConfirmLeaveEdit && (
+        <ConfirmationModal
+          open={showConfirmLeaveEdit}
+          onClose={cancelLeaveEditingMode}
+          onConfirm={confirmLeaveEditingMode}
+          message="You have unsaved changes. Are you sure you want to leave editing mode?"
+        />
+      )}
 
       <TableContainer theme={theme}>
         <StyledTable>
           <TableHeader theme={theme}>
             <TableHeaderRow>
-              <TableHeaderCell theme={theme}>Date</TableHeaderCell>
-              <TableHeaderCell theme={theme}>Description</TableHeaderCell>
-              <TableHeaderActionCell theme={theme}>Actions</TableHeaderActionCell>
+              <TableHeaderCell theme={theme}>Fechas</TableHeaderCell>
+              <TableHeaderCell theme={theme}>Descripción</TableHeaderCell>
+              {isEditing && <TableHeaderActionCell theme={theme}>Acciones</TableHeaderActionCell> } {/* Conditionally render action column */}
+
             </TableHeaderRow>
           </TableHeader>
           <TableBody>
@@ -489,11 +541,29 @@ const HolidaysTable = () => {
                   }
                   placeholder="Description"
                 />
+
+                {!isEditing && (
+                  // Render buttons inside Description Cell in non-editing mode
+                  <div style={{ display: "flex", flexDirection:'row', justifyContent: 'flex-end'}}>
+                  <Button onClick={handleSaveClick}>Save</Button>
+                  <CancelRowButton onClick={handleSaveCancel} sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelRowButton>                    
+                  </div>
+                )}
               </TableCell>
-              <SaveButtonCell>
+
+        
+              {/* Action Cell for Editing Mode */}
+              {isEditing && (
+                <TableCell theme={theme}>
+                <div style={{ display: "flex", flexDirection:'row', marginLeft: '-30px'}}>
                 <Button onClick={handleSaveClick}>Save</Button>
-              </SaveButtonCell>
+                <CancelRowButton onClick={handleSaveCancel} sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelRowButton>                    
+                </div>
+                </TableCell>
+              )}
               </TableRow>)}
+
+
 
 
 
@@ -502,8 +572,8 @@ const HolidaysTable = () => {
 
                   {editHoliday && editHoliday[0] === holiday[0] ? (
                                     <>
+                                    {/* Add Holiday */}
                                         <TableCell>
-
                                         <StyledSelect
                                           value={editHoliday.month || ""}
                                           onChange={(e) => handleEditMonthChange(e.target.value)}
@@ -527,9 +597,6 @@ const HolidaysTable = () => {
                                           ))}
                                         </StyledSelect>
 
-
-
-
                                         </TableCell>
                                         <TableCell>
                                             <StyledInput
@@ -541,6 +608,8 @@ const HolidaysTable = () => {
                                                     }))
                                                 }
                                             />
+
+
                                         </TableCell>
                                         <ActionCell>
                                             <Button
@@ -549,25 +618,33 @@ const HolidaysTable = () => {
                                                 Save
                                             </Button>
                                             <Button onClick={handleEditCancel}>Cancel</Button>
+                                        
                                         </ActionCell>
                                     </>
                                 ) : (
                                     <>
+                                    {/* View Holiday */}
                                         <DateCell>{holiday[1]}</DateCell>
                                         <DescriptionCell>{holiday[2]}</DescriptionCell>
+                                        
+                                        {isEditing && (
+
                                         <ActionCell>
-                                            <EditButton
+                                            <EditRowButton
                                                 onClick={() => handleEditClick(holiday)}
                                             >
                                               Edit
                                                 {/* <EditIcon/> */}
-                                            </EditButton>
-                                            <DeleteButton onClick={() => handleDeleteClick(holiday[0])} style={{ color: 'red' }}>
-                                            
-                                              <DeleteForeverIcon/>
+                                            </EditRowButton>
+                                            <DeleteButton 
+                                                onClick={() => handleDeleteClick(holiday[0])} 
+                                                style={{ color: 'red' }}
+                                              >
+                                              <DeleteIcon/>
                                             </DeleteButton>
 
                                         </ActionCell>
+                                      )}
                                     </>
                                 )}
               </TableRow>
@@ -577,7 +654,7 @@ const HolidaysTable = () => {
           </TableBody>
           <TableFooter theme={theme}>
             <TableFooterRow >
-                <TableFooterCell colSpan={3} theme={theme}>
+                <TableFooterCell colSpan={isEditing ? 3 : 2} theme={theme}>
                   <Container>
                     <RowsPerPage
                         rowsPerPage={rowsPerPage}
@@ -598,21 +675,52 @@ const HolidaysTable = () => {
       </TableContainer>
 
 
-      {!isAdding ? ( <AddButton
-                        onClick={handleAddClick}
-                        variant="contained"
-                      >
-                        +
-                      </AddButton>
-                    ) : (
-                      <CancelButton
-                        onClick={handleCancelClick}
-                        variant="contained"
-                        sx = {{backgroundColor: '#ff6b6b',}}
-                      >
-                        ✕
-                      </CancelButton>
-                    )}
+          {/* Floating Button - Edit*/}
+          <EditButton
+            theme={theme}
+            variant='contained'
+            style={{
+              color: 'white',
+              backgroundColor: isEditing
+                ? 'red' // Red background when in editing mode
+                : theme.palette.mode === 'dark'
+                ? theme.palette.primary.main
+                : theme.palette.primary.main,
+            }}
+            onClick={toggleEditingMode}
+          >
+            {isEditing ? <> <ArrowBackIcon sx={{fontSize:'xxlarge'}}/> 
+            </> : <EditIcon/>}
+          </EditButton>
+
+
+
+            {/* Floating Button - Add*/}
+            {!isAdding ? ( <AddButton
+                  theme={theme}
+                  onClick={handleAddClick}
+                  variant="contained"
+                  style={{
+                    color: 'white',
+                    backgroundColor: isAdding
+                      ? 'red' // Red background when in editing mode
+                      : theme.palette.mode === 'dark'
+                      ? theme.palette.primary.main
+                      : theme.palette.primary.main,
+                  }}
+                  
+                >
+                  +
+                </AddButton>
+              ) : (
+                <CancelButton
+                  onClick={handleCancelClick}
+                  variant="contained"
+                  sx = {{backgroundColor: 'red', color: 'white'}}
+                >
+                  ✕
+                </CancelButton>
+              )}
 
       </>    
       );

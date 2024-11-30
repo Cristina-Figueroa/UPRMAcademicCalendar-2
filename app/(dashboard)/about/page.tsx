@@ -68,21 +68,13 @@ export default function AboutPage() {
 
   return (
 <PageContainer theme={theme}>
-      <Header theme={theme}>About the Academic Calendar Generator</Header>
+      <Header theme={theme}>Acerca del Generador de Calendario Academicos UPRM</Header>
       <Paragraph theme={theme}>
-        The <strong>Academic Calendar Generator</strong> is a tool created by{" "}
-        <strong>UPRM Calendar Generator Team</strong> to simplify academic
-        calendar planning. Built as part of our capstone project, this tool
-        addresses the challenges of manual calendar creation by automating date
-        calculations, following institutional guidelines, and adapting to
-        unexpected changes.
-      </Paragraph>
-      <Paragraph theme={theme}>
-        Our goal is to provide administrators and educators with an easy-to-use, reliable,
-        and customizable solution to streamline the calendar creation process.
+      El Generador de Calendarios Académicos es una herramienta poderosa diseñada para simplificar el proceso de creación y modificación de calendarios académicos en universidades. Esta herramienta automatiza cálculos complejos de fechas, sigue las directrices institucionales y ofrece flexibilidad para ajustar los calendarios ante cambios inesperados.
       </Paragraph>
 
-      <SubHeader theme={theme}>What Does This Tool Do?</SubHeader>
+      {/* <SubHeader theme={theme}>Key Features of the Academic Calendar Generator:
+</SubHeader>
       <Paragraph theme={theme}>
         The Academic Calendar Generator simplifies the process of building
         institutional academic calendars by automating date calculations,
@@ -97,20 +89,33 @@ export default function AboutPage() {
         <FeatureItem theme={theme}>Generate academic calendars based on start date and academic period.</FeatureItem>
         <FeatureItem theme={theme}>Adjust quickly for unexpected changes.</FeatureItem>
         <FeatureItem theme={theme}>Export your calendar in PDF format.</FeatureItem>
-      </FeatureList>
+      </FeatureList> */}
 
-      <SubHeader theme={theme}>Get in Touch</SubHeader>
+    <SubHeader theme={theme}>
+    Cómo funciona:
+      </SubHeader>
+      <FeatureList theme={theme}>
+        <FeatureItem theme={theme}>
+          <strong>Dashboard:</strong> La interfaz principal donde puedes ingresar la fecha de inicio y el período académico para generar un nuevo calendario.</FeatureItem>
+        <FeatureItem theme={theme}>
+        <strong>Página de Feriados:</strong> Muestra una tabla con todos los días festivos en tu base de datos para asegurar que el calendario respete esas fechas.
+        </FeatureItem>
+        <FeatureItem theme={theme}>
+        <strong> Página de Directrices:</strong> Presenta una tabla con todas las directrices institucionales para garantizar que el calendario cumpla con todas las reglas y regulaciones.
+        </FeatureItem>
+      </FeatureList> 
+
+
+
+      <SubHeader theme={theme}>Contactanos!</SubHeader>
       <Paragraph theme={theme}>
-        If you have questions, feedback, or would like to discuss further
-        improvements, don’t hesitate to reach out!
+      Si tienes preguntas, comentarios o te gustaría discutir mejoras adicionales, ¡no dudes en ponerte en contacto!
       </Paragraph>
       <Contact theme={theme}>
-        📧 Contact us at: <Email>cristina.figueroa7@upr.edu</Email>
+        📧 Contáctanos en: <Email>cristina.figueroa7@upr.edu</Email>
       </Contact>
       <Paragraph theme={theme}>
-        Thank you for using the Academic Calendar
-        Generator. We hope it makes your planning process smoother and more
-        efficient!
+      Gracias por utilizar el Generador de Calendarios Académicos. ¡Esperamos que haga tu planificación académica más fluida y eficiente!
       </Paragraph>
     </PageContainer>
   );

@@ -21,19 +21,17 @@ export const StyledInput = styled.input`
 `;
 
 export const AddButton = styled(Button)`
-  // margin-left: 10px;
   position: fixed;
-  bottom: 60px;
-  right: 25px;
+  bottom: 75px;
+  right: 23px;
   padding: 10px 15px;
   font-size: 30px;
   border-radius: 50%;
   height: 40px;
   min-width: 40px;
-  // cursor: 'pointer';
+  cursor: 'pointer';
   background-color: 'green';
 `;
-
 
 export const CancelButton = styled(Button)`
   margin-left: 10px;
@@ -150,7 +148,6 @@ export const DescriptionCell = styled(TableCell)`
   text-overflow: ellipsis; /* Add ellipsis for long text */
   // background-color:pink;
   // text-align: center;
-
 `;
 
 export const ActionCell = styled(TableCell)`
@@ -242,6 +239,18 @@ export const Notification = styled.div`
 `;
 
 export const EditButton = styled(Button)`
+  position: fixed;
+  bottom: 21px;
+  right: 20px;
+  padding: 10px 15px;
+  border-radius: 50%;
+  border: none;
+  height: 46px;
+  min-width: 46px;
+  cursor: 'pointer';
+`;
+
+export const EditRowButton = styled(Button)`
   // font-size: 30px;
   border-radius: 100px;
   height: 40px;

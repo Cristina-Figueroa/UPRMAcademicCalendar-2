@@ -30,9 +30,11 @@ export default function HolidaysPage() {
   return (
     <PageContainer theme={theme}>
       <Paragraph theme={theme}>
-      This page provides an <strong>overview</strong> of the <strong>holidays </strong> 
-      included in the <strong>academic calendar generation process</strong>. While the holidays follow standard academic guidelines, 
-      they can be adjusted to meet the unique requirements of your institution.
+      Esta página proporciona una <strong>visión general</strong> de 
+      los <strong>días festivos</strong> incluidos en el <strong>proceso de 
+      generación del calendario académico</strong>. Aunque los días 
+      festivos siguen las directrices académicas estándar de Puerto Rico, pueden 
+      ajustarse para cumplir con los requisitos únicos de tu institución.
       </Paragraph>
 
       <ThemeProvider theme={theme}>
