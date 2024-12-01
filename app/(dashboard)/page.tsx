@@ -46,13 +46,7 @@ export default function HomePage() {
     setIsClient(true);
   }, []);
 
-  if (!isClient) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress /> 
-      </div>
-    );
-  }
+  if (!isClient) return null
   return (    
     <PageContainer theme={theme}>
       <SubHeader theme={theme}>Academic Calendar Generator</SubHeader>

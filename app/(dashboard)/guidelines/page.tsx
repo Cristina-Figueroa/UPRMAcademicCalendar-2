@@ -35,13 +35,7 @@ export default function GuidelinesPage() {
     setIsClient(true);
   }, []);
 
-  if (!isClient) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress /> 
-      </div>
-    );
-  }
+  if (!isClient) return null
 
   return (
     <PageContainer theme={theme}>

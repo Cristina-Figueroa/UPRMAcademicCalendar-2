@@ -74,13 +74,7 @@ export default function AboutPage() {
     setIsClient(true);
   }, []);
 
-  if (!isClient) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress /> 
-      </div>
-    );
-  }
+  if (!isClient) return null
 
   return (
 
