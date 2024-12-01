@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from 'react';
+import { Suspense } from 'react';
 import Typography from '@mui/material/Typography';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
@@ -62,12 +63,14 @@ const Email = styled.span`
 
 
 
-export default function AboutPage() {
+const AboutPage = () => {
 
   const theme = useTheme();
 
   return (
-<PageContainer theme={theme}>
+    <Suspense fallback={<div>Loading...</div>}>
+
+  <PageContainer theme={theme}>
       <Header theme={theme}>Acerca del Generador de Calendario Academicos UPRM</Header>
       <Paragraph theme={theme}>
       El Generador de Calendarios Académicos es una herramienta poderosa diseñada para simplificar el proceso de creación y modificación de calendarios académicos en universidades. Esta herramienta automatiza cálculos complejos de fechas, sigue las directrices institucionales y ofrece flexibilidad para ajustar los calendarios ante cambios inesperados.
@@ -118,5 +121,8 @@ export default function AboutPage() {
       Gracias por utilizar el Generador de Calendarios Académicos. ¡Esperamos que haga tu planificación académica más fluida y eficiente!
       </Paragraph>
     </PageContainer>
+    
+    </Suspense>
   );
 }
+export default AboutPage;
