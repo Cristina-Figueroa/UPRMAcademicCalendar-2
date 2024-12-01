@@ -1,11 +1,13 @@
 "use client"
 
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import HolidaysTable from '@/app/components/Holidays'
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../../../theme';
+import CircularProgress from '@mui/material/CircularProgress'; 
 
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -26,6 +28,20 @@ const Paragraph = styled.p`
 
 export default function HolidaysPage() {
   const theme = useTheme();
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress /> 
+      </div>
+    );
+  }
 
   return (
     <PageContainer theme={theme}>

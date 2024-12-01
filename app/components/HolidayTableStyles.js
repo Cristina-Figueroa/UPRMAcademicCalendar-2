@@ -94,10 +94,12 @@ export const TableHeaderCell = styled.th`
   /* Set specific widths */
   &:nth-child(1) {
     width: 25%; /* Date column */
+    text-align: center;
+
   }
   &:nth-child(2) {
     width: 55%; /* Description column */
-    // text-align: center;
+    text-align: center;
 
   }
   // &:nth-child(3) {

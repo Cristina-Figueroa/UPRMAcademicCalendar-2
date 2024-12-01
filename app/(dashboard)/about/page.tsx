@@ -1,10 +1,12 @@
 "use client"
 
 import * as React from 'react';
-import { Suspense } from 'react';
+import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
+import CircularProgress from '@mui/material/CircularProgress'; 
+
 
 // npm install styled-components
 
@@ -63,12 +65,24 @@ const Email = styled.span`
 
 
 
-const AboutPage = () => {
+export default function AboutPage() {
 
   const theme = useTheme();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress /> 
+      </div>
+    );
+  }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
 
   <PageContainer theme={theme}>
       <Header theme={theme}>Acerca del Generador de Calendario Academicos UPRM</Header>
@@ -122,7 +136,5 @@ const AboutPage = () => {
       </Paragraph>
     </PageContainer>
     
-    </Suspense>
   );
 }
-export default AboutPage;

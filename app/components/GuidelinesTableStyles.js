@@ -90,7 +90,7 @@ export const TableHeaderCell = styled.th`
   /* Set specific widths */
   &:nth-child(1) {
     width: 25%; /* Name column */
-        text-align: center;
+    text-align: center;
 
   }
   &:nth-child(2) {
