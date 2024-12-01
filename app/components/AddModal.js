@@ -5,21 +5,21 @@ import { useTheme } from '@mui/material/styles';
 const AddGuidelineModal = ({ show, onClose, onSave }) => {
   const theme = useTheme();
 
-  const defaultFormData = {
+  const defaultAddFormData = {
     guideline_name: '',
     shift_days: '',
     day_type: 'NORMAL',
     start: '',
   };
 
-  const [formData, setFormData] = useState(defaultFormData);
+  const [formData, setFormData] = useState(defaultAddFormData);
   const [errors, setErrors] = useState({});
   const [notification, setNotification] = useState('');
 
   // Reset formData and errors whenever the modal opens
   useEffect(() => {
     if (show) {
-      setFormData(defaultFormData);
+      setFormData(defaultAddFormData);
       setErrors({});
       setNotification();
     }

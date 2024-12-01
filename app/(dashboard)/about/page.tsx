@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress'; 
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 
 // npm install styled-components
@@ -68,6 +70,8 @@ const Email = styled.span`
 export default function AboutPage() {
 
   const theme = useTheme();
+  const searchParams = useSearchParams();
+
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -76,8 +80,10 @@ export default function AboutPage() {
 
   if (!isClient) return null
 
-  return (
 
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
   <PageContainer theme={theme}>
       <Header theme={theme}>Acerca del Generador de Calendario Academicos UPRM</Header>
       <Paragraph theme={theme}>
@@ -129,6 +135,7 @@ export default function AboutPage() {
       Gracias por utilizar el Generador de Calendarios Académicos. ¡Esperamos que haga tu planificación académica más fluida y eficiente!
       </Paragraph>
     </PageContainer>
-    
+    </Suspense>
+
   );
 }

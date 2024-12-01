@@ -8,7 +8,8 @@ import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
 import Home from '../components/Home';
 import CircularProgress from '@mui/material/CircularProgress'; 
-
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -40,6 +41,8 @@ const Paragraph = styled.p`
 
 export default function HomePage() {
   const theme = useTheme();
+  const searchParams = useSearchParams();
+
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -48,6 +51,7 @@ export default function HomePage() {
 
   if (!isClient) return null
   return (    
+    <Suspense fallback={<div>Loading...</div>}>
     <PageContainer theme={theme}>
       <SubHeader theme={theme}>Academic Calendar Generator</SubHeader>
       <Paragraph theme={theme}>
@@ -67,6 +71,7 @@ export default function HomePage() {
       <Home></Home>
 
     </PageContainer>
+</Suspense>
 
   );
 }
