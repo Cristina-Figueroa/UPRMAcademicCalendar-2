@@ -80,3 +80,89 @@ def execute_query_get_guidelines(query, params=()):
         return []
     finally:
         conn.close()
+
+
+
+
+# ====================AcademicPeriod========================
+import holidays
+from datetime import datetime, date
+
+def get_academic_period(startdate):
+    # Convert startdate to a date object
+    start_date = datetime.strptime(startdate, '%Y-%m-%d').date()
+
+    # Define the academic periods as date objects
+    fall_start = date(start_date.year, 8, 1)
+    fall_end = date(start_date.year, 12, 25)
+
+    spring_start = date(start_date.year, 1, 1)
+    spring_end = date(start_date.year, 5, 20)
+
+    summer_v1_start = date(start_date.year, 6, 1)
+    summer_v1_end = date(start_date.year, 6, 30)
+
+    summer_v2_start = date(start_date.year, 7, 1)
+    summer_v2_end = date(start_date.year, 7, 31)
+
+    extended_summer_start = date(start_date.year, 6, 1)
+    extended_summer_end = date(start_date.year, 7, 31)
+
+    # Determine which academic period the startdate falls under
+    if fall_start <= start_date <= fall_end:
+        return "Fall"
+    elif spring_start <= start_date <= spring_end:
+        return "Spring"
+    elif summer_v1_start <= start_date <= summer_v1_end:
+        return "Summer V1"
+    elif summer_v2_start <= start_date <= summer_v2_end:
+        return "Summer V2"
+    elif extended_summer_start <= start_date <= extended_summer_end:
+        return "Extended Summer"
+    else:
+        return None
+
+
+def get_filtered_holidays(year, startdate):
+    # Get Puerto Rico holidays
+    pr_holidays = holidays.PuertoRico(years=year)
+
+    # Filter holidays based on the academic period
+    academic_period = get_academic_period(startdate)
+
+    filtered_holidays = []
+
+    # Define holiday ranges based on academic periods
+    if academic_period == "Fall":
+        holiday_range = (date(year, 8, 1), date(year, 12, 25))
+    elif academic_period == "Spring":
+        holiday_range = (date(year, 1, 1), date(year, 5, 20))
+    elif academic_period == "Summer V1":
+        holiday_range = (date(year, 6, 1), date(year, 6, 30))
+    elif academic_period == "Summer V2":
+        holiday_range = (date(year, 7, 1), date(year, 7, 31))
+    elif academic_period == "Extended Summer":
+        holiday_range = (date(year, 6, 1), date(year, 7, 31))
+    else:
+        holiday_range = None
+
+    if holiday_range:
+        # Filter holidays within the range for the selected academic period
+        for date_obj, name in pr_holidays.items():
+            if holiday_range[0] <= date_obj <= holiday_range[1]:
+                filtered_holidays.append(f"{date_obj}: {name}")
+
+    return filtered_holidays
+
+
+# Function to get Puerto Rico holidays for the current year
+def get_pr_holidays(year):
+    # Get Puerto Rico holidays for the given year
+    pr_holidays = holidays.PuertoRico(years=year)
+    return pr_holidays
+
+
+# Update the date format before returning it in the response
+def format_date_for_display(date_obj):
+    # Format the date to 'Mon, 26 Aug 2024'
+    return date_obj.strftime("%a, %d %b %Y")

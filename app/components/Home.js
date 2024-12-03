@@ -9,6 +9,7 @@ import BasicSelect from './BasicSelect';
 import DatePickerComponent from './DatePicker';
 import ButtonComponent from './Button';
 import DescriptionAlerts from './Alert';
+import CircularSpinner from './LoadingSpinner';
 
 
 import styled from "styled-components";
@@ -59,6 +60,7 @@ const Center = styled.div`
 
 function Home() {
   const theme = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
 
 
   const [startDate, setStartDate] = useState('');
@@ -150,6 +152,8 @@ function Home() {
 
 
 
+  const [holidays, setHolidays] = useState([]); //State to get holidays
+  const [importantDates, setImportantDates] = useState([]);
 
 
   // Yes!
@@ -201,7 +205,7 @@ function Home() {
   // Clear error message if validation passes
     setErrorMessage('');
 
-    fetch('http://127.0.0.1:5000/submit-academic-period', {
+    fetch('http://127.0.0.1:5000/submit-academic-period/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -213,12 +217,19 @@ function Home() {
         weeks: weeks,
       }),
     })
-      .then((response) => response.json())  
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log('Response from Flask:', data);
         setResponseMessage(
-          data.message + ' - ' + data.date + ' , Period: ' + period + ' , Weeks: ' + weeks
+          data.message + ' - Date:' + startDate + ' , Period: ' + period + ' , Weeks: ' + weeks
         );
+        setImportantDates(data.important_dates);  // Store important dates in state
+
         // setResponseMessage(data.message + ' - ' + data.date + ' , ' + data.period);
         console.log('Updated responseMessage:', responseMessage); // This log will show the state value
         // navigate('/calendar', { state: { message: data.message, date: data.date, period: data.period } });
@@ -227,7 +238,7 @@ function Home() {
       .catch((error) => {
         console.error('Error:', error);
         setErrorMessage(error.message);
-      });
+      });      
   };
 
   const submitDate = () => {
@@ -263,19 +274,33 @@ function Home() {
 
   
   return (
+    
     <PageContainer theme={theme}>
-            
+          <>
+            {/* <CircularSpinner loading={isLoading}/> */}
+                    {/* {!isLoading && ( */}
+
+            <>
                 {/* Date Picker */}
                 <Center>
-                  <DatePickerComponent startDate={startDate} setStartDate={setStartDate} />
+                  <DatePickerComponent startDate={startDate} setStartDate={setStartDate}/>
                 </Center>
-
+                 
+                 
                 
                 {/* BasicSelect */}
                 <Center>
-                  <BasicSelect academicPeriod={academicPeriod} setAcademicPeriod={setAcademicPeriod} />
+                  <BasicSelect academicPeriod={academicPeriod} setAcademicPeriod={setAcademicPeriod}/>
                 </Center>
 
+                {/* Button */}
+
+                <Center>
+                <ButtonComponent handleClick={submitDates}/>     
+                </Center>
+
+
+                {/* Messages */}
                 
                 {/* Display error message if validation fails */}
                 {/* {errorMessage && <div className='section'> <DescriptionAlerts error={errorMessage} /> </div>} */}
@@ -288,25 +313,28 @@ function Home() {
 
 
 
-                {/* Button */}
 
                 <Center>
-                <ButtonComponent handleClick={submitDates}/>     
+                        {/* Important Dates */}
+      <div>
+        {importantDates.length > 0 ? (
+          importantDates.map((item, index) => (
+            <div key={index}>
+              <p>{item.date}: {item.event}</p>
+            </div>
+          ))
+        ) : (
+          <p>No important dates available.</p>
+        )}
+      </div>
+
                 </Center>
-
-                {/* <button onClick={submitDates}>Generate Dates</button> */}
-
-                {/* <button onClick={handleGenerateDates}>Generate Dates</button> */}
-
-              {/* <div>
-                {responseMessage && <p>{responseMessage}</p>} Conditionally render message
-                <button onClick={handleGenerate}>Generate Dates 2</button>
-              </div> */}
-              
-
+        </>               
+        {/* // )} */}
       
-      
+       </>       
     </PageContainer>
+    
   );
 }
 
