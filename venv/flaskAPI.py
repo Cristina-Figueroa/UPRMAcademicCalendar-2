@@ -1,9 +1,12 @@
 import sys
 import os
+from flask_app.config import get_db_connection
+
 
 # Set the base directory as the project root (one level above venv)
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, base_dir)
+
 from flask_app import create_app
 
 

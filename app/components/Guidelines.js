@@ -157,7 +157,7 @@ const GuidelinesTable = () => {
     
         showNotification("Guideline deleted successfully!", "success");
     
-        // Refresh holidays in state after deletion
+        // Refresh guidelines in state after deletion
         setGuidelines((prevGuidelines) =>
           prevGuidelines.filter((guideline) => guideline[0] !== guidelineToDelete)
         );
@@ -168,19 +168,56 @@ const GuidelinesTable = () => {
         setIsModalOpenDelete(false); // Close the modal
         setGuidelineToDelete(null);
       }
+      try {
+        const response = await fetch("http://127.0.0.1:5000/guidelines/");
+        const data = await response.json();
+        setGuidelines(data); // Refresh guidelines list
+      } catch (error) {
+        console.error("Error refreshing guidelines:", error);
+      }
     };
 
 
 
+
+    const [errors, setErrors] = useState({
+      guideline_name: false,
+      shift_days: false,
+      day_type: false,
+      start: false,
+    });
+
     // Add a Guideline
     const handleAddGuideline = async (newGuideline) => {
+      const newErrors = {
+        guideline_name: !newGuideline.guideline_name,
+        shift_days: !newGuideline.shift_days,
+        day_type: !newGuideline.day_type,
+        start: !newGuideline.start,
+      };
+  
+    
+      setErrors(newErrors);
+    
+      // If any errors exist, prevent submission
+      if (Object.values(newErrors).some((error) => error)) {
+        showNotification("Please fill in all required fields.", "error");
+        return;
+      }
+
+
       try {
         const response = await fetch('http://127.0.0.1:5000/guidelines/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(newGuideline),
+          body: JSON.stringify({         
+            guideline_name: newGuideline.guideline_name,
+            shift_days: newGuideline.shift_days,
+            day_type: newGuideline.day_type,
+            start: newGuideline.start,
+          })
         });
     
         if (!response.ok) {
@@ -206,10 +243,6 @@ const GuidelinesTable = () => {
       }
 
     };
-
-
-
-
 
 
 
@@ -245,10 +278,10 @@ const GuidelinesTable = () => {
     const handleEditClick = (index, guideline) => {
       setEditRowIndex(index);
       setEditedGuideline({
-        guideline: guideline[1],
-        day_type: guideline[3],
-        shift_days: guideline[2],
-        start: guideline[4],
+        guideline: guideline.guideline_name,
+        shift_days: guideline.shift_days,
+        day_type: guideline.day_type,
+        start: guideline.start,
       });
     };
 
@@ -260,22 +293,22 @@ const GuidelinesTable = () => {
     };
 
     const handleSave = async (index) => {
-      // Construct the payload for the PUT request
       const updatedGuideline = {
-        guideline_id: guidelines[index][0], // Assuming the first value is the ID
-        guideline_name: editedGuideline.guideline, // `guideline_name` maps to the edited guideline name
+        guideline_id: guidelines[index].guideline_id, // guideline_id
+        guideline_name: editedGuideline.guideline, // guideline_name
         shift_days: editedGuideline.shift_days,    // Shift days
         day_type: editedGuideline.day_type,        // Day type
         start: editedGuideline.start,              // Start value
       };
-    
+      console.log(updatedGuideline);  // Add this line to check the value
+
       try {
         const response = await fetch(`http://127.0.0.1:5000/guidelines/${updatedGuideline.guideline_id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedGuideline), // Send the correct payload
+          body: JSON.stringify(updatedGuideline), 
         });
     
         if (!response.ok) {
@@ -373,9 +406,9 @@ const GuidelinesTable = () => {
                       value={editedGuideline.day_type}
                       onChange={(e) => handleInputChange(e, 'day_type')}
                     >
-                      <option value="NORMAL">Normal</option>
-                      <option value="LABOR">Labor</option>
-                      <option value="SABADOS">Saturdays</option>
+                      <option value="NORMALES">Normales</option>
+                      <option value="LABORABLES">Laborables</option>
+                      <option value="SABADOS">Sabados</option>
                     </StyledSelect>
                     <StyledInput
                       type="number"
@@ -397,15 +430,19 @@ const GuidelinesTable = () => {
                 </>
               ) : (
                 <>
-                <DateCell theme={theme}>{guideline[1]}</DateCell> 
+                <DateCell theme={theme}>{guideline.guideline_name}</DateCell> 
                 <DescriptionCell theme={theme}>
-              {`Starts counting ${guideline[2]} ${guideline[3]} days from your chosen ${guideline[4]}`}
-                  </DescriptionCell> 
+                    {guideline.start === 'SABADOS' 
+                    
+                      ? `Cuenta ${guideline.shift_days} ${guideline.day_type} desde ${guideline.start}`
+                      : `Cuenta ${guideline.shift_days} dias ${guideline.day_type} desde ${guideline.start}`
+                    }
+                  </DescriptionCell>
                   {isEditing && (
                     <TableCell>
                       <EditRowButton onClick={() => handleEditClick(index, guideline)}>Edit</EditRowButton>
                       <DeleteButton
-                        onClick={() => handleDeleteClick(guideline[0])}
+                        onClick={() => handleDeleteClick(guideline.guideline_id)}
                         style={{ color: 'red' }}
                       >
                         Delete

@@ -155,7 +155,6 @@ const HolidaysTable = () => {
   }, []);
   
 
-
     // Delete Holiday
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [holidayToDelete, setHolidayToDelete] = useState(null);
@@ -191,6 +190,14 @@ const HolidaysTable = () => {
         setIsModalOpen(false); // Close the modal
         setHolidayToDelete(null);
       }
+      try {
+        const response = await fetch("http://127.0.0.1:5000/holidays/");
+        const data = await response.json();
+        setHolidays(data); // Refresh holidays list
+      } catch (error) {
+        console.error("Error refreshing holidays:", error);
+      }
+
     };
 
 
@@ -239,18 +246,8 @@ const HolidaysTable = () => {
     useEffect(() => {
       if (newHoliday.month && newHoliday.day) {
         const monthNames = [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         ];
         const monthName = monthNames[newHoliday.month - 1]; // Convert month number to name
         const formattedMonth = String(newHoliday.month).padStart(2, "0");
@@ -272,23 +269,22 @@ const HolidaysTable = () => {
     });
 
     const handleSaveClick = async () => {
-
       const newErrors = {
         month: !newHoliday.month,
         day: !newHoliday.day,
         description: !newHoliday.description,
       };
-
-        // Validate the day against the selected month
+    
+      // Validate the day against the selected month
       if (newHoliday.month && newHoliday.day) {
         const daysInMonth = getDaysInMonth(newHoliday.month);
         if (newHoliday.day > daysInMonth) {
           newErrors.day = true;
         }
       }
-
+    
       setErrors(newErrors);
-
+    
       // If any errors exist, prevent submission
       if (Object.values(newErrors).some((error) => error)) {
         showNotification("Please fill in all required fields.", "error");
@@ -308,45 +304,41 @@ const HolidaysTable = () => {
             formatted_date: newHoliday.formattedDate,
           }),
         });
-    
+        console.log("Sending holiday:", {
+          holiday_date: newHoliday.holiday_date,
+          holiday_name: newHoliday.description,
+          formatted_date: newHoliday.formattedDate,
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
     
         // Parse the response
         const responseData = await response.json();
-
-
-        // Map the backend response to match frontend keys
-        const newHolidayData = {
-          date: responseData.holiday_date || newHoliday.holiday_date,
-          description: responseData.holiday_name || newHoliday.description,
-          formattedDate: responseData.formatted_date || newHoliday.formattedDate,
-        };
-
-        // Update the state to include the new holiday
-        setHolidays((prevHolidays) => [...prevHolidays, newHolidayData]);
+    
+        // Directly use the response data (assuming the backend sends back the newly created holiday)
+        setHolidays((prevHolidays) => [...prevHolidays, responseData]);
     
         // Reset form and close adding mode
         setNewHoliday({ month: '', day: '', description: '' });
         setErrors({ month: false, day: false, description: false }); // Reset errors
         setIsAdding(false);
         showNotification("Holiday added successfully!", "success");
-
+    
       } catch (error) {
         console.error('Error saving holiday:', error);
         showNotification("Failed to save the holiday. Please try again.", "error");
-
       }
-
+    
       try {
         const response = await fetch("http://127.0.0.1:5000/holidays/");
         const data = await response.json();
-        setHolidays(data);
+        setHolidays(data); // Refresh holidays list
       } catch (error) {
         console.error("Error refreshing holidays:", error);
       }
     };
+    
 
     const handleSaveCancel = () => {
       setIsAdding(false);
@@ -364,25 +356,34 @@ const HolidaysTable = () => {
     const [editHoliday, setEditHoliday] = useState(null); // State for the holiday being edited
 
 
-    const monthNames = [
-      "January", "February", "March", "April", "May",
-      "June", "July", "August", "September", "October",
-      "November", "December"
-  ];
+  //   const monthNames = [
+  //     "January", "February", "March", "April", "May",
+  //     "June", "July", "August", "September", "October",
+  //     "November", "December"
+  // ];
 
+    const monthNamesInSpanish = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
 
     // Handle editing a specific row
-    const handleEditClick = (holiday,index) => {
-      const [monthName, day] = holiday[1].split(' '); // Assuming holiday[1] is "November 2"
-      const monthIndex = monthNames.findIndex((m) => m === monthName) + 1;
-      
-      setEditRowIndex(index); // Track the currently edited row
+    const handleEditClick = (holiday, index) => {
+      setEditRowIndex(index); 
+      // console.log(holiday.holiday_id); // Check if holiday_id exists
+      // Check if holiday_id exists
+      if (!holiday.holiday_id) {
+        console.error("holiday_id is undefined or missing in the holiday object!");
+      }
       setEditHoliday({
-        ...holiday,
-        month: monthIndex, // Store as 1-based month index
-        day: parseInt(day),
+        holiday_id: holiday.holiday_id, 
+        holiday_date: holiday.holiday_date,
+        holiday_name: holiday.holiday_name,
+        month: monthNamesInSpanish.findIndex((month) => month === holiday.holiday_date.split(' ')[0]) + 1,
+        day: parseInt(holiday.holiday_date.split(' ')[1]),
       });
     };
+    
 
     const handleEditMonthChange = (value) => {
       setEditHoliday((prev) => ({
@@ -407,44 +408,46 @@ const HolidaysTable = () => {
     }, [editHoliday?.month, selectedYear]);
 
     const handleEditSave = async (updatedHoliday) => {
-        try {
-            const response = await fetch(`http://127.0.0.1:5000/holidays/${updatedHoliday[0]}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  holiday_date: `${monthNames[updatedHoliday.month - 1]} ${updatedHoliday.day}`,
-                  holiday_name: updatedHoliday[2],
+      try {
+          const response = await fetch(`http://127.0.0.1:5000/holidays/${updatedHoliday.holiday_id}`, { // Use holiday_id here
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  holiday_date: `${monthNamesInSpanish[updatedHoliday.month - 1]} ${updatedHoliday.day}`,
+                  holiday_name: updatedHoliday.holiday_name,  // Use updatedHoliday for holiday_name
                   formatted_date: `${String(updatedHoliday.month).padStart(2, '0')}-${String(updatedHoliday.day).padStart(2, '0')}`,
               }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            showNotification("Holiday updated successfully!", "success");
-
-            // Refresh the holidays list
-            const refreshedHolidays = await response.json();
-            setHolidays((prev) =>
-                prev.map((holiday) =>
-                    holiday[0] === updatedHoliday[0] ? updatedHoliday : holiday
-                )
-            );
-            setEditHoliday(null); // Exit edit mode
-        } catch (err) {
-            console.error('Error saving holiday:', err);
-        }
-        try {
+          });
+  
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          showNotification("Holiday updated successfully!", "success");
+  
+          // Refresh the holidays list
+          const refreshedHolidays = await response.json();
+          setHolidays((prev) =>
+              prev.map((holiday) =>
+                  holiday.holiday_id === updatedHoliday.holiday_id ? updatedHoliday : holiday
+              )
+          );
+          setEditHoliday(null); // Exit edit mode
+      } catch (err) {
+          console.error('Error saving holiday:', err);
+      }
+  
+      try {
           const response = await fetch("http://127.0.0.1:5000/holidays/");
           const data = await response.json();
-          setHolidays(data);
-        } catch (error) {
+          setHolidays(data); // Refresh holidays list
+      } catch (error) {
           console.error("Error refreshing holidays:", error);
           showNotification("Failed to update the holiday. Please try again.", "error");
-        }
-    };
+      }
+  };
+  
 
     const handleEditCancel = () => {
         setEditHoliday(null); // Exit edit mode without saving
@@ -452,9 +455,11 @@ const HolidaysTable = () => {
     };
 
 
+    
 
     return (
       <>
+
         {notification && (
           <Notification type={notificationType}>
             {notification}
@@ -501,18 +506,8 @@ const HolidaysTable = () => {
                 >
                   <option value="" disabled>Select Month</option>
                   {[
-                    "January",
-                    "February",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
-                    "August",
-                    "September",
-                    "October",
-                    "November",
-                    "December",
+                      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+                      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
                   ].map((month, index) => (
                     <option key={index} value={index + 1}>
                       {month}
@@ -568,25 +563,27 @@ const HolidaysTable = () => {
 
 
             {currentHolidays.map((holiday, index) => (
-              <TableRow key={index} theme={theme}>
+              <TableRow key={holiday.holiday_id} theme={theme}>
+    {editHoliday && editHoliday.holiday_id === holiday.holiday_id ? ( 
 
-                  {editHoliday && editHoliday[0] === holiday[0] ? (
+                  // {editHoliday && editHoliday[0] === holiday[0] ? (
                                     <>
                                     {/* Add Holiday */}
                                         <TableCell>
                                         <StyledSelect
-                                          value={editHoliday.month || ""}
+                                          value={editHoliday?.month || ""}
                                           onChange={(e) => handleEditMonthChange(e.target.value)}
                                         >
                                           <option value="" disabled>Select Month</option>
-                                          {monthNames.map((month, index) => (
+                                          {monthNamesInSpanish.map((month, index) => (
                                             <option key={index} value={index + 1}>
                                               {month}
                                             </option>
                                           ))}
                                         </StyledSelect>
+
                                         <StyledSelect
-                                          value={editHoliday.day || ""}
+                                          value={editHoliday?.day || ""}
                                           onChange={(e) => handleEditDayChange(e.target.value)}
                                         >
                                           <option value="" disabled>Select Day</option>
@@ -600,11 +597,11 @@ const HolidaysTable = () => {
                                         </TableCell>
                                         <TableCell>
                                             <StyledInput
-                                                value={editHoliday[2]}
+                                                value={editHoliday?.holiday_name || ""}
                                                 onChange={(e) =>
                                                     setEditHoliday((prev) => ({
                                                         ...prev,
-                                                        [2]: e.target.value,
+                                                        holiday_name: e.target.value,
                                                     }))
                                                 }
                                             />
@@ -624,20 +621,20 @@ const HolidaysTable = () => {
                                 ) : (
                                     <>
                                     {/* View Holiday */}
-                                        <DateCell>{holiday[1]}</DateCell>
-                                        <DescriptionCell>{holiday[2]}</DescriptionCell>
+                                        <DateCell>{holiday.holiday_date}</DateCell>
+                                        <DescriptionCell>{holiday.holiday_name}</DescriptionCell>
                                         
                                         {isEditing && (
 
                                         <ActionCell>
                                             <EditRowButton
-                                                onClick={() => handleEditClick(holiday)}
+                                                onClick={() => handleEditClick(holiday, index)}
                                             >
                                               Edit
                                                 {/* <EditIcon/> */}
                                             </EditRowButton>
                                             <DeleteButton 
-                                                onClick={() => handleDeleteClick(holiday[0])} 
+                                                onClick={() => handleDeleteClick(holiday.holiday_id)} 
                                                 style={{ color: 'red' }}
                                               >
                                               <DeleteIcon/>
