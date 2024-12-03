@@ -10,6 +10,8 @@ import PaginationComponent from './Pagination';
 import RowsPerPage from './RowsPerPage'; 
 import ConfirmationModal from './ConfirmDelete';
 import { Button } from '@mui/material';
+import CircularSpinner from './LoadingSpinner';
+
 import {
   TableContainer,
   StyledTable,
@@ -68,7 +70,7 @@ const GuidelinesTable = () => {
       setCurrentPage(1);
     }, []);
     
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
 
 
@@ -105,7 +107,7 @@ const GuidelinesTable = () => {
     // Fetch guidelines from DB
     useEffect(() => {
       const fetchGuidelines = async () => {
-        setLoading(true);
+        // setIsLoading(true);
           try {
               const response = await fetch('http://127.0.0.1:5000/guidelines/', {
                   method: 'GET',
@@ -124,7 +126,7 @@ const GuidelinesTable = () => {
               console.error('Error fetching guidelines:', err);
               setError(err.message); // Save error to state for display
           } finally {
-            setLoading(false);
+            setIsLoading(false);
           }
       };
   
@@ -377,6 +379,11 @@ const GuidelinesTable = () => {
         />
       )}
 
+      <CircularSpinner loading={isLoading}/>
+
+      {/* Render the table when data is fetched */}
+      {!isLoading && (
+
         <TableContainer theme={theme}>
         <StyledTable>
           <TableHeader theme={theme}>
@@ -476,6 +483,7 @@ const GuidelinesTable = () => {
 
         </StyledTable>
       </TableContainer>
+      )}
 
       {/* Floating Button */}
       <EditButton

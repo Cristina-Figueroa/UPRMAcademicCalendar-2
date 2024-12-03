@@ -11,6 +11,7 @@ import { Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TableFilters from './HolidayFiltering';
 import ConfirmationModal from './ConfirmDelete';
+import CircularSpinner from './LoadingSpinner';
 import {
   TableContainer,
   StyledTable,
@@ -71,7 +72,7 @@ const HolidaysTable = () => {
       setCurrentPage(1);
     }, []);
     
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
 
     // Notification
@@ -128,7 +129,7 @@ const HolidaysTable = () => {
     // Fetch Holidays from DB
     useEffect(() => {
       const fetchHolidays = async () => {
-        setLoading(true);
+        // setLoading(true);
           try {
               const response = await fetch('http://127.0.0.1:5000/holidays/', {
                   method: 'GET',
@@ -147,7 +148,7 @@ const HolidaysTable = () => {
               console.error('Error fetching holidays:', err);
               setError(err.message); // Save error to state for display
           } finally {
-            setLoading(false);
+            setIsLoading(false);
           }
       };
   
@@ -459,7 +460,6 @@ const HolidaysTable = () => {
 
     return (
       <>
-
         {notification && (
           <Notification type={notificationType}>
             {notification}
@@ -484,6 +484,10 @@ const HolidaysTable = () => {
         />
       )}
 
+      <CircularSpinner loading={isLoading}/>
+
+      {/* Render the table when data is fetched */}
+      {!isLoading && (
       <TableContainer theme={theme}>
         <StyledTable>
           <TableHeader theme={theme}>
@@ -671,7 +675,7 @@ const HolidaysTable = () => {
         </StyledTable>
       </TableContainer>
 
-
+)}
           {/* Floating Button - Edit*/}
           <EditButton
             theme={theme}
