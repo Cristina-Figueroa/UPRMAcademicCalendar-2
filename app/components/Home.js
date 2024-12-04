@@ -1,19 +1,40 @@
 'use client';
 
 
-
-import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-import { Box, Container, } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, Container, } from '@mui/material';
 import BasicSelect from './BasicSelect';
 import DatePickerComponent from './DatePicker';
 import ButtonComponent from './Button';
 import DescriptionAlerts from './Alert';
 import CircularSpinner from './LoadingSpinner';
-
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ConfirmationModal from './ConfirmDelete';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
+
+import {
+  TableContainer,
+  StyledTable,
+  TableHeader,
+  TableHeaderRow,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+  DateCell,
+  DescriptionCell,
+  ActionCell,
+  EditRowButton,
+  DeleteButton,
+  EditButton,
+  Notification,
+  AddButton,
+  CancelButton,
+} from './DatesTableStyles';
 
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -60,7 +81,7 @@ const Center = styled.div`
 
 function Home() {
   const theme = useTheme();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
 
   const [startDate, setStartDate] = useState('');
@@ -68,93 +89,28 @@ function Home() {
   const [responseMessage, setResponseMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');  // For displaying error messages
 
-  const [generatedDates, setGeneratedDates] = useState([]);
-  
-  // Working on it 
-  const handleGenerateDates = () => {
-
-    // Handle Errors
-    if (!startDate) {
-      setErrorMessage('Please select a start date');
-      return;
-    }
-    // Academic period has default set to fall
-    setErrorMessage('');
-
-    fetch('http://127.0.0.1:5000/generate-dates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        startDate: startDate,
-        academicPeriod: academicPeriod
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.dates) {
-          // setGeneratedDates(data.dates); // Set the generated dates
-          // navigate('/calendar', { state: { generatedDates: data } });
-
-
-          console.log('Response from Flask:', data);
-          setResponseMessage(data.message + ' - ' + data.date);  // Display the message and date
-
-          console.log('Updated responseMessage:', responseMessage); // This log will show the state value
-          navigate('/generate', { state: { message: data.message, date: data.date, period: data.period } });
-
-
-        } else if (data.error) {
-          console.error('Error:', data.error);
-
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  };
-
-  const handleGenerate = async () => {
-    try {
-        const response = await fetch('http://localhost:5000/generate-dates', {
-            method: 'POST', // Explicitly specify POST
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                start_date: startDate, // Provide the input
-            }),
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        setGeneratedDates(data.dates); // Update state with received dates
-    } catch (error) {
-        console.error('Error fetching dates:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const [holidays, setHolidays] = useState([]); //State to get holidays
   const [importantDates, setImportantDates] = useState([]);
 
+
+  // Notification
+  const [notification, setNotification] = useState(null); // Pop-up notification state
+  const [notificationType, setNotificationType] = useState(""); // 'success' or 'error'
+
+  const showNotification = (message, type) => {
+    setNotification(message);
+    setNotificationType(type);
+  
+    // Automatically hide the notification after 3 seconds
+    setTimeout(() => {
+      setNotification(null);
+      setNotificationType("");
+    }, 3000);
+  };
+
+  
+      
 
   // Yes!
 
@@ -166,6 +122,7 @@ function Home() {
 
   const submitDates = () => {
 
+    setIsLoading(true);
     // Handle Errors
     if (!startDate) {
       // message = 'Please select a start date' 
@@ -226,44 +183,14 @@ function Home() {
       .then((data) => {
         console.log('Response from Flask:', data);
         setResponseMessage(
-          data.message + ' - Date:' + startDate + ' , Period: ' + period + ' , Weeks: ' + weeks
+          // data.message + ' - Date:' + startDate + ' , Period: ' + period + ' , Weeks: ' + weeks
         );
-        setImportantDates(data.important_dates);  // Store important dates in state
-
-        // setResponseMessage(data.message + ' - ' + data.date + ' , ' + data.period);
-        console.log('Updated responseMessage:', responseMessage); // This log will show the state value
-        // navigate('/calendar', { state: { message: data.message, date: data.date, period: data.period } });
-
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        setErrorMessage(error.message);
-      });      
-  };
-
-  const submitDate = () => {
-
-    // Handle Errors
-    if (!startDate) {
-      setErrorMessage('Please select a start date');
-      return;
-    }
-    setErrorMessage('');
-
-    fetch('http://127.0.0.1:5000/submit-date', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        startDate: startDate,
-      }),
-    })
-      .then((response) => response.json())  
-      .then((data) => {
-        console.log('Response from Flask:', data);
-        setResponseMessage(data.message + ' - ' + data.date);
-        console.log('Updated responseMessage:', responseMessage); // This log will show the state value
+        setImportantDates(data.important_dates); 
+        console.log('Updated responseMessage:', responseMessage); 
+        // Fetch important dates from the database after inserting them
+        fetchImportantDates(period, startDate); 
+        handleSubmitDates();
+        setIsLoading(false);
 
       })
       .catch((error) => {
@@ -272,32 +199,210 @@ function Home() {
       });
   };
 
+
+
+
+/**
+ * Handles Fetching the generated date from the database
+ * @returns list of important_dates
+ */
+
+  useEffect(() => {
+    // Fetch data when component mounts
+    fetchImportantDates();
+  }, []);
+
+  const fetchImportantDates = async () => {
+    const response = await fetch('http://127.0.0.1:5000/submit-academic-period/get-important-dates');
+    const data = await response.json();
+    setImportantDates(data.important_dates);
+  };
+
+
+
+
+/**
+ * 
+ * @param {*} id 
+ */
+
+  const [isAdding, setIsAdding] = useState(false); // Toggle for input row
+  const [newEvent, setNewEvent] = useState({ date: '', event: ''}); // Temp state for new event
+  const [errors, setErrors] = useState({ date: false, event: false });
+
+    // Open Inline Adding feature
+    const handleAddClick = () => {
+      setIsAdding(true);
+    };
+
+    const handleCancelClick = () => {
+      setNewEvent({ date: '', event: ''}); // Reset the newEvent state
+      setErrors({ date: false,  event: false}); // Clear any validation errors
+      setIsAdding(false); // Exit the add mode
+    };
+
+    const handleSaveClick = async () => {
+      const newErrors = {
+        date: !newEvent.date,
+        event: !newEvent.event,
+      };
+    
+      setErrors(newErrors);
+    
+      // If any errors exist, prevent submission
+      if (Object.values(newErrors).some((error) => error)) {
+        showNotification("Please fill in all required fields.", "error");
+        return;
+      }
+    
+      try {
+        // Send POST request to Flask API
+        const response = await fetch('http://127.0.0.1:5000/submit-academic-period/add-important_dates', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            date: newEvent.date,
+            event: newEvent.event,
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        // Parse the response
+        const responseData = await response.json();
+    
+        // Add the new event to the state
+        setImportantDates((prevDates) => [...prevDates, responseData]);
+    
+        // Reset form and exit adding mode
+        setNewEvent({ date: '', event: '' });
+        setErrors({ date: false, event: false });
+        setIsAdding(false);
+        showNotification("Event added successfully!", "success");
+      } catch (error) {
+        console.error('Error saving event:', error);
+        showNotification("Failed to save the event. Please try again.", "error");
+      }
+    
+      // Refresh the important_dates list
+      try {
+        const response = await fetch("http://127.0.0.1:5000/submit-academic-period/get-important_dates/");
+        const data = await response.json();
+        setImportantDates(data);
+      } catch (error) {
+        console.error("Error refreshing important_dates:", error);
+      }
+    };
+    
+    const handleSaveCancel = () => {
+      setIsAdding(false);
+      setErrors(false);
+    };
+
+
+
+  const handleEdit = (id) => {
+    // Call a backend API to edit the item with the given id
+    console.log('Edit item with ID:', id);
+  };
+
+  const handleDelete = (id) => {
+    // Call a backend API to delete the item with the given id
+    console.log('Delete item with ID:', id);
+  };
+
+
+  const [isSubmitPressed, setIsSubmitPressed] = useState(false);  // State to track if SubmitDates has been pressed
+  const [showConfirmLeave, setShowConfirmLeave] = useState(false); // State for showing the confirmation modal
+
+  // Function to handle SubmitDates button click
+  const handleSubmitDates = () => {
+    setIsSubmitPressed(true);  // Mark as pressed when SubmitDates is clicked
+  };
+
+  // Function to reset visibility and form inputs (if necessary)
+  const handleGenerateNewPeriod = () => {
+    setIsSubmitPressed(false);
+    setShowConfirmLeave(false); // Close the confirmation modal after confirming
+    setStartDate("");  
+    setAcademicPeriod("fall");  
+  };
+
+  // Open the confirmation modal
+  const openConfirmLeave = () => {
+    setShowConfirmLeave(true); // Show the modal when "Generate Another Period" is clicked
+  };
+
+  // Cancel leaving and close the confirmation modal
+  const cancelLeave = () => {
+    setShowConfirmLeave(false); // Close the confirmation dialog
+  };
+
+
+
+
+
+
   
   return (
-    
-    <PageContainer theme={theme}>
-          <>
-            {/* <CircularSpinner loading={isLoading}/> */}
-                    {/* {!isLoading && ( */}
+    <>
 
-            <>
+
+            {notification && (
+              <Notification type={notificationType}>
+                {notification}
+              </Notification>
+            )}
+
+          {/* {isModalOpen && (
+            <ConfirmationModal
+              open={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onConfirm={handleConfirmDelete}
+              message="Are you sure you want to delete this holiday? This action cannot be undone."
+            />
+          )} */}
+          {showConfirmLeave && (
+            <ConfirmationModal
+              open={showConfirmLeave}
+              onClose={cancelLeave}
+              onConfirm={handleGenerateNewPeriod}
+              message="Are you sure you want to discard this generation?"
+            />
+          )}
+
+                    
+            {!isSubmitPressed && (
+              <>
+
+              <SubHeader theme={theme}>
+                Select a start date to get started
+              </SubHeader>
+
+
                 {/* Date Picker */}
                 <Center>
                   <DatePickerComponent startDate={startDate} setStartDate={setStartDate}/>
                 </Center>
                  
-                 
-                
                 {/* BasicSelect */}
                 <Center>
                   <BasicSelect academicPeriod={academicPeriod} setAcademicPeriod={setAcademicPeriod}/>
                 </Center>
 
                 {/* Button */}
-
                 <Center>
                 <ButtonComponent handleClick={submitDates}/>     
-                </Center>
+                </Center>              
+              </>
+            )}
+
+            <>
+
 
 
                 {/* Messages */}
@@ -311,31 +416,139 @@ function Home() {
                 {responseMessage && <p>{responseMessage}</p>}
                 </Center>
 
+                {isLoading && (
+                  <CircularSpinner loading={isLoading}/>
+
+                )}
+
+                {!isLoading && isSubmitPressed && (
+
+              <>
+                  {/* Important Dates */}
+                              <TableContainer theme={theme}>
+                              <StyledTable theme={theme}>
+                                <TableHeader theme={theme}>
+                                  <TableHeaderRow theme={theme}>
+                                    {/* <TableHeaderCell theme={theme}>ID</TableHeaderCell> */}
+                                    <TableHeaderCell theme={theme}>Date</TableHeaderCell>
+                                    <TableHeaderCell theme={theme}>Event</TableHeaderCell>
+                                    <TableHeaderCell theme={theme}>Actions</TableHeaderCell>
+                                  </TableHeaderRow>
+                                </TableHeader>
+                                <TableBody>
+
+
+                              {isAdding && ( 
+                                <TableRow theme={theme}>
+                                    <DateCell theme={theme}>
+                                        <input
+                                        type="date"
+                                        value={newEvent.date}
+                                        onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                                        style={{ borderColor: errors.date ? 'red' : undefined }}
+                                      />
+
+                                    </DateCell>
+                                    <TableCell theme={theme}>
+                                            <input
+                                          type="text"
+                                          placeholder="Event Name"
+                                          value={newEvent.event}
+                                          onChange={(e) => setNewEvent({ ...newEvent, event: e.target.value })}
+                                          style={{ borderColor: errors.event ? 'red' : undefined }}
+                                        />
+                                    </TableCell>  
+                                    <ActionCell theme={theme}>
+                                                  <div style={{ display: "flex", flexDirection:'row', marginLeft: '-30px'}}>
+                                                  <Button 
+                                                  onClick={handleSaveClick}
+                                                  >
+                                                    Save</Button>
+                                                  <CancelButton 
+                                                  onClick={handleSaveCancel} 
+                                                  sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelButton>                    
+                                                  </div>
+
+                                    </ActionCell>
+                                  </TableRow>
+                                  )}
 
 
 
-                <Center>
-                        {/* Important Dates */}
-      <div>
-        {importantDates.length > 0 ? (
-          importantDates.map((item, index) => (
-            <div key={index}>
-              <p>{item.date}: {item.event}</p>
-            </div>
-          ))
-        ) : (
-          <p>No important dates available.</p>
-        )}
-      </div>
+                                  {importantDates.map((date, index) => (
+                                    <TableRow key={index} theme={theme}>
 
-                </Center>
-        </>               
-        {/* // )} */}
+                                      {/* <TableCell theme={theme}>{date.id}</TableCell> */}
+                                      <DateCell theme={theme}>{date.date}</DateCell>
+                                      <DescriptionCell theme={theme}>{date.event}</DescriptionCell>
+                                      <ActionCell theme={theme}>
+                                        <EditRowButton theme={theme}><EditIcon/></EditRowButton>
+                                        <DeleteButton theme={theme}><DeleteIcon/></DeleteButton>
+
+                                      </ActionCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </StyledTable>
+                              </TableContainer>
+
+
+                          {/* Floating Button - Add*/}
+                            {!isAdding ? ( 
+                              <AddButton 
+                                theme={theme}
+                                onClick={handleAddClick}
+                                variant="contained"
+                                style={{
+                                  color: 'white',
+                                }}
+                              >+</AddButton>              
       
-       </>       
-    </PageContainer>
-    
+                    
+                              ) : (
+                                <CancelButton
+                                  onClick={handleCancelClick}
+                                  variant="contained"
+                                  sx = {{backgroundColor: 'red', color: 'white'}}
+                                >
+                                  ✕
+                                </CancelButton>
+                              )}
+
+
+
+                            {/* Floating Button */}
+                            <EditButton
+                              variant="contained"
+                              onClick={openConfirmLeave} 
+                              theme={theme}
+                              style={{                                
+                                display: isSubmitPressed ? "block" : "none", // Only show when submit is pressed
+                                color: 'white',
+
+                              }}
+                            >
+                              <ArrowBackIcon sx={{fontSize:'xxlarge'}}/>
+                            </EditButton>
+
+                            {/* {isEditing ? <> <ArrowBackIcon sx={{fontSize:'xxlarge'}}/> 
+                            </> : <EditIcon/>} */}
+                </>
+
+                  )}
+
+
+
+
+
+
+
+
+        </>               
+      
+    </>     
   );
 }
 
 export default Home;
+// Let's add edit and delete to our API Endpoints for important_dates

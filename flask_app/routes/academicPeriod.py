@@ -1,9 +1,8 @@
 # Academic route
 # from datetime import datetime
 from flask import Blueprint, jsonify, request
-from flask_app.services.utils import get_filtered_holidays, datetime
-from flask_app.services.academicPeriod import calculate_important_dates
-
+from flask_app.services.utils import datetime, replace_important_dates
+from flask_app.services.academicPeriod import calculate_important_dates, fetch_important_dates, fetch_filtered_and_add_year_to_holidays, add_date_to_db
 
 bp = Blueprint('submit-academic-period', __name__, url_prefix='/submit-academic-period')
 
@@ -25,30 +24,32 @@ def submit_academic_period():
             'message': 'Please select a start date'
         }), 400  # Return a 400 Bad Request status code
 
-    # academic period has set default to fall period
     # Backend validation for academic_period and weeks
     if not academic_period or not weeks:
         return jsonify({
             'message': 'Invalid academic period or weeks'
         }), 400  # Return a 400 Bad Request status code
 
-
-
-    fixed_holidays = [
-        {"holiday_date": "2024-09-01", "holiday_name": "Labor Day"},
-        {"holiday_date": "2024-11-28", "holiday_name": "Thanksgiving"}
-    ]
-
     # Get the year from the start_date
     year = datetime.strptime(start_date, '%Y-%m-%d').year
     print(f"Year: {year}")
-    
+
+    # Call Holidays (FIXED) DB **HERE**
+    fixed_holidays = fetch_filtered_and_add_year_to_holidays(year, start_date)
+    print(f"fixedholidays: {fixed_holidays}")
+
     # Get important dates including holidays and calculated events
     important_dates = calculate_important_dates(start_date, weeks, fixed_holidays, year)
 
     if not start_date or not academic_period or not weeks:
         return jsonify({'message': 'Invalid data'}), 400
 
+
+
+    # Save the important dates to the database
+    replace_important_dates(important_dates)
+
+    
     # Prepare the response data
     JSONresponse = {
         'message': 'Data received successfully',
@@ -57,11 +58,6 @@ def submit_academic_period():
         'weeks': weeks,
         'important_dates': important_dates  # Include the calculated important dates
     }
-
-
-
-
-
 
 
 
@@ -104,7 +100,27 @@ def submit_academic_period():
     return jsonify(JSONresponse)
 
 
-@bp.route('/', methods=['PUT'])
-def save_list_of_dates():
+@bp.route('/get-important-dates', methods=['GET'])
+def get_important_dates():
 
-    return
+    important_dates = fetch_important_dates()
+
+    return jsonify({
+        'important_dates': important_dates  # Send only the important dates
+    })
+
+
+
+
+@bp.route('/add-important-dates', methods=['POST'])
+def add_important_date():
+    data = request.json  # Extract JSON payload
+    if not data.get('date') or not data.get('event'):
+        return jsonify({'error': 'Missing fields'}), 400
+
+    try:
+        add_date_to_db(data)  # Add to the database
+        return jsonify({'message': 'Date added successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+

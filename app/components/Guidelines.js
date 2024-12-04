@@ -11,6 +11,7 @@ import RowsPerPage from './RowsPerPage';
 import ConfirmationModal from './ConfirmDelete';
 import { Button } from '@mui/material';
 import CircularSpinner from './LoadingSpinner';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import {
   TableContainer,
@@ -92,7 +93,7 @@ const GuidelinesTable = () => {
     // Toggle Editing Mode
     const [isEditing, setIsEditing] = useState(false);
     const toggleEditingMode = () => {
-      if (editRowIndex !== null) {
+      if (editGuidelineID !== null) {
         setShowConfirmLeaveEdit(true); // Show confirmation dialog if a row is being edited
       } else {
         setIsEditing((prev) => !prev); // Toggle directly if no row is being edited
@@ -187,6 +188,7 @@ const GuidelinesTable = () => {
       shift_days: false,
       day_type: false,
       start: false,
+      period_type: false,
     });
 
     // Add a Guideline
@@ -196,6 +198,7 @@ const GuidelinesTable = () => {
         shift_days: !newGuideline.shift_days,
         day_type: !newGuideline.day_type,
         start: !newGuideline.start,
+        period_type: !newGuideline.period_type,
       };
   
     
@@ -219,6 +222,7 @@ const GuidelinesTable = () => {
             shift_days: newGuideline.shift_days,
             day_type: newGuideline.day_type,
             start: newGuideline.start,
+            period_type: newGuideline.period_type,
           })
         });
     
@@ -253,7 +257,7 @@ const GuidelinesTable = () => {
 
 
     // Editing a Guideline
-    const [editRowIndex, setEditRowIndex] = useState(null);  
+    const [editGuidelineID, setEditGuidelineID] = useState(null);  
     const [showConfirmLeaveEdit, setShowConfirmLeaveEdit] = useState(false); 
 
     const [editedGuideline, setEditedGuideline] = useState({
@@ -261,12 +265,13 @@ const GuidelinesTable = () => {
       day_type: "",
       shift_days: "",
       start: "",
+      period_type: "",
     });
 
     // Confirm leave editing mode
     const confirmLeaveEditingMode = () => {
       setShowConfirmLeaveEdit(false); // Close the confirmation dialog
-      setEditRowIndex(null); // Exit editing mode for the row
+      setEditGuidelineID(null); // Exit editing mode for the row
       setEditedGuideline({}); // Reset the edited guideline
       setIsEditing(false); // Exit overall editing mode
     };
@@ -277,13 +282,14 @@ const GuidelinesTable = () => {
     };
 
     // Handle editing a specific row
-    const handleEditClick = (index, guideline) => {
-      setEditRowIndex(index);
+    const handleEditClick = (guideline) => {
+      setEditGuidelineID(guideline.guideline_id);
       setEditedGuideline({
         guideline: guideline.guideline_name,
         shift_days: guideline.shift_days,
         day_type: guideline.day_type,
         start: guideline.start,
+        period_type: guideline.period_type,
       });
     };
 
@@ -294,15 +300,16 @@ const GuidelinesTable = () => {
         }));
     };
 
-    const handleSave = async (index) => {
+    const handleSave = async () => {
       const updatedGuideline = {
-        guideline_id: guidelines[index].guideline_id, // guideline_id
+        guideline_id: editGuidelineID, // guideline_id
         guideline_name: editedGuideline.guideline, // guideline_name
         shift_days: editedGuideline.shift_days,    // Shift days
         day_type: editedGuideline.day_type,        // Day type
         start: editedGuideline.start,              // Start value
+        period_type: editedGuideline.period_type, // Period Type
       };
-      console.log(updatedGuideline);  // Add this line to check the value
+      console.log(updatedGuideline); 
 
       try {
         const response = await fetch(`http://127.0.0.1:5000/guidelines/${updatedGuideline.guideline_id}`, {
@@ -318,14 +325,11 @@ const GuidelinesTable = () => {
         }
     
         // Update the local state with the updated guideline
-        const updatedGuidelines = [...guidelines];
-        updatedGuidelines[index] = [
-          updatedGuideline.guideline_id,
-          updatedGuideline.guideline_name,
-          updatedGuideline.shift_days,
-          updatedGuideline.day_type,
-          updatedGuideline.start,
-        ];
+        const updatedGuidelines = guidelines.map((guideline) =>
+          guideline.guideline_id === updatedGuideline.guideline_id
+            ? updatedGuideline
+            : guideline
+        );
         setGuidelines(updatedGuidelines);
     
         showNotification("Guideline updated successfully!", "success");
@@ -333,7 +337,7 @@ const GuidelinesTable = () => {
         console.error("Error updating guideline:", error);
         showNotification("Failed to update the guideline. Please try again.", "error");
       } finally {
-        setEditRowIndex(null); // Exit editing mode
+        setEditGuidelineID(null); // Exit editing mode
       }
       try {
         const response = await fetch("http://127.0.0.1:5000/guidelines/");
@@ -346,7 +350,7 @@ const GuidelinesTable = () => {
     };
 
     const handleCancel = () => {
-        setEditRowIndex(null);
+        setEditGuidelineID(null);
         setEditedGuideline({});
     };
 
@@ -390,6 +394,8 @@ const GuidelinesTable = () => {
             <TableHeaderRow>
               <TableHeaderCell theme={theme}>Directriz</TableHeaderCell>
               <TableHeaderCell theme={theme}>Descripción</TableHeaderCell>
+              <TableHeaderCell theme={theme}>Periodo</TableHeaderCell> {/* New column */}
+
                 {isEditing && <TableHeaderActionCell theme={theme}>Acciones</TableHeaderActionCell> } {/* Conditionally render action column */}
             </TableHeaderRow>
           </TableHeader>
@@ -400,7 +406,7 @@ const GuidelinesTable = () => {
 
           {currentGuidelines.map((guideline, index) => (
             <TableRow key={index} theme={theme}>
-              {editRowIndex === index ? (
+              {editGuidelineID === guideline.guideline_id ? (
                 <>
                   <TableCell>
                   <StyledInput
@@ -409,7 +415,13 @@ const GuidelinesTable = () => {
                     />
                   </TableCell>
                   <TableCell>
-                  <StyledSelect
+                    <StyledInput
+                      type="number"
+                      value={editedGuideline.shift_days}
+                      onChange={(e) => handleInputChange(e, 'shift_days')}
+                      placeholder="Shift Days"
+                    />          
+                    <StyledSelect
                       value={editedGuideline.day_type}
                       onChange={(e) => handleInputChange(e, 'day_type')}
                     >
@@ -417,12 +429,17 @@ const GuidelinesTable = () => {
                       <option value="LABORABLES">Laborables</option>
                       <option value="SABADOS">Sabados</option>
                     </StyledSelect>
-                    <StyledInput
-                      type="number"
-                      value={editedGuideline.shift_days}
-                      onChange={(e) => handleInputChange(e, 'shift_days')}
-                      placeholder="Shift Days"
-                    />
+                    </TableCell> 
+                    
+                    <TableCell>
+                    <StyledSelect
+                      value={editedGuideline.period_type}
+                      onChange={(e) => handleInputChange(e, 'period_type')}
+                    >
+                      <option value="SEMESTER">Semestre</option>
+                      <option value="SUMMER">Verano Corto</option>
+                      <option value="EXTENDED SUMMER">Verano Extendido</option>
+                    </StyledSelect>
                     <StyledInput
                       type="text"
                       value={editedGuideline.start}
@@ -431,7 +448,7 @@ const GuidelinesTable = () => {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button onClick={() => handleSave(index)}>Save</Button>
+                    <Button onClick={handleSave}>Save</Button>
                     <CancelButton onClick={handleCancel}>Cancel</CancelButton>
                   </TableCell>
                 </>
@@ -445,14 +462,19 @@ const GuidelinesTable = () => {
                       : `Cuenta ${guideline.shift_days} dias ${guideline.day_type} desde ${guideline.start}`
                     }
                   </DescriptionCell>
+
+                  <TableCell>{guideline.period_type}</TableCell> {/* New column display */}
+
+
+
                   {isEditing && (
                     <TableCell>
-                      <EditRowButton onClick={() => handleEditClick(index, guideline)}>Edit</EditRowButton>
+                      <EditRowButton onClick={() => handleEditClick(guideline)}>Edit</EditRowButton>
                       <DeleteButton
                         onClick={() => handleDeleteClick(guideline.guideline_id)}
                         style={{ color: 'red' }}
                       >
-                        Delete
+                        <DeleteIcon/>
                       </DeleteButton>
                     </TableCell>
                   )}
@@ -463,7 +485,7 @@ const GuidelinesTable = () => {
           </TableBody>
           <TableFooter theme={theme}>
             <TableFooterRow >
-                <TableFooterCell colSpan={isEditing ? 3 : 2} theme={theme}>
+                <TableFooterCell colSpan={isEditing ? 4 : 3} theme={theme}>
                   <Container>
                     <RowsPerPage
                         rowsPerPage={rowsPerPage}

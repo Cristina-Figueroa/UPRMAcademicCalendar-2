@@ -1,8 +1,10 @@
 # Utility functions
 from flask_app.config import get_db_connection
+from flask_app.services.models import create_important_dates_table
 
-# ====================Holidays========================
-def execute_query_holidays(query, params=()):
+
+# Execute POST, PUT, DELETE from holidays, guideline and important_dates
+def execute_query(query, params=()):
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -16,6 +18,7 @@ def execute_query_holidays(query, params=()):
         cursor.close()
         conn.close()
 
+# ====================Holidays========================
 
 def execute_query_get_holidays(query, params=()):
     # Connect to the database using the function from the database module
@@ -42,21 +45,77 @@ def execute_query_get_holidays(query, params=()):
 
 
 
-# ====================Guidelines========================
-def execute_query_guidelines(query, params=()):
+def execute_query_get_holidays2(query, params=()):
+    # Connect to the database using the function from the database module
     conn = get_db_connection()
-    cursor = conn.cursor()
-    
     try:
+        cursor = conn.cursor()
         cursor.execute(query, params)
-        conn.commit()  # Make sure the data is committed
-    except Exception as e:
-        conn.rollback()  # Rollback if an error occurs
-        raise e
-    finally:
+        
+        # For SELECT queries, fetch all results
+        result = cursor.fetchall()
         cursor.close()
         conn.close()
+        
+        # Convert the result into a list of dictionaries, if necessary
+        result_list = [{"holiday_name": row[0], "formatted_date": row[1]} for row in result]
+        return result_list
 
+    except Exception as e:
+        conn.rollback()
+        print(f"Error executing query: {e}")
+        return []
+    finally:
+        conn.close()
+
+
+
+
+def execute_query_get_filtered_holidays(query, params=()):
+    # Connect to the database using the function from the database module
+    conn = get_db_connection()
+    
+    try:
+        # Create a cursor object to interact with the database
+        cursor = conn.cursor()
+        cursor.execute(query, params)  # Execute the query with the given parameters
+        print(f"Executing query: {query} with params: {params}")
+        print(type(params[0]))
+        # Fetch all results from the query execution
+        result = cursor.fetchall()
+        print({result})
+        cursor.close()
+        conn.close()
+        
+        # Convert the result into a list of dictionaries
+        result_list = [{"holiday_date": row[0], "holiday_name": row[1], "formatted_date": row[2]} for row in result]
+        
+        return result_list
+
+    except Exception as e:
+        conn.rollback()  # In case of error, rollback the transaction
+        print(f"Error executing query: {e}")
+        return []  # Return an empty list in case of error
+
+    finally:
+        conn.close()  # Ensure the connection is always closed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ====================Guidelines========================
 
 def execute_query_get_guidelines(query, params=()):
     # Connect to the database using the function from the database module
@@ -71,7 +130,7 @@ def execute_query_get_guidelines(query, params=()):
         conn.close()
         
         # Convert the result into a list of dictionaries, if necessary
-        result_list = [{"guideline_id": row[0], "guideline_name": row[1], "shift_days": row[2], "day_type": row[3], "start": row[4]} for row in result]
+        result_list = [{"guideline_id": row[0], "guideline_name": row[1], "shift_days": row[2], "day_type": row[3], "start": row[4], "period_type": row[5]} for row in result]
         return result_list
 
     except Exception as e:
@@ -87,6 +146,32 @@ def execute_query_get_guidelines(query, params=()):
 # ====================AcademicPeriod========================
 import holidays
 from datetime import datetime, date
+
+
+def execute_query_get_dates(query, params=()):
+    # Connect to the database using the function from the database module
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        
+        # For SELECT queries, fetch all results
+        result = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        # Convert the result into a list of dictionaries, if necessary
+        result_list = [{"id": row[0], "date": row[1], "event": row[2]} for row in result]
+        return result_list
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Error executing query: {e}")
+        return []
+    finally:
+        conn.close()
+
+
 
 def get_academic_period(startdate):
     # Convert startdate to a date object
@@ -155,14 +240,54 @@ def get_filtered_holidays(year, startdate):
     return filtered_holidays
 
 
-# Function to get Puerto Rico holidays for the current year
-def get_pr_holidays(year):
-    # Get Puerto Rico holidays for the given year
-    pr_holidays = holidays.PuertoRico(years=year)
-    return pr_holidays
+def insert_important_dates(important_dates):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Insert the important dates into the table
+    insert_query = '''
+    INSERT INTO important_dates (date, event)
+    VALUES (%s, %s);
+    '''
+    
+    try:
+        # Execute the insert for each date
+        for item in important_dates:
+            cur.execute(insert_query, (item['date'], item['event']))
+        
+        conn.commit()  # Commit the transaction
+        print("Important dates inserted successfully.")
+    except Exception as e:
+        print(f"Error inserting data: {e}")
+    finally:
+        cur.close()  # Close the cursor
+        conn.close()  # Close the connection
 
 
-# Update the date format before returning it in the response
-def format_date_for_display(date_obj):
-    # Format the date to 'Mon, 26 Aug 2024'
-    return date_obj.strftime("%a, %d %b %Y")
+def replace_important_dates(important_dates):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Step 1: Delete all existing records in the important_dates table
+    delete_query = 'DELETE FROM important_dates;'
+    try:
+        # Execute delete command
+        cur.execute(delete_query)
+        conn.commit()  # Commit the transaction
+
+        # Step 2: Insert the new data into the important_dates table
+        insert_query = '''
+        INSERT INTO important_dates (date, event)
+        VALUES (%s, %s);
+        '''
+        # Execute the insert for each new date
+        for item in important_dates:
+            cur.execute(insert_query, (item['date'], item['event']))
+
+        conn.commit()  # Commit the transaction
+        print("Important dates replaced successfully.")
+    except Exception as e:
+        print(f"Error replacing data: {e}")
+    finally:
+        cur.close()  # Close the cursor
+        conn.close()  # Close the connection

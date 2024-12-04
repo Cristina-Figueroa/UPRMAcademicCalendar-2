@@ -1,8 +1,25 @@
 # Academic logic
-from flask_app.services.utils import get_academic_period, get_filtered_holidays
-
+import holidays
 from datetime import datetime, date, timedelta
-from flask_app.services.utils import get_pr_holidays, format_date_for_display  # Import the holiday utility function
+from flask_app.services.utils import get_academic_period, get_filtered_holidays, execute_query_get_dates, execute_query_get_filtered_holidays, execute_query_get_holidays2, execute_query
+# from flask_app.services.holidays import execute_query_get_holidays
+
+# Fetch Dates from DB
+def fetch_important_dates():
+    # Define your query and pass the parameters
+    query = """
+        SELECT id, date, event
+        FROM important_dates
+    """
+    
+    # Call execute_query_get_dates with the query and parameters
+    return execute_query_get_dates(query)
+
+# Add Date to DB
+def add_date_to_db(data):
+    query = "INSERT INTO important_dates (date, event) VALUES (%s, %s)"
+    execute_query(query, (data['date'], data['event']))
+
 
 # Helper function to check if a day is a labor day (Monday to Friday)
 def is_labor_day(date):
@@ -79,6 +96,37 @@ def get_academic_period(startdate):
     else:
         return None
 
+
+from datetime import datetime, timedelta
+
+def get_academic_period_range(year, start_date):
+    
+    # Determine the academic period range based on the start date
+    academic_period = get_academic_period(start_date)
+    
+    if academic_period == "Fall":
+        start_range = f"{year}-08-01"
+        end_range = f"{year}-12-31"
+    elif academic_period == "Spring":
+        start_range = f"{year}-01-01"
+        end_range = f"{year}-05-30"
+    elif academic_period == "Summer V1":
+        start_range = f"{year}-06-01"
+        end_range = f"{year}-06-30"
+    elif academic_period == "Summer V2":
+        start_range = f"{year}-07-01"
+        end_range = f"{year}-07-31"
+    elif academic_period == "Extended Summer":
+        start_range = f"{year}-06-01"
+        end_range = f"{year}-07-31"
+    else:
+        return None  # Invalid academic period
+    
+    return start_range, end_range
+
+
+
+
 def get_filtered_PR_holidays(year, startdate):
     pr_holidays = get_pr_holidays(year)
     academic_period = get_academic_period(startdate)
@@ -104,6 +152,63 @@ def get_filtered_PR_holidays(year, startdate):
 
     return filtered_PR_holidays
 
+
+
+def fetch_filtered_and_add_year_to_holidays(year, start_date):
+
+    # Get Academic Period Range
+    start_range, end_range = get_academic_period_range(year, start_date)
+
+    if not start_range or not end_range:
+        return []  # Return an empty list if the period is invalid
+
+    # Convert the start and end ranges to date objects
+    start_range_date = datetime.strptime(start_range, "%Y-%m-%d").date()
+    end_range_date = datetime.strptime(end_range, "%Y-%m-%d").date()
+
+
+
+    # Query to fetch holidays with the formatted_date in MM-DD format
+    query = """
+        SELECT holiday_name, formatted_date
+        FROM holidays
+        ORDER BY formatted_date
+    """
+            # WHERE formatted_date BETWEEN %s AND %s
+
+    # Fetch holidays from the database
+    holidays = execute_query_get_holidays2(query)
+    
+    # Prepare the list of fixed holidays with the year added to formatted_date
+    fixed_holidays = []
+
+    for holiday in holidays:
+        # Add the year to the formatted_date (MM-DD -> YYYY-MM-DD)
+        full_date = f"{year}-{holiday['formatted_date']}"
+        
+        # Append the holiday with the new full date
+        fixed_holidays.append({
+            "holiday_date": full_date,  # now the date is in YYYY-MM-DD format
+            "holiday_name": holiday["holiday_name"]
+        })
+
+
+    # Filter the holidays that fall within the period range
+    filtered_holidays = []
+    
+    for holiday in fixed_holidays:
+        # Access the holiday date
+        holiday_date = datetime.strptime(holiday["holiday_date"], "%Y-%m-%d").date()
+        
+        # Check if the holiday falls within the range
+        if start_range_date <= holiday_date <= end_range_date:
+            filtered_holidays.append(holiday)
+    
+    return filtered_holidays
+
+
+
+
 def combine_holidays(fixed_holidays, year, startdate):
     dynamic_holidays = get_filtered_PR_holidays(year, startdate)
     fixed_holidays = [{"holiday_date": datetime.strptime(holiday["holiday_date"], '%Y-%m-%d').date(), "holiday_name": holiday["holiday_name"]} for holiday in fixed_holidays]
@@ -127,6 +232,11 @@ def combine_holidays(fixed_holidays, year, startdate):
 
     return sorted(combined_holidays, key=lambda x: x["holiday_date"])
 
+# Function to get Puerto Rico holidays for the current year
+def get_pr_holidays(year):
+    # Get Puerto Rico holidays for the given year
+    pr_holidays = holidays.PuertoRico(years=year)
+    return pr_holidays
 
 # Update the date format before returning it in the response
 def format_date_for_display(date_obj):
@@ -140,6 +250,7 @@ def calculate_important_dates(start_date, weeks_of_classes, fixed_holidays, year
     start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
     semester_end_date = start_date + timedelta(weeks=weeks_of_classes)
     dates = []
+    dates.append({"date": start_date, "event": "Start of Class"})
 
     def adjust_for_holidays(start_date, semester_end_date, holidays):
         extended_days = 0
@@ -151,9 +262,7 @@ def calculate_important_dates(start_date, weeks_of_classes, fixed_holidays, year
     semester_end_date = adjust_for_holidays(start_date, semester_end_date, combined_holidays)
 
     for holiday in combined_holidays:
-        # Format the date before appending it
-        # formatted_date = format_date_for_display(holiday["holiday_date"])
-        dates.append({"date": holiday["holiday_date"], "event": f"Holiday: {holiday['holiday_name']}"})
+        dates.append({"date": holiday["holiday_date"], "event": f"Feriado: {holiday['holiday_name']}"})
 
     def shift_if_holiday(calculated_date, holidays):
         holiday_dates = {holiday["holiday_date"] for holiday in holidays}

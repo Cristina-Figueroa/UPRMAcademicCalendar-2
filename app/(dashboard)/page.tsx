@@ -3,9 +3,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
-import SubmitButton from '../components/submitButton';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+
 import Home from '../components/Home';
 import CircularProgress from '@mui/material/CircularProgress'; 
 import { useSearchParams } from 'next/navigation';
@@ -53,22 +54,20 @@ export default function HomePage() {
   return (    
     <Suspense fallback={<div>Loading...</div>}>
     <PageContainer theme={theme}>
-      <SubHeader theme={theme}>Academic Calendar Generator</SubHeader>
-      <Paragraph theme={theme}>
-        The <strong>Academic Calendar Generator</strong> is a tool created by{" "}
-        <strong>UPRM Calendar Generator Team</strong> to simplify academic
-        calendar planning. Built as part of our capstone project, this tool
-        addresses the challenges of manual calendar creation by automating date
-        calculations, following institutional guidelines, and adapting to
-        unexpected changes.
-      </Paragraph>
+    <SubHeader theme={theme}>Academic Calendar Generator</SubHeader>
+              <Paragraph theme={theme}>
+                The <strong>Academic Calendar Generator</strong> is a tool created by{" "}
+                <strong>UPRM Calendar Generator Team</strong> to simplify academic
+                calendar planning. Built as part of our capstone project, this tool
+                addresses the challenges of manual calendar creation by automating date
+                calculations, following institutional guidelines, and adapting to
+                unexpected changes.
+              </Paragraph>
 
-      <SubHeader theme={theme}>
-        Select a start date to get started
-      </SubHeader>
+      <ThemeProvider theme={theme}>
+        <Home/>
+      </ThemeProvider>
 
-      {/* <SubmitButton></SubmitButton> */}
-      <Home></Home>
 
     </PageContainer>
 </Suspense>

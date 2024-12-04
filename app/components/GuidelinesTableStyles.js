@@ -94,13 +94,13 @@ export const TableHeaderCell = styled.th`
 
   }
   &:nth-child(2) {
-    width: 55%; /* Description column */
+    width: 45%; /* Description column */
     text-align: center;
   }
-  // &:nth-child(3) {
-  //   width: 25%; /* Actions column */
-  //   text-align: center;
-  // }
+  &:nth-child(3) {
+    // width: 20%; /* Period column */
+    // text-align: center;
+  }
 
 `;
 

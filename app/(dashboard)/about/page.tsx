@@ -129,7 +129,10 @@ export default function AboutPage() {
       Si tienes preguntas, comentarios o te gustaría discutir mejoras adicionales, ¡no dudes en ponerte en contacto!
       </Paragraph>
       <Contact theme={theme}>
-        📧 Contáctanos en: <Email>cristina.figueroa7@upr.edu</Email>
+        📧 Contáctanos en: 
+        <Email>
+        <a style={{ color:'#2980b9'}} href="mailto:cristina.figueroa7@upr.edu?subject=UPRM%20Calendar%20Generator%20Tool%20-%20&body=Hola!">cristina.figueroa7@upr.edu</a>
+        </Email>
       </Contact>
       <Paragraph theme={theme}>
       Gracias por utilizar el Generador de Calendarios Académicos. ¡Esperamos que haga tu planificación académica más fluida y eficiente!

@@ -8,8 +8,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
   const defaultAddFormData = {
     guideline_name: '',
     shift_days: '',
-    day_type: 'NORMAL',
+    day_type: 'NORMALES',
     start: '',
+    period_type: 'SEMESTER',
   };
 
   const [formData, setFormData] = useState(defaultAddFormData);
@@ -109,9 +110,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
             color: theme.palette.text.primary,
           }}
         >
-          <MenuItem value="NORMAL">Normal</MenuItem>
-          <MenuItem value="LABOR">Labor</MenuItem>
-          <MenuItem value="SABADOS">Saturdays</MenuItem>
+          <MenuItem value="NORMALES">Normales</MenuItem>
+          <MenuItem value="LABORABLES">Laborables</MenuItem>
+          <MenuItem value="SABADOS">Sabados</MenuItem>
         </Select>
         <TextField
           name="start"
@@ -126,6 +127,20 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           error={!!errors.start}
           helperText={errors.start || ''}
         />
+        <Select
+          name="period_type"
+          value={formData.period_type}
+          onChange={handleChange}
+          fullWidth
+          style={{
+            marginBottom: '15px',
+            color: theme.palette.text.primary,
+          }}
+        >
+          <MenuItem value="SEMESTER">Semestre</MenuItem>
+          <MenuItem value="SUMMER">Verano Corto</MenuItem>
+          <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
+        </Select>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button
             onClick={onClose}
