@@ -2,7 +2,8 @@
 # from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_app.services.utils import datetime, replace_important_dates
-from flask_app.services.academicPeriod import calculate_important_dates, fetch_important_dates, fetch_filtered_and_add_year_to_holidays, add_date_to_db
+from flask_app.services.academicPeriod import calculate_important_dates, calculate_important_dates_using_guidelines, fetch_important_dates, fetch_filtered_and_add_year_to_holidays, add_date_to_db
+from flask_app.services.guidelines import fetch_guidelines, fetch_filtered_guidelines
 
 bp = Blueprint('submit-academic-period', __name__, url_prefix='/submit-academic-period')
 
@@ -17,6 +18,11 @@ def submit_academic_period():
     start_date = data.get('startDate')
     academic_period = data.get('academicPeriod')
     weeks = data.get('weeks')
+    # Para ver la informacion en la consola de Flask
+    # Log the received date to the console
+    print(f"Received start date: {start_date}")
+    print(f"Received Academic Period: {academic_period}")
+    print(f"Received Weeks: {weeks}")
 
     # Backend validation
     if not start_date:
@@ -34,16 +40,20 @@ def submit_academic_period():
     year = datetime.strptime(start_date, '%Y-%m-%d').year
     print(f"Year: {year}")
 
-    # Call Holidays (FIXED) DB **HERE**
+    # Gets holidays of specific academic period from holidays db here
     fixed_holidays = fetch_filtered_and_add_year_to_holidays(year, start_date)
     print(f"fixedholidays: {fixed_holidays}")
 
+    # Fetch filtered guidelines based on the academic period
+    guidelines = fetch_filtered_guidelines(academic_period)
+    print(f"Guidelines: {guidelines}")
+
     # Get important dates including holidays and calculated events
-    important_dates = calculate_important_dates(start_date, weeks, fixed_holidays, year)
+    important_dates = calculate_important_dates_using_guidelines(start_date, weeks, fixed_holidays, guidelines, year)
+
 
     if not start_date or not academic_period or not weeks:
         return jsonify({'message': 'Invalid data'}), 400
-
 
 
     # Save the important dates to the database
@@ -111,7 +121,7 @@ def get_important_dates():
 
 
 
-
+# No funciona aun
 @bp.route('/add-important-dates', methods=['POST'])
 def add_important_date():
     data = request.json  # Extract JSON payload

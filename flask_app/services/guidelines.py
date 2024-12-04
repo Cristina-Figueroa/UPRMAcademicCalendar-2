@@ -5,6 +5,37 @@ from flask_app.services.utils import execute_query, execute_query_get_guidelines
 def fetch_guidelines():
     return execute_query_get_guidelines("SELECT * FROM guidelines ORDER BY guideline_name")
 
+def fetch_filtered_guidelines(academic_period):
+    # Map the academic periods to their respective period types
+    period_mapping = {
+        "fall": "SEMESTER",
+        "spring": "SEMESTER",
+        "summerV1": "SUMMER",
+        "summerV2": "SUMMER",
+        "summerExtended": "EXTENDED SUMMER"
+    }
+
+    # Get the period type based on the academic period
+    period_type = period_mapping.get(academic_period)
+
+    # If the period type is not found, return an empty list
+    if not period_type:
+        return []
+
+    # Query to fetch guidelines with the corresponding period_type
+    query = """
+        SELECT guideline_id, guideline_name, shift_days, day_type, start, period_type
+        FROM guidelines
+        WHERE period_type = %s
+    """
+
+    # Execute the query to get the filtered guidelines
+    guidelines = execute_query_get_guidelines(query, (period_type,))
+
+    return guidelines
+
+
+
 def add_guideline_to_db(data):
     query = "INSERT INTO guidelines (guideline_name, shift_days, day_type, start, period_type) VALUES (%s, %s, %s, %s, %s)"
     execute_query(query, (data['guideline_name'], data['shift_days'], data['day_type'], data['start'], data['period_type']))

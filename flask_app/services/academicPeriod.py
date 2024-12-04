@@ -21,6 +21,14 @@ def add_date_to_db(data):
     execute_query(query, (data['date'], data['event']))
 
 
+
+# Edit Date in DB
+
+
+# Delete Date in DB
+
+
+
 # Helper function to check if a day is a labor day (Monday to Friday)
 def is_labor_day(date):
     return date.weekday() < 5  # 0-4 represent Monday to Friday
@@ -68,31 +76,32 @@ def get_current_year():
 
 def get_academic_period(startdate):
     start_date = datetime.strptime(startdate, '%Y-%m-%d').date()
+
     fall_start = date(start_date.year, 8, 1)
     fall_end = date(start_date.year, 12, 25)
     
     spring_start = date(start_date.year, 1, 1)
     spring_end = date(start_date.year, 5, 20)
     
-    summer_v1_start = date(start_date.year, 6, 1)
+    summer_v1_start = date(start_date.year, 5, 20)
     summer_v1_end = date(start_date.year, 6, 30)
     
     summer_v2_start = date(start_date.year, 7, 1)
     summer_v2_end = date(start_date.year, 7, 31)
     
-    extended_summer_start = date(start_date.year, 6, 1)
+    extended_summer_start = date(start_date.year, 5, 20)
     extended_summer_end = date(start_date.year, 7, 31)
 
     if fall_start <= start_date <= fall_end:
-        return "Fall"
+        return "fall"
     elif spring_start <= start_date <= spring_end:
-        return "Spring"
+        return "spring"
     elif summer_v1_start <= start_date <= summer_v1_end:
-        return "Summer V1"
+        return "summerV1"
     elif summer_v2_start <= start_date <= summer_v2_end:
-        return "Summer V2"
+        return "summerV2"
     elif extended_summer_start <= start_date <= extended_summer_end:
-        return "Extended Summer"
+        return "extendedSummer"
     else:
         return None
 
@@ -103,21 +112,22 @@ def get_academic_period_range(year, start_date):
     
     # Determine the academic period range based on the start date
     academic_period = get_academic_period(start_date)
-    
-    if academic_period == "Fall":
+    print(f"Determined academic period: {academic_period}")  # Debugging line
+
+    if academic_period == "fall":
         start_range = f"{year}-08-01"
         end_range = f"{year}-12-31"
-    elif academic_period == "Spring":
+    elif academic_period == "spring":
         start_range = f"{year}-01-01"
-        end_range = f"{year}-05-30"
-    elif academic_period == "Summer V1":
-        start_range = f"{year}-06-01"
+        end_range = f"{year}-05-20"
+    elif academic_period == "summerV1":
+        start_range = f"{year}-05-20"
         end_range = f"{year}-06-30"
-    elif academic_period == "Summer V2":
+    elif academic_period == "summerV2":
         start_range = f"{year}-07-01"
         end_range = f"{year}-07-31"
-    elif academic_period == "Extended Summer":
-        start_range = f"{year}-06-01"
+    elif academic_period == "extendedSummer":
+        start_range = f"{year}-05-20"
         end_range = f"{year}-07-31"
     else:
         return None  # Invalid academic period
@@ -242,6 +252,104 @@ def get_pr_holidays(year):
 def format_date_for_display(date_obj):
     # Format the date to 'Mon, 26 Aug 2024'
     return date_obj.strftime("%a, %d %b %Y")
+
+
+# Main functions to calculate important dates
+def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fixed_holidays, guidelines_list, year):
+    combined_holidays = combine_holidays(fixed_holidays, year, start_date)
+    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+    semester_end_date = start_date + timedelta(weeks=weeks_of_classes)
+    
+    dates = []
+    dates.append({"date": start_date, "event": "Primer Dia de Clases"})
+
+    def adjust_for_holidays(start_date, semester_end_date, holidays):
+        extended_days = 0
+        for holiday in holidays:
+            if start_date <= holiday["holiday_date"] <= semester_end_date:
+                extended_days += 1
+        return semester_end_date + timedelta(days=extended_days)
+
+    semester_end_date = adjust_for_holidays(start_date, semester_end_date, combined_holidays)
+    dates.append({"date": semester_end_date, "event": "Ultimo Dia de Clases"})
+
+    for holiday in combined_holidays:
+        dates.append({"date": holiday["holiday_date"], "event": f"Feriado: {holiday['holiday_name']}"})
+
+    def shift_if_holiday(calculated_date, holidays):
+        holiday_dates = {holiday["holiday_date"] for holiday in holidays}
+        while calculated_date in holiday_dates:
+            calculated_date += timedelta(days=1)
+        return calculated_date
+
+    # Loop over the guidelines list and apply the correct function based on the day_type
+    for guideline in guidelines_list:
+        shift_days = guideline["shift_days"]
+        day_type = guideline["day_type"]
+        start = guideline["start"]
+
+        # Check the day type and call the corresponding function
+        if day_type == "LABORABLES" and start == "STARTDATE":
+            # Adjust date by adding labor days
+            adjusted_date = add_labor_days(start_date, shift_days)
+        elif day_type == "LABORABLES" and start == "ENDDATE":
+            # Adjust date by adding labor days
+            adjusted_date = add_labor_days(semester_end_date, shift_days)
+        elif day_type == "NORMALES" and start == "STARTDATE":
+            # Adjust date by adding normal days (including weekends)
+            adjusted_date = add_normal_days(start_date, shift_days)
+        elif day_type == "NORMALES" and start == "ENDDATE":
+            # Adjust date by adding normal days (including weekends)
+            adjusted_date = add_normal_days(semester_end_date, shift_days)
+        elif day_type == "NORMALES" and start == "PERIODO DE REPASO":
+            # Adjust date by adding normal days (including weekends)
+            adjusted_date = add_normal_days(semester_end_date, shift_days)
+        elif day_type == "NORMALES" and start == "PERIODO DE EXAMENES FINALES":
+            # Adjust date by adding normal days (including weekends)
+            adjusted_date = add_normal_days(semester_end_date, shift_days)        
+        # elif day_type == "SABADOS":
+            # Placeholder for adding Saturdays
+            # adjusted_date = get_last_day_of_saturday_classes(start_date, shift_days)
+        else:
+            continue  # Skip if the day type doesn't match
+
+
+
+
+
+        # Append the calculated date for this guideline
+        dates.append({"date": shift_if_holiday(adjusted_date, combined_holidays), "event": f"{guideline['guideline_name']}"})
+
+
+
+
+    # STATIC CALCULATION OF PERIODS
+    # Add the Period of Final Exams and Period of Review for Final Exams
+    # exam_review_start = shift_if_holiday(add_normal_days(semester_end_date, 2), combined_holidays)  # 2 days after semester end
+    # exam_review_end = shift_if_holiday(exam_review_start + timedelta(days=1), combined_holidays)  # 1 day after review start
+    # exam_start_date = shift_if_holiday(exam_review_end + timedelta(days=1), combined_holidays)  # 1 day after review end
+    # exam_end_date = shift_if_holiday(exam_start_date + timedelta(days=5), combined_holidays)  # 5 days after exam start
+    # period_of_grade_start = shift_if_holiday(exam_end_date + timedelta(days=1), combined_holidays)  # 1 day after exam end
+    # period_of_grade_end = shift_if_holiday(period_of_grade_start + timedelta(days=2), combined_holidays)  # 2 days after period start
+
+    # dates.append({"date": exam_review_start, "event": "Period of Review for Final Exams"})
+    # dates.append({"date": exam_review_end, "event": "Period of Review for Final Exams"})
+    # dates.append({"date": exam_start_date, "event": "Period of Final Exams"})
+    # dates.append({"date": exam_end_date, "event": "Period of Final Exams"})
+    # dates.append({"date": period_of_grade_start, "event": "Period of Grades"})
+    # dates.append({"date": period_of_grade_end, "event": "Period of Grades"})
+
+
+    # Add Last Day of Saturday Classes
+    last_saturday = get_last_day_of_saturday_classes(start_date, weeks_of_classes)
+    dates.append({"date": last_saturday, "event": "Last Day of Saturday Classes"})
+
+    dates.sort(key=lambda x: x["date"])
+
+    # Format the dates after sorting and before sending the response
+    formatted_dates = [{"date": format_date_for_display(item['date']), "event": item['event']} for item in dates]
+
+    return formatted_dates
 
 
 # Main function to calculate important dates

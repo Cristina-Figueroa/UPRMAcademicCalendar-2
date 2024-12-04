@@ -262,3 +262,14 @@ export const DeleteButton = styled(Button)`
   height: 40px;
   min-width: 40px;
 `;
+
+export const DownloadButton = styled(Button)`
+  position: fixed;
+  bottom: 124px;
+  right: 23px;
+  padding: 10px 12px;
+  border-radius: 50%;
+  height: 42px;
+  min-width: 40px;
+  cursor: 'pointer';
+`;

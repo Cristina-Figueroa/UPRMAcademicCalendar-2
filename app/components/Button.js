@@ -24,7 +24,8 @@ const ButtonComponent = ({handleClick}) => {
         className="submit"
         onClick={handleClick}
         variant='contained' 
-        sx={{borderRadius:2}}
+        sx={{borderRadius:2, color: 'white',   
+        }}
         > 
         SUBMIT 
         </Button>

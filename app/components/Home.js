@@ -13,6 +13,7 @@ import ConfirmationModal from './ConfirmDelete';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import DownloadIcon from '@mui/icons-material/Download';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
 
@@ -34,6 +35,7 @@ import {
   Notification,
   AddButton,
   CancelButton,
+  DownloadButton,
 } from './DatesTableStyles';
 
 const PageContainer = styled.div`
@@ -144,14 +146,23 @@ function Home() {
     // Check the month and determine the period and weeks
     if (month === 7 && academicPeriod === 'fall' || month === 8 && academicPeriod === 'fall') { // August (7) or September (8)
       weeks = 15;
+      // weeks = 75;
     } else if (month === 0 && academicPeriod === 'spring'|| month === 1 && academicPeriod === 'spring') { // January (0) or February (1)
       weeks = 15;
+      // weeks = 75;
+
     } else if (month === 4 && academicPeriod === 'summerV1'|| month === 5 && academicPeriod === 'summerV1') { // May (4) or June (5)
       weeks = 4;
+      // weeks = 19;
+
     } else if (month === 4 && academicPeriod === 'summerExtended'|| month === 5 && academicPeriod === 'summerExtended') { // May (4) or June (5)
       weeks = 6;
+      // weeks = 30;
+
     } else if (month === 5 && academicPeriod === 'summerV2'|| month === 6 && academicPeriod === 'summerV2') { // May (4) or June (5)
       weeks = 4;
+      // weeks = 19;
+
     } else {
       period = 'unknown';
       weeks = 0;
@@ -342,10 +353,38 @@ function Home() {
     setShowConfirmLeave(false); // Close the confirmation dialog
   };
 
+  // Function to trigger the download when the button is clicked
+  const handleDownload = async () => {
+    const response = await fetch('http://127.0.0.1:5000/download', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      },
+    });
 
+    if (response.ok) {
+      const blob = await response.blob(); // Create a Blob from the response
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob); // Create an object URL for the Blob
+      link.download = 'dias-de-calendario.xlsx'; // Set the file name
+      link.click(); // Trigger the download
+    } else {
+      alert('Failed to download the file.');
+    }
+  };
+    
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Open modal confirmation
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
-
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   
   return (
@@ -525,14 +564,37 @@ function Home() {
                               style={{                                
                                 display: isSubmitPressed ? "block" : "none", // Only show when submit is pressed
                                 color: 'white',
+                                backgroundColor: 'red'
 
                               }}
                             >
                               <ArrowBackIcon sx={{fontSize:'xxlarge'}}/>
                             </EditButton>
 
+
+                              <DownloadButton 
+                                theme={theme}
+                                style={{
+                                  color: 'white',   
+                                  backgroundColor: theme.palette.mode === 'dark' 
+                                  ? theme.palette.primary.main 
+                                  : theme.palette.primary.main, 
+                                }}
+                                onClick={openModal}
+                              >
+                                <DownloadIcon/>
+                                </DownloadButton>
+
+
+
+
+
+
+
+
                             {/* {isEditing ? <> <ArrowBackIcon sx={{fontSize:'xxlarge'}}/> 
                             </> : <EditIcon/>} */}
+
                 </>
 
                   )}
@@ -540,7 +602,47 @@ function Home() {
 
 
 
+      {/* Modal for download confirmation */}
+      {isModalOpen && (
+        <div style={{
+          position: 'fixed',
+          top: '50%',
+          left: '55%',
+          transform: 'translate(-50%, -50%)',
+          border: `1px solid ${theme.palette.mode === 'dark' ? '#555' : 'grey'}`,
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: theme.palette.mode === 'dark' ? '0px 4px 6px rgba(0, 0, 0, 0.7)' : '0px 4px 6px rgba(0, 0, 0, 0.1)',
+          padding: '20px',
+          borderRadius: '10px',
+          zIndex: 1000,
+      }}>
+          <h2>Are you sure you want to download the data?</h2>
+          <Button onClick={handleDownload} 
+          style={{
+            backgroundColor: theme.palette.mode === 'dark' 
+            ? theme.palette.primary.main 
+            : theme.palette.primary.main,
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginRight: '10px',
 
+          }}
+          >Yes, Download</Button>
+          <Button onClick={closeModal} 
+          style={{
+            backgroundColor: '#dc3545',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+          >Cancel</Button>
+        </div>
+      )}
 
 
 
