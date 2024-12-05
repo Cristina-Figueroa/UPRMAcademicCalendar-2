@@ -293,6 +293,26 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
         day_type = guideline["day_type"]
         start = guideline["start"]
 
+       # Handle the "PERIODO DE REPASO" period
+        if day_type == "NORMALES" and start == "PERIODO DE REPASO" and repaso_start_date is None:
+            # If this is "PERIODO DE REPASO," calculate the date only once
+            repaso_start_date = shift_if_holiday(add_normal_days(semester_end_date, shift_days), combined_holidays)
+            dates.append({"date": repaso_start_date, "event": "Periodo de Repaso"})
+
+        # Handle the "PERIODO DE EXAMENES FINALES" period
+        if day_type == "NORMALES" and start == "PERIODO DE EXAMENES FINALES" and repaso_start_date:
+            # The start of the final exams is after the review period
+            examenes_finals_start_date = shift_if_holiday(add_normal_days(repaso_start_date, shift_days), combined_holidays)
+            dates.append({"date": examenes_finals_start_date, "event": "Periodo de Examenes Finales"})
+
+        # Handle the "PERIODO DE NOTAS" period
+        if day_type == "NORMALES" and start == "PERIODO DE NOTAS" and examenes_finals_start_date:
+            # The grade period is after the final exams
+            period_of_notes_start_date = shift_if_holiday(add_normal_days(examenes_finals_start_date, shift_days), combined_holidays)
+            dates.append({"date": period_of_notes_start_date, "event": "Periodo de Notas"})
+
+
+
         # Check the day type and call the corresponding function
         if day_type == "LABORABLES" and start == "STARTDATE":
             # Adjust date by adding labor days
@@ -306,12 +326,12 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
         elif day_type == "NORMALES" and start == "ENDDATE":
             # Adjust date by adding normal days (including weekends)
             adjusted_date = add_normal_days(semester_end_date, shift_days)
-        elif day_type == "NORMALES" and start == "PERIODO DE REPASO":
-            # Adjust date by adding normal days (including weekends)
-            adjusted_date = add_normal_days(semester_end_date, shift_days)
-        elif day_type == "NORMALES" and start == "PERIODO DE EXAMENES FINALES":
-            # Adjust date by adding normal days (including weekends)
-            adjusted_date = add_normal_days(semester_end_date, shift_days)
+        # elif day_type == "NORMALES" and start == "PERIODO DE REPASO":
+        #     # Adjust date by adding normal days (including weekends)
+        #     adjusted_date = add_normal_days(semester_end_date, shift_days)
+        # elif day_type == "NORMALES" and start == "PERIODO DE EXAMENES FINALES":
+        #     # Adjust date by adding normal days (including weekends)
+        #     adjusted_date = add_normal_days(semester_end_date, shift_days)
         elif day_type == "SABADOS" and start == "STARTDATE":
             adjusted_date = get_last_day_of_saturday_classes(start_date, shift_days)
         else:
