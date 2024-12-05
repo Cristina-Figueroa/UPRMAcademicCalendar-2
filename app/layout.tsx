@@ -11,6 +11,7 @@ import type { Navigation } from '@toolpad/core/AppProvider';
 import { Suspense } from 'react';
 import Loading from '@/app/(dashboard)/loading';
 import theme from '../theme';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const NAVIGATION: Navigation = [
   {
@@ -54,6 +55,8 @@ export default function RootLayout(props: { children: React.ReactNode }) {
               theme={theme}
             >
               {props.children}
+              <SpeedInsights />
+
             </AppProvider>
           </AppRouterCacheProvider>
       </Suspense>
