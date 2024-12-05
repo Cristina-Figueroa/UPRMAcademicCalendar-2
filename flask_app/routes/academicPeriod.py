@@ -84,7 +84,7 @@ def get_important_dates():
 @bp.route('/get-important-dates', methods=['POST'])
 def add_important_date():
     data = request.json  # Extract JSON payload
-    if not data.get('date') or not data.get('event'):
+    if not data.get('date') or not data.get('event') or not data.get('formatted_date'):
         return jsonify({'error': 'Missing fields'}), 400
     try:
         add_date_to_db(data)  # Add to the database

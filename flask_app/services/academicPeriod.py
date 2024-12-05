@@ -8,7 +8,7 @@ from flask_app.services.utils import get_academic_period, get_filtered_holidays,
 def fetch_important_dates():
     # Define your query and pass the parameters
     query = """
-        SELECT id, date, event
+        SELECT id, date, event, formatted_date
         FROM important_dates
     """
     
@@ -17,8 +17,8 @@ def fetch_important_dates():
 
 # Add Date to DB
 def add_date_to_db(data):
-    query = "INSERT INTO important_dates (date, event) VALUES (%s, %s)"
-    execute_query(query, (data['date'], data['event']))
+    query = "INSERT INTO important_dates (date, event, formatted_date) VALUES (%s, %s, %s)"
+    execute_query(query, (data['date'], data['event'], data['formatted_date']))
 
 
 
