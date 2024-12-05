@@ -80,7 +80,7 @@ def get_important_dates():
 
 
 # No funciona aun
-@bp.route('/add-important-dates', methods=['POST'])
+@bp.route('/get-important-dates', methods=['POST'])
 def add_important_date():
     data = request.json  # Extract JSON payload
     if not data.get('date') or not data.get('event'):
@@ -92,3 +92,14 @@ def add_important_date():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# @bp.route('/', methods=['POST'])
+# def add_holiday():
+#     data = request.json  # Extract JSON payload
+#     if not data.get('holiday_date') or not data.get('holiday_name') or not data.get('formatted_date'):
+#         return jsonify({'error': 'Missing fields'}), 400
+
+#     try:
+#         add_holiday_to_db(data)  # Add to the database
+#         return jsonify({'message': 'Holiday added successfully'}), 201
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
