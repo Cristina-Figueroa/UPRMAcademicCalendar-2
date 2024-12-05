@@ -13,7 +13,7 @@ def download_file():
     conn = get_db_connection()
 
    # Query to fetch data from the important_dates table
-    query = "SELECT * FROM important_dates"
+    query = "SELECT date, event FROM important_dates"
 
     # Create a cursor and execute the query
     cursor = conn.cursor()
