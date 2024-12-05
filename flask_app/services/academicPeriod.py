@@ -50,10 +50,12 @@ def count_normal_days(start_date, end_date):
 # Adjust a date by adding labor days
 def add_labor_days(start_date, num_days):
     current_date = start_date
-    while num_days > 0:
-        current_date += timedelta(days=1)
-        if is_labor_day(current_date):
+    while num_days != 0:
+        current_date += timedelta(days=1) if num_days > 0 else timedelta(days=-1)
+        if is_labor_day(current_date) and num_days > 0:  # Only subtract labor days if positive
             num_days -= 1
+        elif is_labor_day(current_date) and num_days < 0:  # Subtract labor days if negative
+            num_days += 1
     return current_date
 
 # Adjust a date by adding normal days (including weekends)
