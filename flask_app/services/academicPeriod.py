@@ -10,10 +10,10 @@ def fetch_important_dates():
     query = """
         SELECT id, date, event
         FROM important_dates
+        ORDER BY date
     """
-    
-    # Call execute_query_get_dates with the query and parameters
     return execute_query_get_dates(query)
+
 
 # Add Date to DB
 def add_date_to_db(data):
@@ -21,8 +21,19 @@ def add_date_to_db(data):
     execute_query(query, (data['date'], data['event']))
 
 
-
 # Edit Date in DB
+def update_date_in_db(data):
+    fields = []
+    params = []
+    if 'date' in data:
+        fields.append("date = %s")
+        params.append(data['date'])
+    if 'event' in data:
+        fields.append("event = %s")
+        params.append(data['event'])
+    query = f"UPDATE important_dates SET {', '.join(fields)} WHERE id = %s"
+    params.append(id)
+    execute_query(query, params)
 
 
 # Delete Date in DB
