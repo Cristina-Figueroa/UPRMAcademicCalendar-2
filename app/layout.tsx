@@ -8,7 +8,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
 import type { Navigation } from '@toolpad/core/AppProvider';
-
+import { Suspense } from 'react';
+import Loading from '@/app/(dashboard)/loading';
 import theme from '../theme';
 
 const NAVIGATION: Navigation = [
@@ -45,17 +46,17 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" data-toolpad-color-scheme="light" suppressHydrationWarning>
       <body>
-        
+      <Suspense fallback={<Loading/>}>
           <AppRouterCacheProvider options={{ enableCssLayer: true }}>
             <AppProvider
               navigation={NAVIGATION}
               branding={BRANDING}
-
               theme={theme}
             >
               {props.children}
             </AppProvider>
           </AppRouterCacheProvider>
+      </Suspense>
         
       </body>
     </html>

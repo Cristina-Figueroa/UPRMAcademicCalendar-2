@@ -4,8 +4,10 @@ import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 
 export default function CircularSpinner({loading}) {
-    if (!loading) return null;
     const theme = useTheme(); 
+    if (!loading) {
+      return null;
+    }
 
   return (
     <Box theme={theme}
