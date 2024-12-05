@@ -112,9 +112,7 @@ def submit_academic_period():
 
 @bp.route('/get-important-dates', methods=['GET'])
 def get_important_dates():
-
     important_dates = fetch_important_dates()
-
     return jsonify({
         'important_dates': important_dates  # Send only the important dates
     })

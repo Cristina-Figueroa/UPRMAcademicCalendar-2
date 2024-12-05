@@ -50,10 +50,12 @@ def count_normal_days(start_date, end_date):
 # Adjust a date by adding labor days
 def add_labor_days(start_date, num_days):
     current_date = start_date
-    while num_days > 0:
-        current_date += timedelta(days=1)
-        if is_labor_day(current_date):
+    while num_days != 0:
+        current_date += timedelta(days=1) if num_days > 0 else timedelta(days=-1)
+        if is_labor_day(current_date) and num_days > 0:  # Only subtract labor days if positive
             num_days -= 1
+        elif is_labor_day(current_date) and num_days < 0:  # Subtract labor days if negative
+            num_days += 1
     return current_date
 
 # Adjust a date by adding normal days (including weekends)
@@ -176,16 +178,12 @@ def fetch_filtered_and_add_year_to_holidays(year, start_date):
     start_range_date = datetime.strptime(start_range, "%Y-%m-%d").date()
     end_range_date = datetime.strptime(end_range, "%Y-%m-%d").date()
 
-
-
     # Query to fetch holidays with the formatted_date in MM-DD format
     query = """
         SELECT holiday_name, formatted_date
         FROM holidays
         ORDER BY formatted_date
     """
-            # WHERE formatted_date BETWEEN %s AND %s
-
     # Fetch holidays from the database
     holidays = execute_query_get_holidays2(query)
     
@@ -271,6 +269,13 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
         return semester_end_date + timedelta(days=extended_days)
 
     semester_end_date = adjust_for_holidays(start_date, semester_end_date, combined_holidays)
+    
+    # Adjust semester_end_date if it falls on a Saturday or Sunday, shifting to Friday
+    if semester_end_date.weekday() == 5:  # Saturday (5)
+        semester_end_date -= timedelta(days=1)  # Move to Friday
+    elif semester_end_date.weekday() == 6:  # Sunday (6)
+        semester_end_date -= timedelta(days=2)  # Move to Friday
+    
     dates.append({"date": semester_end_date, "event": "Ultimo Dia de Clases"})
 
     for holiday in combined_holidays:
@@ -306,10 +311,9 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
             adjusted_date = add_normal_days(semester_end_date, shift_days)
         elif day_type == "NORMALES" and start == "PERIODO DE EXAMENES FINALES":
             # Adjust date by adding normal days (including weekends)
-            adjusted_date = add_normal_days(semester_end_date, shift_days)        
-        # elif day_type == "SABADOS":
-            # Placeholder for adding Saturdays
-            # adjusted_date = get_last_day_of_saturday_classes(start_date, shift_days)
+            adjusted_date = add_normal_days(semester_end_date, shift_days)
+        elif day_type == "SABADOS" and start == "STARTDATE":
+            adjusted_date = get_last_day_of_saturday_classes(start_date, shift_days)
         else:
             continue  # Skip if the day type doesn't match
 
@@ -341,8 +345,8 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
 
 
     # Add Last Day of Saturday Classes
-    last_saturday = get_last_day_of_saturday_classes(start_date, weeks_of_classes)
-    dates.append({"date": last_saturday, "event": "Last Day of Saturday Classes"})
+    # last_saturday = get_last_day_of_saturday_classes(start_date, weeks_of_classes)
+    # dates.append({"date": last_saturday, "event": "Last Day of Saturday Classes"})
 
     dates.sort(key=lambda x: x["date"])
 

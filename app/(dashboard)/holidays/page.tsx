@@ -47,7 +47,7 @@ export default function HolidaysPage() {
 
     <PageContainer theme={theme}>
       <Paragraph theme={theme}>
-      Esta página proporciona una <strong>visión general</strong> de 
+      Esta página proporciona una <strong>lista general</strong> de 
       los <strong>días festivos</strong> incluidos en el <strong>proceso de 
       generación del calendario académico</strong>. Aunque los días 
       festivos siguen las directrices académicas estándar de Puerto Rico, pueden 

@@ -448,12 +448,23 @@ const GuidelinesTable = () => {
                       <option value="SUMMER">Verano Corto</option>
                       <option value="EXTENDED SUMMER">Verano Extendido</option>
                     </StyledSelect>
-                    <StyledInput
+                    {/* <StyledInput
                       type="text"
                       value={editedGuideline.start}
                       onChange={(e) => handleInputChange(e, 'start')}
                       placeholder="Start"
-                    />
+                    /> */}
+                    <StyledSelect
+                      value={editedGuideline.start}
+                      onChange={(e) => handleInputChange(e, 'start')}
+                    >
+                      <option value="STARTDATE">STARTDATE</option>
+                      <option value="ENDDATE">ENDDATE</option>
+                      <option value="PERIODO DE REPASO">Periodo de Repaso</option>
+                      <option value="PERIODO DE FINALES">Periodo de Finales</option>
+
+                    </StyledSelect>
+
                   </TableCell>
                   <TableCell>
                     <Button onClick={handleSave}>Save</Button>

@@ -53,18 +53,15 @@ const PageContainer = styled.div`
 `;
 
 const Header = styled.h1`
-  // color: #2c3e50;
   color: ${({ theme }) =>
   theme.palette.mode === 'dark'
     ? theme.palette.text.primary
     : theme.palette.text.primary};
-  // text-align: center;
   margin-bottom: 20px;
   margin-top: 10px;
 `;
 
 const SubHeader = styled.h2`
-  // color: #34495e;
   color: ${({ theme }) =>
   theme.palette.mode === 'dark'
     ? theme.palette.text.primary
@@ -109,10 +106,6 @@ function Home() {
     }, 3000);
   };
 
-  
-      
-
-  // Yes!
 
 /**
  * Handles the operations of selecting an academic period and a
@@ -125,11 +118,9 @@ function Home() {
     setIsLoading(true);
     // Handle Errors
     if (!startDate) {
-      // message = 'Please select a start date' 
       setErrorMessage('Please select a start date');
       return;
     }
-    // Academic period has default set to fall
 
     // Convert startDate to a Date object (if it's not already one)
     const dateObject = new Date(startDate);
@@ -148,27 +139,21 @@ function Home() {
     } else if (month === 0 && academicPeriod === 'spring'|| month === 1 && academicPeriod === 'spring') { // January (0) or February (1)
       weeks = 15;
       // weeks = 75;
-
     } else if (month === 4 && academicPeriod === 'summerV1'|| month === 5 && academicPeriod === 'summerV1') { // May (4) or June (5)
       weeks = 4;
       // weeks = 19;
-
     } else if (month === 4 && academicPeriod === 'summerExtended'|| month === 5 && academicPeriod === 'summerExtended') { // May (4) or June (5)
       weeks = 6;
       // weeks = 30;
-
     } else if (month === 5 && academicPeriod === 'summerV2'|| month === 6 && academicPeriod === 'summerV2') { // May (4) or June (5)
       weeks = 4;
       // weeks = 19;
-
     } else {
       period = 'unknown';
       weeks = 0;
-      // message = 'Invalid start date for academic period'
       setErrorMessage('Invalid start date for academic period. Please select another date for calendar.');
       return; // Exit if the date is invalid
     }
-  // Clear error message if validation passes
     setErrorMessage('');
     fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/', {
     // fetch('http://127.0.0.1:5000/submit-academic-period/', {
@@ -178,7 +163,6 @@ function Home() {
       },
       body: JSON.stringify({
         startDate: startDate,
-        // academicPeriod: academicPeriod,
         academicPeriod: period,
         weeks: weeks,
       }),
@@ -449,9 +433,9 @@ function Home() {
                 </Center>
 
 
-                {isLoading && (
+                {/* {isLoading && (
                   <CircularSpinner loading={isLoading}/>
-                )}
+                )} */}
 
 
         {/* <> */}
