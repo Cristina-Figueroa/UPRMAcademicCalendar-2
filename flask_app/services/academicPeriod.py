@@ -283,7 +283,7 @@ def calculate_important_dates_with_formatted_date(start_date, weeks_of_classes, 
     dates.append({"date": semester_end_date, "event": "Ultimo Dia de Clases", "formatted_date": semester_end_date})
 
     for holiday in combined_holidays:
-        dates.append({"date": holiday["holiday_date"], "event": f"Feriado: {holiday['holiday_name']}"})
+        dates.append({"date": holiday["holiday_date"], "event": f"Feriado: {holiday['holiday_name']}", "formatted_date": holiday["holiday_date"]})
 
     def shift_if_holiday(calculated_date, holidays):
         holiday_dates = {holiday["holiday_date"] for holiday in holidays}
