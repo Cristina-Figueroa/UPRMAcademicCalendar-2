@@ -8,8 +8,9 @@ import { useTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../../../theme';
 import CircularProgress from '@mui/material/CircularProgress'; 
-import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import Loading from '../loading';
+
 
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -30,7 +31,6 @@ const Paragraph = styled.p`
 
 export default function HolidaysPage() {
   const theme = useTheme();
-  const searchParams = useSearchParams();
 
   const [isClient, setIsClient] = useState(false);
 
@@ -38,10 +38,12 @@ export default function HolidaysPage() {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null
+  if (!isClient) {
+    return null;
+  }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+<>
 
     <PageContainer theme={theme}>
       <Paragraph theme={theme}>
@@ -51,12 +53,13 @@ export default function HolidaysPage() {
       festivos siguen las directrices académicas estándar de Puerto Rico, pueden 
       ajustarse para cumplir con los requisitos únicos de tu institución.
       </Paragraph>
+    <Suspense fallback={<Loading/>}>
 
       <ThemeProvider theme={theme}>
         <HolidaysTable/>
       </ThemeProvider>
-
-    </PageContainer>
 </Suspense>
+    </PageContainer>
+</>
   );
 }

@@ -16,6 +16,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DownloadIcon from '@mui/icons-material/Download';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
+import { Suspense } from 'react';
+
 
 import {
   TableContainer,
@@ -84,14 +86,10 @@ const Center = styled.div`
 function Home() {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
-
-
   const [startDate, setStartDate] = useState('');
   const [academicPeriod, setAcademicPeriod] = useState('fall');  // Default to 'fall'
   const [responseMessage, setResponseMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');  // For displaying error messages
-
-
   const [holidays, setHolidays] = useState([]); //State to get holidays
   const [importantDates, setImportantDates] = useState([]);
 
@@ -414,14 +412,12 @@ function Home() {
             />
           )}
 
-                    
+      <Suspense fallback={<CircularSpinner loading={isLoading} />}>  
             {!isSubmitPressed && (
               <>
-
-              <SubHeader theme={theme}>
-                Select a start date to get started
-              </SubHeader>
-
+                <SubHeader theme={theme}>
+                  Select a start date to get started
+                </SubHeader>
 
                 {/* Date Picker */}
                 <Center>
@@ -440,25 +436,22 @@ function Home() {
               </>
             )}
 
-            <>
-
-
+            
 
                 {/* Messages */}
-                
-                {/* Display error message if validation fails */}
-                {/* {errorMessage && <div className='section'> <DescriptionAlerts error={errorMessage} /> </div>} */}
                 <Center>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-
-                {/* Display message if validation is passed */}
                 {responseMessage && <p>{responseMessage}</p>}
                 </Center>
 
+
                 {isLoading && (
                   <CircularSpinner loading={isLoading}/>
-
                 )}
+
+
+        {/* <> */}
+
 
                 {!isLoading && isSubmitPressed && (
 
@@ -601,6 +594,7 @@ function Home() {
 
 
 
+        </Suspense>
 
       {/* Modal for download confirmation */}
       {isModalOpen && (
@@ -646,8 +640,8 @@ function Home() {
 
 
 
-        </>               
-      
+        {/* </>                */}
+
     </>     
   );
 }

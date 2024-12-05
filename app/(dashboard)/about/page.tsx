@@ -8,6 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress'; 
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import Loading from '../loading';
 
 
 // npm install styled-components
@@ -68,9 +69,7 @@ const Email = styled.span`
 
 
 export default function AboutPage() {
-
   const theme = useTheme();
-  const searchParams = useSearchParams();
 
   const [isClient, setIsClient] = useState(false);
 
@@ -78,12 +77,14 @@ export default function AboutPage() {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null
+  if (!isClient) {
+    return null;
+  }
 
 
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading/>}>
   <PageContainer theme={theme}>
       <Header theme={theme}>Acerca del Generador de Calendario Academicos UPRM</Header>
       <Paragraph theme={theme}>

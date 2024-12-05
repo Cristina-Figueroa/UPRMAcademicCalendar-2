@@ -1,34 +1,89 @@
 {
   "pages": {
-    "/(dashboard)/holidays/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/holidays/page.js"
-    ],
-    "/(dashboard)/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/layout.js"
+    "/_not-found/page": [
+      "static/chunks/webpack-50a2d8161597d6ae.js",
+      "static/chunks/fd9d1056-2d951dff1d94e412.js",
+      "static/chunks/117-f13786a8099d6e21.js",
+      "static/chunks/main-app-8451573c29465596.js",
+      "static/chunks/app/_not-found/page-ee0c7b8fcd9f883f.js"
     ],
     "/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/layout.js"
-    ],
-    "/(dashboard)/guidelines/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/guidelines/page.js"
-    ],
-    "/(dashboard)/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/page.js"
+      "static/chunks/webpack-50a2d8161597d6ae.js",
+      "static/chunks/fd9d1056-2d951dff1d94e412.js",
+      "static/chunks/117-f13786a8099d6e21.js",
+      "static/chunks/main-app-8451573c29465596.js",
+      "static/chunks/389-f9a4e3e8baf69717.js",
+      "static/chunks/662-d1ed95a51ae7bdd1.js",
+      "static/chunks/914-5e864b0dbcbde9ac.js",
+      "static/chunks/986-ab6f7dbb9ef4b557.js",
+      "static/chunks/app/layout-e2654a458a3205af.js"
     ],
     "/(dashboard)/about/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/about/page.js"
+      "static/chunks/webpack-50a2d8161597d6ae.js",
+      "static/chunks/fd9d1056-2d951dff1d94e412.js",
+      "static/chunks/117-f13786a8099d6e21.js",
+      "static/chunks/main-app-8451573c29465596.js",
+      "static/chunks/389-f9a4e3e8baf69717.js",
+      "static/chunks/379-0ecd2fd110854821.js",
+      "static/chunks/app/(dashboard)/about/page-8139a19dfc3fb4ac.js"
+    ],
+    "/(dashboard)/layout": [
+      "static/chunks/webpack-50a2d8161597d6ae.js",
+      "static/chunks/fd9d1056-2d951dff1d94e412.js",
+      "static/chunks/117-f13786a8099d6e21.js",
+      "static/chunks/main-app-8451573c29465596.js",
+      "static/chunks/389-f9a4e3e8baf69717.js",
+      "static/chunks/662-d1ed95a51ae7bdd1.js",
+      "static/chunks/187-3ff77af4127dedcb.js",
+      "static/chunks/914-5e864b0dbcbde9ac.js",
+      "static/chunks/613-052f53f09c737d1c.js",
+      "static/chunks/app/(dashboard)/layout-0eab7f095579bb78.js"
+    ],
+    "/(dashboard)/loading": [
+      "static/chunks/webpack-50a2d8161597d6ae.js",
+      "static/chunks/fd9d1056-2d951dff1d94e412.js",
+      "static/chunks/117-f13786a8099d6e21.js",
+      "static/chunks/main-app-8451573c29465596.js",
+      "static/chunks/389-f9a4e3e8baf69717.js",
+      "static/chunks/app/(dashboard)/loading-296dc51548d721a6.js"
+    ],
+    "/(dashboard)/page": [
+      "static/chunks/webpack-50a2d8161597d6ae.js",
+      "static/chunks/fd9d1056-2d951dff1d94e412.js",
+      "static/chunks/117-f13786a8099d6e21.js",
+      "static/chunks/main-app-8451573c29465596.js",
+      "static/chunks/389-f9a4e3e8baf69717.js",
+      "static/chunks/662-d1ed95a51ae7bdd1.js",
+      "static/chunks/187-3ff77af4127dedcb.js",
+      "static/chunks/379-0ecd2fd110854821.js",
+      "static/chunks/302-0d185b86614cbdc9.js",
+      "static/chunks/932-25ee23c9e0f3c69e.js",
+      "static/chunks/app/(dashboard)/page-cc09db006752d100.js"
+    ],
+    "/(dashboard)/holidays/page": [
+      "static/chunks/webpack-50a2d8161597d6ae.js",
+      "static/chunks/fd9d1056-2d951dff1d94e412.js",
+      "static/chunks/117-f13786a8099d6e21.js",
+      "static/chunks/main-app-8451573c29465596.js",
+      "static/chunks/389-f9a4e3e8baf69717.js",
+      "static/chunks/662-d1ed95a51ae7bdd1.js",
+      "static/chunks/187-3ff77af4127dedcb.js",
+      "static/chunks/379-0ecd2fd110854821.js",
+      "static/chunks/302-0d185b86614cbdc9.js",
+      "static/chunks/app/(dashboard)/holidays/page-3c6d800b10f2c504.js"
+    ],
+    "/(dashboard)/guidelines/page": [
+      "static/chunks/webpack-50a2d8161597d6ae.js",
+      "static/chunks/fd9d1056-2d951dff1d94e412.js",
+      "static/chunks/117-f13786a8099d6e21.js",
+      "static/chunks/main-app-8451573c29465596.js",
+      "static/chunks/389-f9a4e3e8baf69717.js",
+      "static/chunks/662-d1ed95a51ae7bdd1.js",
+      "static/chunks/187-3ff77af4127dedcb.js",
+      "static/chunks/379-0ecd2fd110854821.js",
+      "static/chunks/302-0d185b86614cbdc9.js",
+      "static/chunks/970-5f26e55b36f8cf90.js",
+      "static/chunks/app/(dashboard)/guidelines/page-53a6adfe43a9296b.js"
     ]
   }
 }
