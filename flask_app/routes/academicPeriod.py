@@ -51,60 +51,20 @@ def submit_academic_period():
     # Get important dates including holidays and calculated events
     important_dates = calculate_important_dates_using_guidelines(start_date, weeks, fixed_holidays, guidelines, year)
 
-
     if not start_date or not academic_period or not weeks:
         return jsonify({'message': 'Invalid data'}), 400
-
 
     # Save the important dates to the database
     replace_important_dates(important_dates)
 
-    
     # Prepare the response data
     JSONresponse = {
         'message': 'Data received successfully',
         'startDate': start_date,
         'academicPeriod': academic_period,
         'weeks': weeks,
-        'important_dates': important_dates  # Include the calculated important dates
+        'important_dates': important_dates
     }
-
-
-
-
-
-
-    # # Get the year from the start_date
-    # year = datetime.strptime(start_date, '%Y-%m-%d').year
-    # print(f"Year: {year}")
-
-    # # Get the filtered holidays for the given academic period
-    # filtered_holidays = get_filtered_holidays(year, start_date)
-
-    # if not start_date or not academic_period or not weeks or not filtered_holidays:
-    #     return jsonify({'message': 'Invalid data'}), 400
-
-    # # Prepare the response data
-    # JSONresponse = {
-    #     'message': 'Data received successfully',
-    #     'startDate': start_date,
-    #     'academicPeriod': academic_period,
-    #     'weeks': weeks,
-    #     'holidays': filtered_holidays  # Add holidays to the response
-    # }
-
-
-
-    # Generate Dates
-    
-
-    # Create a JSON response
-    # JSONresponse = {
-    #     'message': 'Academic Period Selected successfully',
-    #     'date': start_date,  # Send the received startDate back
-    #     'period': academic_period,  # Send the received academicPeriod back
-    #     'weeks': weeks  # Send the received weeks back
-    # }
 
     # Return the response as JSON
     return jsonify(JSONresponse)
