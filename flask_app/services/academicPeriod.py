@@ -176,16 +176,12 @@ def fetch_filtered_and_add_year_to_holidays(year, start_date):
     start_range_date = datetime.strptime(start_range, "%Y-%m-%d").date()
     end_range_date = datetime.strptime(end_range, "%Y-%m-%d").date()
 
-
-
     # Query to fetch holidays with the formatted_date in MM-DD format
     query = """
         SELECT holiday_name, formatted_date
         FROM holidays
         ORDER BY formatted_date
     """
-            # WHERE formatted_date BETWEEN %s AND %s
-
     # Fetch holidays from the database
     holidays = execute_query_get_holidays2(query)
     
@@ -306,10 +302,9 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
             adjusted_date = add_normal_days(semester_end_date, shift_days)
         elif day_type == "NORMALES" and start == "PERIODO DE EXAMENES FINALES":
             # Adjust date by adding normal days (including weekends)
-            adjusted_date = add_normal_days(semester_end_date, shift_days)        
-        # elif day_type == "SABADOS":
-            # Placeholder for adding Saturdays
-            # adjusted_date = get_last_day_of_saturday_classes(start_date, shift_days)
+            adjusted_date = add_normal_days(semester_end_date, shift_days)
+        elif day_type == "SABADOS" and start == "STARTDATE":
+            adjusted_date = get_last_day_of_saturday_classes(start_date, shift_days)
         else:
             continue  # Skip if the day type doesn't match
 
@@ -341,8 +336,8 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
 
 
     # Add Last Day of Saturday Classes
-    last_saturday = get_last_day_of_saturday_classes(start_date, weeks_of_classes)
-    dates.append({"date": last_saturday, "event": "Last Day of Saturday Classes"})
+    # last_saturday = get_last_day_of_saturday_classes(start_date, weeks_of_classes)
+    # dates.append({"date": last_saturday, "event": "Last Day of Saturday Classes"})
 
     dates.sort(key=lambda x: x["date"])
 
