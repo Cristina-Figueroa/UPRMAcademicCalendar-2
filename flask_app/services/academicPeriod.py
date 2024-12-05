@@ -269,6 +269,13 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
         return semester_end_date + timedelta(days=extended_days)
 
     semester_end_date = adjust_for_holidays(start_date, semester_end_date, combined_holidays)
+    
+    # Adjust semester_end_date if it falls on a Saturday or Sunday, shifting to Friday
+    if semester_end_date.weekday() == 5:  # Saturday (5)
+        semester_end_date -= timedelta(days=1)  # Move to Friday
+    elif semester_end_date.weekday() == 6:  # Sunday (6)
+        semester_end_date -= timedelta(days=2)  # Move to Friday
+    
     dates.append({"date": semester_end_date, "event": "Ultimo Dia de Clases"})
 
     for holiday in combined_holidays:
