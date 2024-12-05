@@ -127,10 +127,10 @@ function Home() {
 
     // Extract the month (0-based, so January is 0, December is 11)
     const month = dateObject.getMonth(); 
-    let period = ''; // To store the academic period
+    let period = academicPeriod; // To store the academic period
     let weeks = 0;   // To store the number of weeks
 
-    period = academicPeriod
+    
 
     // Check the month and determine the period and weeks
     if (month === 7 && academicPeriod === 'fall' || month === 8 && academicPeriod === 'fall') { // August (7) or September (8)
@@ -178,8 +178,15 @@ function Home() {
         setResponseMessage(
           // data.message + ' - Date:' + startDate + ' , Period: ' + period + ' , Weeks: ' + weeks
         );
-        setImportantDates(data.important_dates); 
-        console.log('Updated responseMessage:', responseMessage); 
+        const processedDates = data.important_dates.map((dateItem) => {
+          return {
+            ...dateItem,
+            // No need to remove formatted_date, just keep it available
+          };
+        });
+
+        setImportantDates(processedDates); 
+        console.log('Updated responseMessage:', processedDates); 
         // Fetch important dates from the database after inserting them
         fetchImportantDates(period, startDate); 
         handleSubmitDates();

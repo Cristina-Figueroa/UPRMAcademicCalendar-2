@@ -246,14 +246,14 @@ def insert_important_dates(important_dates):
 
     # Insert the important dates into the table
     insert_query = '''
-    INSERT INTO important_dates (date, event)
-    VALUES (%s, %s);
+    INSERT INTO important_dates (date, event, formatted_date)
+    VALUES (%s, %s, %s);
     '''
     
     try:
         # Execute the insert for each date
         for item in important_dates:
-            cur.execute(insert_query, (item['date'], item['event']))
+            cur.execute(insert_query, (item['date'], item['event'], item['formatted_date']))
         
         conn.commit()  # Commit the transaction
         print("Important dates inserted successfully.")
@@ -277,12 +277,12 @@ def replace_important_dates(important_dates):
 
         # Step 2: Insert the new data into the important_dates table
         insert_query = '''
-        INSERT INTO important_dates (date, event)
-        VALUES (%s, %s);
+        INSERT INTO important_dates (date, event, formatted_date)
+        VALUES (%s, %s, %s);
         '''
         # Execute the insert for each new date
         for item in important_dates:
-            cur.execute(insert_query, (item['date'], item['event']))
+            cur.execute(insert_query, (item['date'], item['event'], item['formatted_date']))
 
         conn.commit()  # Commit the transaction
         print("Important dates replaced successfully.")
