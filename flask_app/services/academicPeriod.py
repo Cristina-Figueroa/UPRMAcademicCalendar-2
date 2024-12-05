@@ -287,6 +287,13 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
             calculated_date += timedelta(days=1)
         return calculated_date
 
+
+    # Initialize the dates for the important periods
+    repaso_start_date = None
+    examenes_finals_start_date = None
+    period_of_notes_start_date = None
+
+    
     # Loop over the guidelines list and apply the correct function based on the day_type
     for guideline in guidelines_list:
         shift_days = guideline["shift_days"]
