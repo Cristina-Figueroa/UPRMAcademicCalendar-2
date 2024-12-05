@@ -2,7 +2,7 @@
 # from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_app.services.utils import datetime, replace_important_dates
-from flask_app.services.academicPeriod import calculate_important_dates, calculate_important_dates_using_guidelines, fetch_important_dates, fetch_filtered_and_add_year_to_holidays, add_date_to_db
+from flask_app.services.academicPeriod import calculate_important_dates, calculate_important_dates_using_guidelines, calculate_important_dates_with_formatted_date, fetch_important_dates, fetch_filtered_and_add_year_to_holidays, add_date_to_db
 from flask_app.services.guidelines import fetch_guidelines, fetch_filtered_guidelines
 
 bp = Blueprint('submit-academic-period', __name__, url_prefix='/submit-academic-period')
@@ -49,7 +49,8 @@ def submit_academic_period():
     print(f"Guidelines: {guidelines}")
 
     # Get important dates including holidays and calculated events
-    important_dates = calculate_important_dates_using_guidelines(start_date, weeks, fixed_holidays, guidelines, year)
+    # important_dates = calculate_important_dates_using_guidelines(start_date, weeks, fixed_holidays, guidelines, year)
+    important_dates = calculate_important_dates_with_formatted_date(start_date, weeks, fixed_holidays, guidelines, year)
 
     if not start_date or not academic_period or not weeks:
         return jsonify({'message': 'Invalid data'}), 400
@@ -79,27 +80,15 @@ def get_important_dates():
 
 
 
-# No funciona aun
+# Funciona!
 @bp.route('/get-important-dates', methods=['POST'])
 def add_important_date():
     data = request.json  # Extract JSON payload
     if not data.get('date') or not data.get('event'):
         return jsonify({'error': 'Missing fields'}), 400
-
     try:
         add_date_to_db(data)  # Add to the database
         return jsonify({'message': 'Date added successfully'}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# @bp.route('/', methods=['POST'])
-# def add_holiday():
-#     data = request.json  # Extract JSON payload
-#     if not data.get('holiday_date') or not data.get('holiday_name') or not data.get('formatted_date'):
-#         return jsonify({'error': 'Missing fields'}), 400
-
-#     try:
-#         add_holiday_to_db(data)  # Add to the database
-#         return jsonify({'message': 'Holiday added successfully'}), 201
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500

@@ -251,6 +251,94 @@ def format_date_for_display(date_obj):
     # Format the date to 'Mon, 26 Aug 2024'
     return date_obj.strftime("%a, %d %b %Y")
 
+def format_date_for_display_formatted_date(date_obj):
+    # Format the date to '2024-08-26'
+    return date_obj.strftime("%Y-%m-%d")
+
+
+# Main functions to calculate important dates
+def calculate_important_dates_with_formatted_date(start_date, weeks_of_classes, fixed_holidays, guidelines_list, year):
+    combined_holidays = combine_holidays(fixed_holidays, year, start_date)
+    start_date = datetime.strptime(start_date, '%Y-%m-%d').date() # Converting str to date obj
+    semester_end_date = start_date + timedelta(weeks=weeks_of_classes)
+    
+    dates = []
+    dates.append({"date": start_date, "event": "Primer Dia de Clases", "formatted_date": start_date})
+
+    def adjust_for_holidays(start_date, semester_end_date, holidays):
+        extended_days = 0
+        for holiday in holidays:
+            if start_date <= holiday["holiday_date"] <= semester_end_date:
+                extended_days += 1
+        return semester_end_date + timedelta(days=extended_days)
+
+    semester_end_date = adjust_for_holidays(start_date, semester_end_date, combined_holidays)
+    
+    # Adjust semester_end_date if it falls on a Saturday or Sunday, shifting to Friday
+    if semester_end_date.weekday() == 5:  # Saturday (5)
+        semester_end_date -= timedelta(days=1)  # Move to Friday
+    elif semester_end_date.weekday() == 6:  # Sunday (6)
+        semester_end_date -= timedelta(days=2)  # Move to Friday
+    
+    dates.append({"date": semester_end_date, "event": "Ultimo Dia de Clases", "formatted_date": semester_end_date})
+
+    for holiday in combined_holidays:
+        dates.append({"date": holiday["holiday_date"], "event": f"Feriado: {holiday['holiday_name']}"})
+
+    def shift_if_holiday(calculated_date, holidays):
+        holiday_dates = {holiday["holiday_date"] for holiday in holidays}
+        while calculated_date in holiday_dates:
+            calculated_date += timedelta(days=1)
+        return calculated_date
+
+    # Loop over the guidelines list and apply the correct function based on the day_type
+    for guideline in guidelines_list:
+        shift_days = guideline["shift_days"]
+        day_type = guideline["day_type"]
+        start = guideline["start"]
+
+        # Check the day type and call the corresponding function
+        if day_type == "LABORABLES" and start == "STARTDATE":
+            # Adjust date by adding labor days
+            adjusted_date = add_labor_days(start_date, shift_days)
+        elif day_type == "LABORABLES" and start == "ENDDATE":
+            # Adjust date by adding labor days
+            adjusted_date = add_labor_days(semester_end_date, shift_days)
+        elif day_type == "NORMALES" and start == "STARTDATE":
+            # Adjust date by adding normal days (including weekends)
+            adjusted_date = add_normal_days(start_date, shift_days)
+        elif day_type == "NORMALES" and start == "ENDDATE":
+            # Adjust date by adding normal days (including weekends)
+            adjusted_date = add_normal_days(semester_end_date, shift_days)
+        elif day_type == "NORMALES" and start == "PERIODO DE REPASO":
+            # Adjust date by adding normal days (including weekends)
+            adjusted_date = add_normal_days(semester_end_date, shift_days)
+        elif day_type == "NORMALES" and start == "PERIODO DE EXAMENES FINALES":
+            # Adjust date by adding normal days (including weekends)
+            adjusted_date = add_normal_days(semester_end_date, shift_days)
+        elif day_type == "SABADOS" and start == "STARTDATE":
+            adjusted_date = get_last_day_of_saturday_classes(start_date, shift_days)
+        else:
+            continue  # Skip if the day type doesn't match
+
+        # Append the calculated date for this guideline
+        dates.append({"date": shift_if_holiday(adjusted_date, combined_holidays), "event": f"{guideline['guideline_name']}", "formatted_date": shift_if_holiday(adjusted_date, combined_holidays)})
+
+    dates.sort(key=lambda x: x["date"])
+
+    # Format the dates after sorting and before sending the response
+    formatted_dates = [{"date": format_date_for_display(item['date']), "event": item['event'], "formatted_date": format_date_for_display_formatted_date(item['formatted_date']) } for item in dates]
+
+    return formatted_dates
+
+
+
+
+
+
+
+
+
 
 # Main functions to calculate important dates
 def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fixed_holidays, guidelines_list, year):
