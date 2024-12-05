@@ -270,7 +270,7 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
     semester_end_date = start_date + timedelta(weeks=weeks_of_classes)
     
     dates = []
-    dates.append({"date": start_date, "event": "Primer Dia de Clases"})
+    dates.append({"date": start_date, "event": "Primer Dia de Clases", "formatted_date": start_date.strftime('%Y-%m-%d') })
 
     def adjust_for_holidays(start_date, semester_end_date, holidays):
         extended_days = 0
@@ -287,10 +287,10 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
     elif semester_end_date.weekday() == 6:  # Sunday (6)
         semester_end_date -= timedelta(days=2)  # Move to Friday
     
-    dates.append({"date": semester_end_date, "event": "Ultimo Dia de Clases"})
+    dates.append({"date": semester_end_date, "event": "Ultimo Dia de Clases", "formatted_date": semester_end_date.strftime('%Y-%m-%d')})
 
     for holiday in combined_holidays:
-        dates.append({"date": holiday["holiday_date"], "event": f"Feriado: {holiday['holiday_name']}"})
+        dates.append({"date": holiday["holiday_date"], "event": f"Feriado: {holiday['holiday_name']}", "formatted_date": holiday['holiday_date'].strftime('%Y-%m-%d') })
 
     def shift_if_holiday(calculated_date, holidays):
         holiday_dates = {holiday["holiday_date"] for holiday in holidays}
@@ -354,7 +354,9 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
 
 
         # Append the calculated date for this guideline
-        dates.append({"date": shift_if_holiday(adjusted_date, combined_holidays), "event": f"{guideline['guideline_name']}"})
+        dates.append({"date": shift_if_holiday(adjusted_date, combined_holidays), 
+                      "event": f"{guideline['guideline_name']}", 
+                      "formatted_date": shift_if_holiday(adjusted_date, combined_holidays).strftime('%Y-%m-%d')})
 
 
 
@@ -383,7 +385,9 @@ def calculate_important_dates_using_guidelines(start_date, weeks_of_classes, fix
     dates.sort(key=lambda x: x["date"])
 
     # Format the dates after sorting and before sending the response
-    formatted_dates = [{"date": format_date_for_display(item['date']), "event": item['event']} for item in dates]
+    formatted_dates = [{"date": format_date_for_display(item['date']), 
+                        "event": item['event'],
+                        "formatted_date": item['date'].strftime('%Y-%m-%d')} for item in dates]
 
     return formatted_dates
 
