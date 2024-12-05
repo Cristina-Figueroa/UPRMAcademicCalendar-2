@@ -148,7 +148,7 @@ const GuidelinesTable = () => {
     
     const handleConfirmDelete = async () => {
       try {
-        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/${guidelineToDelete}', {
+        const response = await fetch(`https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/${guidelineToDelete}`, {
         // const response = await fetch(`http://127.0.0.1:5000/guidelines/${guidelineToDelete}`, {
           method: 'DELETE',
           headers: {
@@ -318,7 +318,7 @@ const GuidelinesTable = () => {
       console.log(updatedGuideline); 
 
       try {
-        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/${updatedGuideline.guideline_id}', {
+        const response = await fetch(`https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/${updatedGuideline.guideline_id}`, {
         // const response = await fetch(`http://127.0.0.1:5000/guidelines/${updatedGuideline.guideline_id}`, {
           method: "PUT",
           headers: {

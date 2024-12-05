@@ -168,7 +168,7 @@ const HolidaysTable = () => {
     
     const handleConfirmDelete = async () => {
       try {
-        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/${holidayToDelete}', {
+        const response = await fetch(`https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/${holidayToDelete}`, {
 
         // const response = await fetch(`http://127.0.0.1:5000/holidays/${holidayToDelete}`, {
           method: 'DELETE',
@@ -416,7 +416,7 @@ const HolidaysTable = () => {
 
     const handleEditSave = async (updatedHoliday) => {
       try {
-          const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/${updatedHoliday.holiday_id}',{
+        const response = await fetch(`https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/${updatedHoliday.holiday_id}`, {
           // const response = await fetch(`http://127.0.0.1:5000/holidays/${updatedHoliday.holiday_id}`, { 
               method: 'PUT',
               headers: {
@@ -453,7 +453,7 @@ const HolidaysTable = () => {
           setHolidays(data); // Refresh holidays list
       } catch (error) {
           console.error("Error refreshing holidays:", error);
-          showNotification("Failed to update the holiday. Please try again.", "error");
+          showNotification("Failed to update the holidayyyyyyyyy. Please try again.", "error");
       }
   };
   
