@@ -8,8 +8,8 @@ import { useTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../../../theme';
 import CircularProgress from '@mui/material/CircularProgress'; 
-import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import Loading from '../loading';
 
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -29,7 +29,6 @@ const Paragraph = styled.p`
 
 export default function GuidelinesPage() {
   const theme = useTheme();
-  const searchParams = useSearchParams();
 
   const [isClient, setIsClient] = useState(false);
 
@@ -40,7 +39,7 @@ export default function GuidelinesPage() {
   if (!isClient) return null
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+<>
     <PageContainer theme={theme}>
       <Paragraph theme={theme}>
       Esta página proporciona una <strong>visión general </strong> 
@@ -54,12 +53,16 @@ export default function GuidelinesPage() {
         aspectos a tener en cuenta.
       </Paragraph>
 
+
+
+    <Suspense fallback={<Loading/>}>
       <ThemeProvider theme={theme}>
         <GuidelinesTable/>
       </ThemeProvider>
-
-    </PageContainer>
 </Suspense>
+    </PageContainer>
+
+</>
 
 
   );

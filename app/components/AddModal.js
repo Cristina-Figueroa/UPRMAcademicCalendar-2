@@ -5,13 +5,13 @@ import { useTheme } from '@mui/material/styles';
 const AddGuidelineModal = ({ show, onClose, onSave }) => {
   const theme = useTheme();
 
-  const defaultAddFormData = {
+  const defaultAddFormData = useMemo(() => ({
     guideline_name: '',
     shift_days: '',
     day_type: 'NORMALES',
     start: '',
     period_type: 'SEMESTER',
-  };
+  }), []);
 
   const [formData, setFormData] = useState(defaultAddFormData);
   const [errors, setErrors] = useState({});
@@ -24,7 +24,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
       setErrors({});
       setNotification();
     }
-  }, [show]);
+  }, [show, defaultAddFormData]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

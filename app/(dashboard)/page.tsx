@@ -2,15 +2,12 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import Typography from '@mui/material/Typography';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
-
 import Home from '../components/Home';
-import CircularProgress from '@mui/material/CircularProgress'; 
-import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import Loading from './loading';
 
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -42,17 +39,41 @@ const Paragraph = styled.p`
 
 export default function HomePage() {
   const theme = useTheme();
-  const searchParams = useSearchParams();
 
+  const [data, setData] = useState(null); // State to store fetched data
+  const [isLoading, setIsLoading] = useState(true); // Loading state for async data
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Your GET endpoint for fetching data
+        const response = await fetch('/api/your-endpoint'); // Replace with your actual endpoint
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false); // Data fetching finished
+      }
+    }
+
+    fetchData();
+  }, []); // Run this effect once on component mount
+
+  if (!isClient) {
+    return null;
+  }
+
+
+
   return (    
-    <Suspense fallback={<div>Loading...</div>}>
+
+    <>
     <PageContainer theme={theme}>
     <SubHeader theme={theme}>Academic Calendar Generator</SubHeader>
               <Paragraph theme={theme}>
@@ -63,14 +84,17 @@ export default function HomePage() {
                 calculations, following institutional guidelines, and adapting to
                 unexpected changes.
               </Paragraph>
+    <Suspense fallback={<Loading/>}>
 
       <ThemeProvider theme={theme}>
+      {isLoading ? <Loading /> : <Home />}
+
         <Home/>
       </ThemeProvider>
+</Suspense>
 
 
     </PageContainer>
-</Suspense>
-
+</>
   );
 }
