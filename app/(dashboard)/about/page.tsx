@@ -2,11 +2,8 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import Typography from '@mui/material/Typography';
 import styled from "styled-components";
 import { useTheme } from '@mui/material/styles';
-import CircularProgress from '@mui/material/CircularProgress'; 
-import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import Loading from '../loading';
 
@@ -26,18 +23,15 @@ const PageContainer = styled.div`
 `;
 
 const Header = styled.h1`
-  // color: #2c3e50;
   color: ${({ theme }) =>
   theme.palette.mode === 'dark'
     ? theme.palette.text.primary
     : theme.palette.text.primary};
-  // text-align: center;
   margin-bottom: 20px;
   margin-top: 10px;
 `;
 
 const SubHeader = styled.h2`
-  // color: #34495e;
   color: ${({ theme }) =>
   theme.palette.mode === 'dark'
     ? theme.palette.text.primary

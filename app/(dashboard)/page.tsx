@@ -89,7 +89,7 @@ export default function HomePage() {
       <ThemeProvider theme={theme}>
       {isLoading ? <Loading /> : <Home />}
 
-        <Home/>
+        {/* <Home/> */}
       </ThemeProvider>
 </Suspense>
 

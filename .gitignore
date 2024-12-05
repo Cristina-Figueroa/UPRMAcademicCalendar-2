@@ -1,3 +1,5 @@
+  # Ignore venv directory
+  /venv/
 
   # Logs
   logs
