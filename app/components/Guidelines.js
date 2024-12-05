@@ -110,7 +110,8 @@ const GuidelinesTable = () => {
       const fetchGuidelines = async () => {
         // setIsLoading(true);
           try {
-              const response = await fetch('http://127.0.0.1:5000/guidelines/', {
+            const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/', {
+              // const response = await fetch('http://127.0.0.1:5000/guidelines/', {
                   method: 'GET',
                   headers: {
                       'Content-Type': 'application/json',
@@ -147,7 +148,8 @@ const GuidelinesTable = () => {
     
     const handleConfirmDelete = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/guidelines/${guidelineToDelete}`, {
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/${guidelineToDelete}', {
+        // const response = await fetch(`http://127.0.0.1:5000/guidelines/${guidelineToDelete}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -172,7 +174,8 @@ const GuidelinesTable = () => {
         setGuidelineToDelete(null);
       }
       try {
-        const response = await fetch("http://127.0.0.1:5000/guidelines/");
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/');
+        // const response = await fetch("http://127.0.0.1:5000/guidelines/");
         const data = await response.json();
         setGuidelines(data); // Refresh guidelines list
       } catch (error) {
@@ -191,7 +194,10 @@ const GuidelinesTable = () => {
       period_type: false,
     });
 
-    // Add a Guideline
+
+
+
+    // Add Guideline to DB
     const handleAddGuideline = async (newGuideline) => {
       const newErrors = {
         guideline_name: !newGuideline.guideline_name,
@@ -201,7 +207,6 @@ const GuidelinesTable = () => {
         period_type: !newGuideline.period_type,
       };
   
-    
       setErrors(newErrors);
     
       // If any errors exist, prevent submission
@@ -210,9 +215,9 @@ const GuidelinesTable = () => {
         return;
       }
 
-
       try {
-        const response = await fetch('http://127.0.0.1:5000/guidelines/', {
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/', {
+        // const response = await fetch('http://127.0.0.1:5000/guidelines/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -240,7 +245,8 @@ const GuidelinesTable = () => {
         showNotification('Failed to add the guideline. Please try again.', 'error');
       }
       try {
-        const response = await fetch("http://127.0.0.1:5000/guidelines/");
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/');
+        // const response = await fetch("http://127.0.0.1:5000/guidelines/");
         const data = await response.json();
         setGuidelines(data);
       } catch (error) {
@@ -312,7 +318,8 @@ const GuidelinesTable = () => {
       console.log(updatedGuideline); 
 
       try {
-        const response = await fetch(`http://127.0.0.1:5000/guidelines/${updatedGuideline.guideline_id}`, {
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/${updatedGuideline.guideline_id}', {
+        // const response = await fetch(`http://127.0.0.1:5000/guidelines/${updatedGuideline.guideline_id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -340,7 +347,8 @@ const GuidelinesTable = () => {
         setEditGuidelineID(null); // Exit editing mode
       }
       try {
-        const response = await fetch("http://127.0.0.1:5000/guidelines/");
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/');
+        // const response = await fetch("http://127.0.0.1:5000/guidelines/");
         const data = await response.json();
         setGuidelines(data);
       } catch (error) {

@@ -131,7 +131,8 @@ const HolidaysTable = () => {
       const fetchHolidays = async () => {
         // setLoading(true);
           try {
-              const response = await fetch('http://127.0.0.1:5000/holidays/', {
+              const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/', {
+              // const response = await fetch('http://127.0.0.1:5000/holidays/', {
                   method: 'GET',
                   headers: {
                       'Content-Type': 'application/json',
@@ -167,7 +168,9 @@ const HolidaysTable = () => {
     
     const handleConfirmDelete = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/holidays/${holidayToDelete}`, {
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/${holidayToDelete}', {
+
+        // const response = await fetch(`http://127.0.0.1:5000/holidays/${holidayToDelete}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -192,7 +195,8 @@ const HolidaysTable = () => {
         setHolidayToDelete(null);
       }
       try {
-        const response = await fetch("http://127.0.0.1:5000/holidays/");
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/');
+        // const response = await fetch("http://127.0.0.1:5000/holidays/");
         const data = await response.json();
         setHolidays(data); // Refresh holidays list
       } catch (error) {
@@ -294,7 +298,8 @@ const HolidaysTable = () => {
     
       try {
         // Send POST request to Flask API
-        const response = await fetch('http://127.0.0.1:5000/holidays/', {
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/',{
+        // const response = await fetch('http://127.0.0.1:5000/holidays/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -332,7 +337,8 @@ const HolidaysTable = () => {
       }
     
       try {
-        const response = await fetch("http://127.0.0.1:5000/holidays/");
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/');
+        // const response = await fetch("http://127.0.0.1:5000/holidays/");
         const data = await response.json();
         setHolidays(data); // Refresh holidays list
       } catch (error) {
@@ -410,14 +416,15 @@ const HolidaysTable = () => {
 
     const handleEditSave = async (updatedHoliday) => {
       try {
-          const response = await fetch(`http://127.0.0.1:5000/holidays/${updatedHoliday.holiday_id}`, { // Use holiday_id here
+          const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/${updatedHoliday.holiday_id}',{
+          // const response = await fetch(`http://127.0.0.1:5000/holidays/${updatedHoliday.holiday_id}`, { 
               method: 'PUT',
               headers: {
                   'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                   holiday_date: `${monthNamesInSpanish[updatedHoliday.month - 1]} ${updatedHoliday.day}`,
-                  holiday_name: updatedHoliday.holiday_name,  // Use updatedHoliday for holiday_name
+                  holiday_name: updatedHoliday.holiday_name,  
                   formatted_date: `${String(updatedHoliday.month).padStart(2, '0')}-${String(updatedHoliday.day).padStart(2, '0')}`,
               }),
           });
@@ -440,7 +447,8 @@ const HolidaysTable = () => {
       }
   
       try {
-          const response = await fetch("http://127.0.0.1:5000/holidays/");
+          const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/');
+          // const response = await fetch("http://127.0.0.1:5000/holidays/");
           const data = await response.json();
           setHolidays(data); // Refresh holidays list
       } catch (error) {
