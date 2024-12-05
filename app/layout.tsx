@@ -12,6 +12,7 @@ import { Suspense } from 'react';
 import Loading from '@/app/(dashboard)/loading';
 import theme from '../theme';
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
 
 const NAVIGATION: Navigation = [
   {
@@ -56,6 +57,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             >
               {props.children}
               <SpeedInsights />
+              <Analytics />
 
             </AppProvider>
           </AppRouterCacheProvider>
