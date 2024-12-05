@@ -2,7 +2,7 @@
 # from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_app.services.utils import datetime, replace_important_dates
-from flask_app.services.academicPeriod import calculate_important_dates, calculate_important_dates_using_guidelines, fetch_important_dates, fetch_filtered_and_add_year_to_holidays, add_date_to_db
+from flask_app.services.academicPeriod import calculate_important_dates, calculate_important_dates_using_guidelines, fetch_important_dates, fetch_filtered_and_add_year_to_holidays, add_date_to_db, update_date_in_db
 from flask_app.services.guidelines import fetch_guidelines, fetch_filtered_guidelines
 
 bp = Blueprint('submit-academic-period', __name__, url_prefix='/submit-academic-period')
@@ -79,7 +79,7 @@ def get_important_dates():
 
 
 
-# No funciona aun
+# Works!
 @bp.route('/get-important-dates', methods=['POST'])
 def add_important_date():
     data = request.json  # Extract JSON payload
@@ -92,14 +92,12 @@ def add_important_date():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# @bp.route('/', methods=['POST'])
-# def add_holiday():
-#     data = request.json  # Extract JSON payload
-#     if not data.get('holiday_date') or not data.get('holiday_name') or not data.get('formatted_date'):
-#         return jsonify({'error': 'Missing fields'}), 400
 
-#     try:
-#         add_holiday_to_db(data)  # Add to the database
-#         return jsonify({'message': 'Holiday added successfully'}), 201
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
+@bp.route('/get-important-dates/<int:id>', methods=['PUT'])
+def add_important_date():
+    try:
+        data = request.json 
+        update_date_in_db(id, data)
+        return jsonify({'message': 'Date updated successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
