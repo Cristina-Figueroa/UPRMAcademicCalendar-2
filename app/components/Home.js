@@ -350,12 +350,10 @@ function Home() {
 
     const handleEditClick = (date) => {
       setEditDate({ ...date }); // clone the object so we can edit fields independently
-      setIsEditing(true);
     };
   
     const handleEditCancel = () => {
       setEditDate(null);
-      setIsEditing(false);
     };
   
     const handleEditSave = async (updatedDate) => {
@@ -410,7 +408,6 @@ function Home() {
           )
         );
         setEditDate(null);
-        setIsEditing(false);
       } catch (err) {
         console.error('Error saving date:', err);
         showNotification("Failed to update the date. Please try again.", "error");
