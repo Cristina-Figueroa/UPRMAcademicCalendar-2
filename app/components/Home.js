@@ -433,12 +433,12 @@ function Home() {
 
 
 
-    const [isDeleteModalOpen, setisDeleteModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [dateToDelete, setDateToDelete] = useState(null);
 
     const handleDeleteClick = (id) => {
       setDateToDelete(id);
-      setisDeleteModalOpen(true);
+      setIsDeleteModalOpen(true);
 
     };
 
@@ -460,12 +460,18 @@ function Home() {
         }
     
         showNotification("Event deleted successfully!", "success");
-    
+      // Refresh guidelines in state after deletion
+      // setGuidelines((prevDates) =>
+      //   prevGuidelines.filter((guideline) => guideline[0] !== guidelineToDelete)
+      // );
+      setImportantDates((prevDates) =>
+        prevDates.filter((date) => date.id !== dateToDelete)
+      );
       } catch (error) {
         console.error('Error deleting event:', error);
         showNotification("Failed to delete the date. Please try again.", "error");
       } finally {
-        setisDeleteModalOpen(false); // Close the modal
+        setIsDeleteModalOpen(false); // Close the modal
         setDateToDelete(null);
       }
 
@@ -545,16 +551,16 @@ function Home() {
     };
       
     
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
     // Open modal confirmation
     const openModal = () => {
-      setIsModalOpen(true);
+      setIsDownloadModalOpen(true);
     };
 
     // Close modal
     const closeModal = () => {
-      setIsModalOpen(false);
+      setIsDownloadModalOpen(false);
     };
 
   
@@ -571,7 +577,7 @@ function Home() {
           {isDeleteModalOpen && (
             <ConfirmationModal
               open={isDeleteModalOpen}
-              onClose={() => isDeleteModalOpen(false)}
+              onClose={() => setIsDeleteModalOpen(false)}
               onConfirm={handleConfirmDelete}
               message="Are you sure you want to delete this event? This action cannot be undone."
             />
@@ -584,6 +590,15 @@ function Home() {
               message="Are you sure you want to discard this generation?"
             />
           )}
+          {isDownloadModalOpen && (
+            <ConfirmationModal
+              open={isDownloadModalOpen}
+              onClose={closeModal}
+              onConfirm={handleDownload}
+              message="Are you sure you want to download the data?"
+            />
+          )}
+
 
       <Suspense fallback={<CircularSpinner loading={isLoading} />}>  
             {!isSubmitPressed && (
@@ -791,13 +806,6 @@ function Home() {
 
 
 
-
-
-
-
-                            {/* {isEditing ? <> <ArrowBackIcon sx={{fontSize:'xxlarge'}}/> 
-                            </> : <EditIcon/>} */}
-
                 </>
 
                   )}
@@ -807,7 +815,7 @@ function Home() {
         </Suspense>
 
       {/* Modal for download confirmation */}
-      {isModalOpen && (
+      {isDownloadModalOpen && (
         <div style={{
           position: 'fixed',
           top: '50%',
