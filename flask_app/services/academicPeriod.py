@@ -10,6 +10,7 @@ def fetch_important_dates():
     query = """
         SELECT id, date, event, formatted_date
         FROM important_dates
+        ORDER BY formatted_date
     """
     
     # Call execute_query_get_dates with the query and parameters

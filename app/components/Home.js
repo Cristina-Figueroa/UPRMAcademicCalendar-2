@@ -36,8 +36,11 @@ import {
   EditButton,
   Notification,
   AddButton,
-  CancelButton,
+  CancelRowButton,
   DownloadButton,
+  CancelButton,
+  StyledInput,
+
 } from './DatesTableStyles';
 
 const PageContainer = styled.div`
@@ -223,13 +226,14 @@ function Home() {
 
 
 /**
- * 
+ * Add an event to Dates List
  * @param {*} id 
  */
 
   const [isAdding, setIsAdding] = useState(false); // Toggle for input row
-  const [newEvent, setNewEvent] = useState({ date: '', event: ''}); // Temp state for new event
-  const [errors, setErrors] = useState({ date: false, event: false });
+  const [newEvent, setNewEvent] = useState({ date: '', event: '', formatted_date: ''}); // Temp state for new event
+  // const [newEvent, setNewEvent] = useState({ event: '', formatted_date: ''}); // Temp state for new event
+  const [errors, setErrors] = useState({ event: false, formatted_date: false });
 
     // Open Inline Adding feature
     const handleAddClick = () => {
@@ -237,15 +241,16 @@ function Home() {
     };
 
     const handleCancelClick = () => {
-      setNewEvent({ date: '', event: ''}); // Reset the newEvent state
-      setErrors({ date: false,  event: false}); // Clear any validation errors
+      setNewEvent({ date: '', event: '', formatted_date: ''}); // Reset the newEvent state
+      setErrors({event: false, formatted_date: false}); // Clear any validation errors
       setIsAdding(false); // Exit the add mode
     };
 
     const handleSaveClick = async () => {
       const newErrors = {
-        date: !newEvent.date,
+        // date: !newEvent.date,
         event: !newEvent.event,
+        formatted_date: !newEvent.formatted_date
       };
     
       setErrors(newErrors);
@@ -255,22 +260,45 @@ function Home() {
         showNotification("Please fill in all required fields.", "error");
         return;
       }
+
+      // Creating date value for important_dates table (Mon, 02 Jan 2025)
+      const inputDate = newEvent.formatted_date; // e.g. "2025-01-02"
+      const utcDateStr = inputDate + "T00:00:00Z"; 
+      const parsedDate = new Date(utcDateStr);
+      const utcDay = parsedDate.getUTCDate();       // Day of month (1-31)
+      const utcMonth = parsedDate.getUTCMonth();    // Month (0-11)
+      const utcYear = parsedDate.getUTCFullYear();  // Full year
+      const utcWeekday = parsedDate.getUTCDay();    // Day of week (0-6, Sun=0)
+      const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          
+      const dayOfWeek = weekdays[utcWeekday];
+      const displayDay = String(utcDay).padStart(2, '0'); // e.g., "02"
+      const displayMonth = months[utcMonth];
+      
+      const dateformatted = `${dayOfWeek}, ${displayDay} ${displayMonth} ${utcYear}`;
+
     
       try {
         // Send POST request to Flask API
-        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/add-important_dates', {
-
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates', {
         // const response = await fetch('http://127.0.0.1:5000/submit-academic-period/add-important_dates', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            date: newEvent.date,
+            date: dateformatted,
             event: newEvent.event,
+            formatted_date: newEvent.formatted_date,
           }),
         });
-    
+        console.log("Sending Date:", {
+          date: dateformatted,
+          event: newEvent.event,
+          formatted_date: newEvent.formatted_date,
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -282,10 +310,11 @@ function Home() {
         setImportantDates((prevDates) => [...prevDates, responseData]);
     
         // Reset form and exit adding mode
-        setNewEvent({ date: '', event: '' });
-        setErrors({ date: false, event: false });
+        setNewEvent({ date: '', event: '', formatted_date: ''}); // Reset the newEvent state
+        setErrors({  event: false, formatted_date: false });
         setIsAdding(false);
         showNotification("Event added successfully!", "success");
+
       } catch (error) {
         console.error('Error saving event:', error);
         showNotification("Failed to save the event. Please try again.", "error");
@@ -293,7 +322,7 @@ function Home() {
     
       // Refresh the important_dates list
       try {
-        const response = await fetch("http://127.0.0.1:5000/submit-academic-period/get-important_dates/");
+        const response = await fetch("https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates/");
         const data = await response.json();
         setImportantDates(data);
       } catch (error) {
@@ -304,6 +333,7 @@ function Home() {
     const handleSaveCancel = () => {
       setIsAdding(false);
       setErrors(false);
+      setNewEvent({  date: '', event: '', formatted_date: ''});
     };
 
 
@@ -445,8 +475,6 @@ function Home() {
                 )} */}
 
 
-        {/* <> */}
-
 
                 {!isLoading && isSubmitPressed && (
 
@@ -468,21 +496,23 @@ function Home() {
                               {isAdding && ( 
                                 <TableRow theme={theme}>
                                     <DateCell theme={theme}>
-                                        <input
+                                        <StyledInput
+                                        hasError={errors.formatted_date}
                                         type="date"
-                                        value={newEvent.date}
-                                        onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                                        style={{ borderColor: errors.date ? 'red' : undefined }}
+                                        value={newEvent.formatted_date}
+                                        onChange={(e) => setNewEvent({ ...newEvent, formatted_date: e.target.value })}
+                                        // style={{ borderColor: errors.formatted_date ? 'red' : undefined }}
                                       />
 
                                     </DateCell>
                                     <TableCell theme={theme}>
-                                            <input
+                                            <StyledInput
+                                          hasError={errors.event}
                                           type="text"
                                           placeholder="Event Name"
                                           value={newEvent.event}
                                           onChange={(e) => setNewEvent({ ...newEvent, event: e.target.value })}
-                                          style={{ borderColor: errors.event ? 'red' : undefined }}
+                                          // style={{ borderColor: errors.event ? 'red' : undefined }}
                                         />
                                     </TableCell>  
                                     <ActionCell theme={theme}>
@@ -491,9 +521,9 @@ function Home() {
                                                   onClick={handleSaveClick}
                                                   >
                                                     Save</Button>
-                                                  <CancelButton 
+                                                  <CancelRowButton 
                                                   onClick={handleSaveCancel} 
-                                                  sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelButton>                    
+                                                  sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelRowButton>                    
                                                   </div>
 
                                     </ActionCell>
@@ -635,7 +665,6 @@ function Home() {
 
 
 
-        {/* </>                */}
 
     </>     
   );
