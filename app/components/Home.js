@@ -263,34 +263,35 @@ function Home() {
 
 
 
-      // Suppose newEvent.formatted_date = "2025-01-02"
-      const [yearStr, monthStr, dayStr] = newEvent.formatted_date.split("-");
-      console.log(newEvent.formatted_date);
+      if (newEvent.formatted_date && newEvent.formatted_date.includes("-")) {
+        const isoDateString = newEvent.formatted_date + "T00:00:00";
+        const selectedDate = new Date(isoDateString);
+      
+        // Now format selectedDate
 
-      const year = parseInt(yearStr, 10);
-      const month = parseInt(monthStr, 10) - 1; // month is zero-based
-      const day = parseInt(dayStr, 10);
+        // Format date value
+        const selectedDate = new Date(newEvent.formatted_date);
+        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-      // This creates a date in the local timezone without shifting
-      const selectedDate = new Date(year, month, day);
-      console.log(selectedDate);
+        // Extract parts of the date
+        const dayOfWeek = weekdays[selectedDate.getDay()];  // "Mon"
+        const day = String(selectedDate.getDate()).padStart(2, '0'); // "26"
+        const month = months[selectedDate.getMonth()]; // "Aug"
+        const year = selectedDate.getFullYear(); // "2024"
+
+        // Construct the desired format: "Mon, 26 Aug 2024"
+        const dateformatted = `${dayOfWeek}, ${day} ${month} ${year}`;
+        console.log(dateformatted);
+
+      }
+      else{
+        console.log("didnt work formatting of date")
+      }
 
 
-      // Format date value
-      const selectedDate = new Date(newEvent.formatted_date);
-      const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-      // Extract parts of the date
-      const dayOfWeek = weekdays[selectedDate.getDay()];  // "Mon"
-      const day = String(selectedDate.getDate()).padStart(2, '0'); // "26"
-      const month = months[selectedDate.getMonth()]; // "Aug"
-      const year = selectedDate.getFullYear(); // "2024"
-
-      // Construct the desired format: "Mon, 26 Aug 2024"
-      const dateformatted = `${dayOfWeek}, ${day} ${month} ${year}`;
-      console.log(dateformatted);
 
     
       try {
