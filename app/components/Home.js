@@ -322,9 +322,11 @@ function Home() {
     
       // Refresh the important_dates list
       try {
-        const response = await fetch("https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates/");
+        const response = await fetch("https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates");
         const data = await response.json();
-        setImportantDates(data);
+        // setImportantDates(data);
+        setImportantDates(data.important_dates);
+
       } catch (error) {
         console.error("Error refreshing important_dates:", error);
       }
