@@ -24,10 +24,28 @@ def add_date_to_db(data):
 
 
 # Edit Date in DB
+def update_date_in_db(id, data):
+    fields = []
+    params = []
+    if 'date' in data:
+        fields.append("date = %s")
+        params.append(data['date'])
+    if 'event' in data:
+        fields.append("event = %s")
+        params.append(data['event'])
+    if 'formatted_date' in data:
+        fields.append("formatted_date = %s")
+        params.append(data['formatted_date'])
+    query = f"UPDATE important_dates SET {', '.join(fields)} WHERE id = %s"
+    params.append(id)
+    execute_query(query, params)
+
 
 
 # Delete Date in DB
-
+def delete_date_from_db(id):
+    query = "DELETE FROM important_dates WHERE id = %s"
+    execute_query(query, (id,))
 
 
 # Helper function to check if a day is a labor day (Monday to Friday)
