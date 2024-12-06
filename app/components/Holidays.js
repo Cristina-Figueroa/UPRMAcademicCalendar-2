@@ -447,8 +447,6 @@ const HolidaysTable = () => {
       }
     };
     
-  
-
     const handleEditCancel = () => {
         setEditHoliday(null); // Exit edit mode without saving
         setEditRowIndex(null); // Exit editing mode without saving

@@ -340,76 +340,222 @@ function Home() {
 
 
 
-  const handleEdit = (id) => {
-    // Call a backend API to edit the item with the given id
-    console.log('Edit item with ID:', id);
-  };
-
-  const handleDelete = (id) => {
-    // Call a backend API to delete the item with the given id
-    console.log('Delete item with ID:', id);
-  };
 
 
-  const [isSubmitPressed, setIsSubmitPressed] = useState(false);  // State to track if SubmitDates has been pressed
-  const [showConfirmLeave, setShowConfirmLeave] = useState(false); // State for showing the confirmation modal
 
-  // Function to handle SubmitDates button click
-  const handleSubmitDates = () => {
-    setIsSubmitPressed(true);  // Mark as pressed when SubmitDates is clicked
-  };
 
-  // Function to reset visibility and form inputs (if necessary)
-  const handleGenerateNewPeriod = () => {
-    setIsSubmitPressed(false);
-    setShowConfirmLeave(false); // Close the confirmation modal after confirming
-    setStartDate("");  
-    setAcademicPeriod("fall");  
-  };
 
-  // Open the confirmation modal
-  const openConfirmLeave = () => {
-    setShowConfirmLeave(true); // Show the modal when "Generate Another Period" is clicked
-  };
+    const [editDate, setEditDate] = useState(null); // holds the currently editing date object
+    const [isRowEditing, setIsRowEditing] = useState(false); // edit row
 
-  // Cancel leaving and close the confirmation modal
-  const cancelLeave = () => {
-    setShowConfirmLeave(false); // Close the confirmation dialog
-  };
-
-  // Function to trigger the download when the button is clicked
-  const handleDownload = async () => {
-    const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/download', {
-    // const response = await fetch('http://127.0.0.1:5000/download', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      },
-    });
-
-    if (response.ok) {
-      const blob = await response.blob(); // Create a Blob from the response
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob); // Create an object URL for the Blob
-      link.download = 'dias-de-calendario.xlsx'; // Set the file name
-      link.click(); // Trigger the download
-    } else {
-      alert('Failed to download the file.');
-    }
-  };
-    
+    const handleEditClick = (date) => {
+      setEditDate({ ...date }); // clone the object so we can edit fields independently
+      setIsEditing(true);
+    };
   
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    const handleEditCancel = () => {
+      setEditDate(null);
+      setIsEditing(false);
+    };
+  
+    const handleEditSave = async (updatedDate) => {
+      try {
+        // Calculate date (Mon, DD MM YYYY)
+        const inputDate = updatedDate.formatted_date; // "YYYY-MM-DD"
+        const utcDateStr = inputDate + "T00:00:00Z"; 
+        const parsedDate = new Date(utcDateStr);
 
-  // Open modal confirmation
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+        const utcDay = parsedDate.getUTCDate();       
+        const utcMonth = parsedDate.getUTCMonth();    // 0-11
+        const utcYear = parsedDate.getUTCFullYear();  
+        const utcWeekday = parsedDate.getUTCDay();    // 0 (Sun) - 6 (Sat)
 
-  // Close modal
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const dayOfWeek = weekdays[utcWeekday];
+        const displayDay = String(utcDay).padStart(2, '0'); // e.g. "02"
+        const displayMonth = months[utcMonth];
+
+        const dateformatted = `${dayOfWeek}, ${displayDay} ${displayMonth} ${utcYear}`;
+
+
+        const response = await fetch(
+          `https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates/${updatedDate.id}`, 
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              date: dateformatted,
+              event: updatedDate.event,
+              formatted_date: updatedDate.formatted_date,
+            }),
+          }
+        );
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        // If you have a notification function, call it here
+        showNotification("Important date updated successfully!", "success");
+    
+        // Update the local state so the UI reflects the changes
+        setImportantDates((prevDates) =>
+          prevDates.map((date) =>
+            date.id === updatedDate.id ? updatedDate : date
+          )
+        );
+        setEditDate(null);
+        setIsEditing(false);
+      } catch (err) {
+        console.error('Error saving date:', err);
+        showNotification("Failed to update the date. Please try again.", "error");
+      }
+    };
+    
+    const handleInputChange = (field, value) => {
+      setEditDate((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
+
+
+
+
+
+
+
+
+
+
+
+    const [dateToDelete, setDateToDelete] = useState(null);
+
+    const handleDeleteClick = (id) => {
+      setDateToDelete(id);
+      setIsModalOpen(true);
+
+    };
+
+
+    const handleConfirmDelete = async () => {
+      try {
+        // const response = await fetch(`https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/${holidayToDelete}`, {
+          const response = await fetch(
+            `https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates/${dateToDelete}`, 
+            {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        showNotification("Event deleted successfully!", "success");
+    
+      } catch (error) {
+        console.error('Error deleting event:', error);
+        showNotification("Failed to delete the date. Please try again.", "error");
+      } finally {
+        setIsModalOpen(false); // Close the modal
+        setDateToDelete(null);
+      }
+
+      // Refresh the important_dates list
+      try {
+        const response = await fetch("https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates");
+        const data = await response.json();
+        // setImportantDates(data);
+        setImportantDates(data.important_dates);
+      } catch (error) {
+        console.error("Error refreshing important_dates:", error);
+      }
+
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const [isSubmitPressed, setIsSubmitPressed] = useState(false);  // State to track if SubmitDates has been pressed
+    const [showConfirmLeave, setShowConfirmLeave] = useState(false); // State for showing the confirmation modal
+
+    // Function to handle SubmitDates button click
+    const handleSubmitDates = () => {
+      setIsSubmitPressed(true);  // Mark as pressed when SubmitDates is clicked
+    };
+
+    // Function to reset visibility and form inputs (if necessary)
+    const handleGenerateNewPeriod = () => {
+      setIsSubmitPressed(false);
+      setShowConfirmLeave(false); // Close the confirmation modal after confirming
+      setStartDate("");  
+      setAcademicPeriod("fall");  
+    };
+
+    // Open the confirmation modal
+    const openConfirmLeave = () => {
+      setShowConfirmLeave(true); // Show the modal when "Generate Another Period" is clicked
+    };
+
+    // Cancel leaving and close the confirmation modal
+    const cancelLeave = () => {
+      setShowConfirmLeave(false); // Close the confirmation dialog
+    };
+
+    // Function to trigger the download when the button is clicked
+    const handleDownload = async () => {
+      const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/download', {
+      // const response = await fetch('http://127.0.0.1:5000/download', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob(); // Create a Blob from the response
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob); // Create an object URL for the Blob
+        link.download = 'dias-de-calendario.xlsx'; // Set the file name
+        link.click(); // Trigger the download
+      } else {
+        alert('Failed to download the file.');
+      }
+    };
+      
+    
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Open modal confirmation
+    const openModal = () => {
+      setIsModalOpen(true);
+    };
+
+    // Close modal
+    const closeModal = () => {
+      setIsModalOpen(false);
+    };
 
   
   return (
@@ -422,14 +568,14 @@ function Home() {
               </Notification>
             )}
 
-          {/* {isModalOpen && (
+          {isModalOpen && (
             <ConfirmationModal
               open={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               onConfirm={handleConfirmDelete}
-              message="Are you sure you want to delete this holiday? This action cannot be undone."
+              message="Are you sure you want to delete this event? This action cannot be undone."
             />
-          )} */}
+          )}
           {showConfirmLeave && (
             <ConfirmationModal
               open={showConfirmLeave}
@@ -470,11 +616,6 @@ function Home() {
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                 {responseMessage && <p>{responseMessage}</p>}
                 </Center>
-
-
-                {/* {isLoading && (
-                  <CircularSpinner loading={isLoading}/>
-                )} */}
 
 
 
@@ -535,21 +676,63 @@ function Home() {
 
 
                                   {importantDates.map((date, index) => (
-                                    <TableRow key={index} theme={theme}>
-
-                                      {/* <TableCell theme={theme}>{date.id}</TableCell> */}
-                                      <DateCell theme={theme}>{date.date}</DateCell>
-                                      <DescriptionCell theme={theme}>{date.event}</DescriptionCell>
-                                      <ActionCell theme={theme}>
-                                        <EditRowButton theme={theme}><EditIcon/></EditRowButton>
-                                        <DeleteButton theme={theme}><DeleteIcon/></DeleteButton>
-
-                                      </ActionCell>
+                                    <TableRow key={date.id} theme={theme}>
+   {editDate && editDate.id === date.id ? (
+              // Editing mode
+              <>
+                <TableCell theme={theme}>
+                  <input
+                    type="date"
+                    value={editDate.formatted_date || ""}
+                    onChange={(e) => handleInputChange('formatted_date', e.target.value)}
+                  />
+                </TableCell>
+                <TableCell theme={theme}>
+                  <input
+                    type="text"
+                    value={editDate.event || ""}
+                    onChange={(e) => handleInputChange('event', e.target.value)}
+                  />
+                </TableCell>
+                <ActionCell theme={theme}>
+                  <Button onClick={() => handleEditSave(editDate)}>Save</Button>
+                  <Button onClick={handleEditCancel}>Cancel</Button>
+                </ActionCell>
+              </>
+            ) : (
+              // View mode
+              <>
+                <DateCell theme={theme}>{dateObj.date}</DateCell>
+                <DescriptionCell theme={theme}>{dateObj.event}</DescriptionCell>
+                <ActionCell theme={theme}>
+                  <EditRowButton theme={theme} onClick={() => handleEditClick(dateObj)}>
+                    <EditIcon />
+                  </EditRowButton>
+                  <DeleteButton
+                    theme={theme}
+                    onClick={handleDeleteClick}
+                  >
+                    <DeleteIcon />
+                  </DeleteButton>
+                </ActionCell>
+              </>
+            )}
                                     </TableRow>
                                   ))}
                                 </TableBody>
                               </StyledTable>
-                              </TableContainer>
+                            </TableContainer>
+
+
+
+
+
+
+
+
+
+
+                            
 
 
                           {/* Floating Button - Add*/}
