@@ -228,6 +228,7 @@ function Home() {
  */
 
   const [isAdding, setIsAdding] = useState(false); // Toggle for input row
+  // const [newEvent, setNewEvent] = useState({ date: '', event: '', formatted_date: ''}); // Temp state for new event
   const [newEvent, setNewEvent] = useState({ event: '', formatted_date: ''}); // Temp state for new event
   const [errors, setErrors] = useState({ event: false, formatted_date: false });
 
@@ -237,13 +238,14 @@ function Home() {
     };
 
     const handleCancelClick = () => {
-      setNewEvent({  event: '', formatted_date: ''}); // Reset the newEvent state
+      setNewEvent({ date: '', event: '', formatted_date: ''}); // Reset the newEvent state
       setErrors({event: false, formatted_date: false}); // Clear any validation errors
       setIsAdding(false); // Exit the add mode
     };
 
     const handleSaveClick = async () => {
       const newErrors = {
+        // date: !newEvent.date,
         event: !newEvent.event,
         formatted_date: !newEvent.formatted_date
       };
@@ -303,7 +305,7 @@ function Home() {
         setImportantDates((prevDates) => [...prevDates, responseData]);
     
         // Reset form and exit adding mode
-        setNewEvent({ event: '', formatted_date: ''});
+        setNewEvent({ date: '', event: '', formatted_date: ''}); // Reset the newEvent state
         setErrors({  event: false, formatted_date: false });
         setIsAdding(false);
         showNotification("Event added successfully!", "success");
