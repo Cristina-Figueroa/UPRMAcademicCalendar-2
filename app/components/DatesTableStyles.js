@@ -41,7 +41,7 @@ export const CancelButton = styled(Button)`
   padding: 10px 15px;
   font-size: 20px;
   border-radius: 100px;
-  height: 45px;
+  height: 42px;
   min-width: 40px;
 `;
 
