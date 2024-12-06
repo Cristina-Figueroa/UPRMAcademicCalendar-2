@@ -36,8 +36,9 @@ import {
   EditButton,
   Notification,
   AddButton,
-  CancelButton,
+  CancelRowButton,
   DownloadButton,
+  CancelButton,
 } from './DatesTableStyles';
 
 const PageContainer = styled.div`
@@ -470,8 +471,6 @@ function Home() {
                 )} */}
 
 
-        {/* <> */}
-
 
                 {!isLoading && isSubmitPressed && (
 
@@ -516,9 +515,9 @@ function Home() {
                                                   onClick={handleSaveClick}
                                                   >
                                                     Save</Button>
-                                                  <CancelButton 
+                                                  <CancelRowButton 
                                                   onClick={handleSaveCancel} 
-                                                  sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelButton>                    
+                                                  sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelRowButton>                    
                                                   </div>
 
                                     </ActionCell>
@@ -660,7 +659,6 @@ function Home() {
 
 
 
-        {/* </>                */}
 
     </>     
   );
