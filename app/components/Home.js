@@ -702,8 +702,8 @@ function Home() {
             ) : (
               // View mode
               <>
-                <DateCell theme={theme}>{dateObj.date}</DateCell>
-                <DescriptionCell theme={theme}>{dateObj.event}</DescriptionCell>
+                <DateCell theme={theme}>{date.date}</DateCell>
+                <DescriptionCell theme={theme}>{date.event}</DescriptionCell>
                 <ActionCell theme={theme}>
                   <EditRowButton theme={theme} onClick={() => handleEditClick(dateObj)}>
                     <EditIcon />
