@@ -289,13 +289,13 @@ function Home() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            date: newEvent.date,
+            date: dateformatted,
             event: newEvent.event,
             formatted_date: newEvent.formatted_date,
           }),
         });
         console.log("Sending Date:", {
-          date: newEvent.date,
+          date: dateformatted,
           event: newEvent.event,
           formatted_date: newEvent.formatted_date,
         });
