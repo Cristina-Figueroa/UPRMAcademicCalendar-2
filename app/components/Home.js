@@ -261,6 +261,21 @@ function Home() {
         return;
       }
 
+
+
+      // Suppose newEvent.formatted_date = "2025-01-02"
+      const [yearStr, monthStr, dayStr] = newEvent.formatted_date.split("-");
+      console.log(newEvent.formatted_date);
+
+      const year = parseInt(yearStr, 10);
+      const month = parseInt(monthStr, 10) - 1; // month is zero-based
+      const day = parseInt(dayStr, 10);
+
+      // This creates a date in the local timezone without shifting
+      const selectedDate = new Date(year, month, day);
+      console.log(selectedDate);
+
+
       // Format date value
       const selectedDate = new Date(newEvent.formatted_date);
       const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
