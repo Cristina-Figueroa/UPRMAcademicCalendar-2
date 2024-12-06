@@ -228,8 +228,8 @@ function Home() {
  */
 
   const [isAdding, setIsAdding] = useState(false); // Toggle for input row
-  // const [newEvent, setNewEvent] = useState({ date: '', event: '', formatted_date: ''}); // Temp state for new event
-  const [newEvent, setNewEvent] = useState({ event: '', formatted_date: ''}); // Temp state for new event
+  const [newEvent, setNewEvent] = useState({ date: '', event: '', formatted_date: ''}); // Temp state for new event
+  // const [newEvent, setNewEvent] = useState({ event: '', formatted_date: ''}); // Temp state for new event
   const [errors, setErrors] = useState({ event: false, formatted_date: false });
 
     // Open Inline Adding feature
