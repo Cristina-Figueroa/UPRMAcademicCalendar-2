@@ -36,8 +36,9 @@ import {
   EditButton,
   Notification,
   AddButton,
-  CancelButton,
+  CancelRowButton,
   DownloadButton,
+  CancelButton,
 } from './DatesTableStyles';
 
 const PageContainer = styled.div`
@@ -317,7 +318,8 @@ function Home() {
     
       // Refresh the important_dates list
       try {
-        const response = await fetch("http://127.0.0.1:5000/submit-academic-period/get-important-dates/");
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates');
+        // const response = await fetch("http://127.0.0.1:5000/submit-academic-period/get-important-dates/");
         const data = await response.json();
         setImportantDates(data);
       } catch (error) {
@@ -516,9 +518,9 @@ function Home() {
                                                   onClick={handleSaveClick}
                                                   >
                                                     Save</Button>
-                                                  <CancelButton 
+                                                  <CancelRowButton 
                                                   onClick={handleSaveCancel} 
-                                                  sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelButton>                    
+                                                  sx={{color:'red', fontWeight:'bold'}}>Cancel</CancelRowButton>                    
                                                   </div>
 
                                     </ActionCell>

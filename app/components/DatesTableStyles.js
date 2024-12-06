@@ -34,6 +34,17 @@ export const AddButton = styled(Button)`
 
 export const CancelButton = styled(Button)`
   margin-left: 10px;
+  position: fixed;
+  bottom: 75px;
+  right: 23px;
+  font-size: 20px;
+  border-radius: 100px;
+  height: 40px;
+  min-width: 40px;
+`;
+
+export const CancelRowButton = styled(Button)`
+  margin-left: 10px;
   height: 40px;
   min-width: 40px;
   background-color: '#ff6b6b', // Red color for cancel button
