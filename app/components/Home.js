@@ -223,13 +223,13 @@ function Home() {
 
 
 /**
- * 
+ * Add an event to Dates List
  * @param {*} id 
  */
 
   const [isAdding, setIsAdding] = useState(false); // Toggle for input row
-  const [newEvent, setNewEvent] = useState({ date: '', event: ''}); // Temp state for new event
-  const [errors, setErrors] = useState({ date: false, event: false });
+  const [newEvent, setNewEvent] = useState({ event: '', formatted_date: ''}); // Temp state for new event
+  const [errors, setErrors] = useState({ event: false, formatted_date: false });
 
     // Open Inline Adding feature
     const handleAddClick = () => {
@@ -237,15 +237,15 @@ function Home() {
     };
 
     const handleCancelClick = () => {
-      setNewEvent({ date: '', event: ''}); // Reset the newEvent state
-      setErrors({ date: false,  event: false}); // Clear any validation errors
+      setNewEvent({  event: '', formatted_date: ''}); // Reset the newEvent state
+      setErrors({event: false, formatted_date: false}); // Clear any validation errors
       setIsAdding(false); // Exit the add mode
     };
 
     const handleSaveClick = async () => {
       const newErrors = {
-        date: !newEvent.date,
         event: !newEvent.event,
+        formatted_date: !newEvent.formatted_date
       };
     
       setErrors(newErrors);
@@ -255,22 +255,43 @@ function Home() {
         showNotification("Please fill in all required fields.", "error");
         return;
       }
+
+      // Format date value
+      const selectedDate = new Date(newEvent.formatted_date);
+      const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+      // Extract parts of the date
+      const dayOfWeek = weekdays[selectedDate.getDay()];  // "Mon"
+      const day = String(selectedDate.getDate()).padStart(2, '0'); // "26"
+      const month = months[selectedDate.getMonth()]; // "Aug"
+      const year = selectedDate.getFullYear(); // "2024"
+
+      // Construct the desired format: "Mon, 26 Aug 2024"
+      const dateformatted = `${dayOfWeek}, ${day} ${month} ${year}`;
+      console.log(date);
+
     
       try {
         // Send POST request to Flask API
-        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/add-important_dates', {
-
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important_dates', {
         // const response = await fetch('http://127.0.0.1:5000/submit-academic-period/add-important_dates', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            date: newEvent.date,
+            date: dateformatted,
             event: newEvent.event,
+            formatted_date: newEvent.formatted_date,
           }),
         });
-    
+        console.log("Sending Date:", {
+          date: dateformatted,
+          event: newEvent.event,
+          formatted_date: newEvent.formatted_date,
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -282,10 +303,11 @@ function Home() {
         setImportantDates((prevDates) => [...prevDates, responseData]);
     
         // Reset form and exit adding mode
-        setNewEvent({ date: '', event: '' });
-        setErrors({ date: false, event: false });
+        setNewEvent({ event: '', formatted_date: ''});
+        setErrors({  event: false, formatted_date: false });
         setIsAdding(false);
         showNotification("Event added successfully!", "success");
+
       } catch (error) {
         console.error('Error saving event:', error);
         showNotification("Failed to save the event. Please try again.", "error");
@@ -304,6 +326,7 @@ function Home() {
     const handleSaveCancel = () => {
       setIsAdding(false);
       setErrors(false);
+      setNewEvent({ event: '', date: '', formatted_date: ''});
     };
 
 
@@ -470,9 +493,9 @@ function Home() {
                                     <DateCell theme={theme}>
                                         <input
                                         type="date"
-                                        value={newEvent.date}
-                                        onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                                        style={{ borderColor: errors.date ? 'red' : undefined }}
+                                        value={newEvent.formatted_date}
+                                        onChange={(e) => setNewEvent({ ...newEvent, formatted_date: e.target.value })}
+                                        style={{ borderColor: errors.formatted_date ? 'red' : undefined }}
                                       />
 
                                     </DateCell>
