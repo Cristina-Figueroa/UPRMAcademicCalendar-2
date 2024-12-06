@@ -260,7 +260,14 @@ function Home() {
       }
 
       // Format date value
-      const selectedDate = new Date(newEvent.formatted_date);
+      // Suppose newEvent.formatted_date is "2025-01-02"
+      const [yearStr, monthStr, dayStr] = newEvent.formatted_date.split("-");
+      const year = parseInt(yearStr, 10);
+      const month = parseInt(monthStr, 10) - 1; // zero-based index for months
+      const day = parseInt(dayStr, 10);
+
+      // Create a date in local time without time zone offset issues
+      const selectedDate = new Date(year, month, day);
       const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -318,7 +325,7 @@ function Home() {
     
       // Refresh the important_dates list
       try {
-        const response = await fetch("http://127.0.0.1:5000/submit-academic-period/get-important-dates/");
+        const response = await fetch("https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates/");
         const data = await response.json();
         setImportantDates(data);
       } catch (error) {

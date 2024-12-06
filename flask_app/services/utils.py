@@ -161,7 +161,7 @@ def execute_query_get_dates(query, params=()):
         conn.close()
         
         # Convert the result into a list of dictionaries, if necessary
-        result_list = [{"id": row[0], "date": row[1], "event": row[2], "formatted_dates": row[3]} for row in result]
+        result_list = [{"id": row[0], "date": row[1], "event": row[2], "formatted_date": row[3]} for row in result]
         return result_list
 
     except Exception as e:
