@@ -261,7 +261,7 @@ function Home() {
         return;
       }
 
-
+      // Creating date value for important_dates table (Mon, 02 Jan 2025)
       const inputDate = newEvent.formatted_date; // e.g. "2025-01-02"
       const utcDateStr = inputDate + "T00:00:00Z"; 
       const parsedDate = new Date(utcDateStr);
@@ -278,25 +278,6 @@ function Home() {
       const displayMonth = months[utcMonth];
       
       const dateformatted = `${dayOfWeek}, ${displayDay} ${displayMonth} ${utcYear}`;
-      // Example output: "Mon, 02 Jan 2025"
-                      
-
-
-      // // Format date value
-      // const selectedDate = new Date(newEvent.formatted_date).getUTC;
-      // const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      // const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-      //                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-      // // Extract parts of the date
-      // const dayOfWeek = weekdays[selectedDate.getDay()];  // "Mon"
-      // const day = String(selectedDate.getDate()).padStart(2, '0'); // "26"
-      // const month = months[selectedDate.getMonth()]; // "Aug"
-      // const year = selectedDate.getFullYear(); // "2024"
-
-      // // Construct the desired format: "Mon, 26 Aug 2024"
-      // const dateformatted = `${dayOfWeek}, ${day} ${month} ${year}`;
-      // console.log(dateformatted);
 
     
       try {
