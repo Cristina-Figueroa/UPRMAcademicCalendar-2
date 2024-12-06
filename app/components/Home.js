@@ -289,13 +289,13 @@ function Home() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            date: dateformatted,
+            date: newEvent.date,
             event: newEvent.event,
             formatted_date: newEvent.formatted_date,
           }),
         });
         console.log("Sending Date:", {
-          date: dateformatted,
+          date: newEvent.date,
           event: newEvent.event,
           formatted_date: newEvent.formatted_date,
         });
@@ -322,7 +322,7 @@ function Home() {
     
       // Refresh the important_dates list
       try {
-        const response = await fetch("https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates/");
+        const response = await fetch("https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates");
         const data = await response.json();
         setImportantDates(data);
       } catch (error) {
