@@ -260,14 +260,7 @@ function Home() {
       }
 
       // Format date value
-      // Suppose newEvent.formatted_date is "2025-01-02"
-      const [yearStr, monthStr, dayStr] = newEvent.formatted_date.split("-");
-      const year = parseInt(yearStr, 10);
-      const month = parseInt(monthStr, 10) - 1; // zero-based index for months
-      const day = parseInt(dayStr, 10);
-
-      // Create a date in local time without time zone offset issues
-      const selectedDate = new Date(year, month, day);
+      const selectedDate = new Date(newEvent.formatted_date);
       const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
