@@ -272,7 +272,7 @@ function Home() {
 
       // Construct the desired format: "Mon, 26 Aug 2024"
       const dateformatted = `${dayOfWeek}, ${day} ${month} ${year}`;
-      console.log(date);
+      console.log(dateformatted);
 
     
       try {
@@ -328,7 +328,7 @@ function Home() {
     const handleSaveCancel = () => {
       setIsAdding(false);
       setErrors(false);
-      setNewEvent({ event: '', date: '', formatted_date: ''});
+      setNewEvent({  date: '', event: '', formatted_date: ''});
     };
 
 
