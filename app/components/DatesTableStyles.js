@@ -34,15 +34,15 @@ export const AddButton = styled(Button)`
 
 
 export const CancelButton = styled(Button)`
+  margin-left: 10px;
   position: fixed;
   bottom: 75px;
   right: 23px;
-  padding: 10px 15px;
-  font-size: 30px;
-  border-radius: 50%;
-  height: 40px;
+  // padding: 10px 15px;
+  font-size: 20px;
+  border-radius: 100px;
+  height: 42px;
   min-width: 40px;
-  cursor: 'pointer';
 `;
 
 export const CancelRowButton = styled(Button)`

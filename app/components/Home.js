@@ -39,6 +39,8 @@ import {
   CancelRowButton,
   DownloadButton,
   CancelButton,
+  StyledInput,
+
 } from './DatesTableStyles';
 
 const PageContainer = styled.div`
@@ -492,21 +494,23 @@ function Home() {
                               {isAdding && ( 
                                 <TableRow theme={theme}>
                                     <DateCell theme={theme}>
-                                        <input
+                                        <StyledInput
+                                        hasError={errors.formatted_date}
                                         type="date"
                                         value={newEvent.formatted_date}
                                         onChange={(e) => setNewEvent({ ...newEvent, formatted_date: e.target.value })}
-                                        style={{ borderColor: errors.formatted_date ? 'red' : undefined }}
+                                        // style={{ borderColor: errors.formatted_date ? 'red' : undefined }}
                                       />
 
                                     </DateCell>
                                     <TableCell theme={theme}>
-                                            <input
+                                            <StyledInput
+                                          hasError={errors.event}
                                           type="text"
                                           placeholder="Event Name"
                                           value={newEvent.event}
                                           onChange={(e) => setNewEvent({ ...newEvent, event: e.target.value })}
-                                          style={{ borderColor: errors.event ? 'red' : undefined }}
+                                          // style={{ borderColor: errors.event ? 'red' : undefined }}
                                         />
                                     </TableCell>  
                                     <ActionCell theme={theme}>
