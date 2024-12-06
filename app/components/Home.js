@@ -433,12 +433,12 @@ function Home() {
 
 
 
-
+    const [isDeleteModalOpen, setisDeleteModalOpen] = useState(false);
     const [dateToDelete, setDateToDelete] = useState(null);
 
     const handleDeleteClick = (id) => {
       setDateToDelete(id);
-      setIsModalOpen(true);
+      setisDeleteModalOpen(true);
 
     };
 
@@ -465,7 +465,7 @@ function Home() {
         console.error('Error deleting event:', error);
         showNotification("Failed to delete the date. Please try again.", "error");
       } finally {
-        setIsModalOpen(false); // Close the modal
+        setisDeleteModalOpen(false); // Close the modal
         setDateToDelete(null);
       }
 
@@ -568,10 +568,10 @@ function Home() {
               </Notification>
             )}
 
-          {isModalOpen && (
+          {isDeleteModalOpen && (
             <ConfirmationModal
-              open={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
+              open={isDeleteModalOpen}
+              onClose={() => isDeleteModalOpen(false)}
               onConfirm={handleConfirmDelete}
               message="Are you sure you want to delete this event? This action cannot be undone."
             />
@@ -705,7 +705,7 @@ function Home() {
                 <DateCell theme={theme}>{date.date}</DateCell>
                 <DescriptionCell theme={theme}>{date.event}</DescriptionCell>
                 <ActionCell theme={theme}>
-                  <EditRowButton theme={theme} onClick={() => handleEditClick(dateObj)}>
+                  <EditRowButton theme={theme} onClick={() => handleEditClick(date)}>
                     <EditIcon />
                   </EditRowButton>
                   <DeleteButton
