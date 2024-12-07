@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Modal, Button, TextField, Select, MenuItem } from '@mui/material';
+import { Modal, Box, Button, TextField, Select, MenuItem } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import FormControl from '@mui/material/FormControl';
 
 const AddGuidelineModal = ({ show, onClose, onSave }) => {
   const theme = useTheme();
@@ -90,19 +89,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
         />
 
 
-        <FormControl sx={{ 
-          flex: '1',
-          flexDirection: 'row'
-          }} 
-          size="small"
-          > 
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent:'space-evenly', gap:'20px' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
 
-          <FormControl sx={{ 
-            flex: '1',
-            flexDirection: 'column'
-            }} 
-            size="small"
-            > 
           <p sx={{}}>¿Que periodo académico cae esta directriz?</p>
           <Select
             name="period_type"
@@ -118,14 +107,10 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
             <MenuItem value="SUMMER">Verano Corto</MenuItem>
             <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
           </Select>
-          </FormControl>
+        </Box>
 
-          <FormControl sx={{ 
-            flex: '1',
-            flexDirection: 'column'
-            }} 
-            size="small"
-            > 
+
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <p>¿Que tipo de días cuentas para esta directriz?</p>
           <Select
             name="day_type"
@@ -141,8 +126,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
             <MenuItem value="LABORABLES">Laborables</MenuItem>
             <MenuItem value="SABADOS">Sabados</MenuItem>
           </Select>
-          </FormControl>
-      </FormControl>
+          </Box>
+        </Box>
+
 
         <p>¿Cuando es el punto de comienzo para esta directriz?</p>
         <Select
