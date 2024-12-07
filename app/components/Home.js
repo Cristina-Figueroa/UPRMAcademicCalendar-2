@@ -209,7 +209,7 @@ function Home() {
       .then((data) => {
         console.log('Response from Flask:', data);
         setResponseMessage(
-          'Dia de Comienzo de Clases: ' + dateformatted + '     Periodo Academico Elegido: ' + academicPeriodFrontEnd
+          'Dia de Comienzo de Clases: ' + dateformatted + ' |    Periodo Academico Elegido: ' + academicPeriodFrontEnd
           // data.message + ' - Date:' + startDate + ' , Period: ' + period + ' , Weeks: ' + weeks
         );
         const processedDates = data.important_dates.map((dateItem) => {
