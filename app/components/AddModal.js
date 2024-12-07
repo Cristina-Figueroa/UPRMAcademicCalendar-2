@@ -122,10 +122,10 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
             color: theme.palette.text.primary,
           }}
           >
-            <option value="STARTDATE">STARTDATE</option>
-            <option value="ENDDATE">ENDDATE</option>
-            <option value="PERIODO DE REPASO">Periodo de Repaso</option>
-            <option value="PERIODO DE FINALES">Periodo de Finales</option>
+            <MenuItem value="STARTDATE">STARTDATE</MenuItem>
+            <MenuItem value="ENDDATE">ENDDATE</MenuItem>
+            <MenuItem value="PERIODO DE REPASO">Periodo de Repaso</MenuItem>
+            <MenuItem value="PERIODO DE FINALES">Periodo de Finales</MenuItem>
 
           </Select>      
 
