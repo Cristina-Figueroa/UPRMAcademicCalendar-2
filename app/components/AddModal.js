@@ -9,7 +9,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
     guideline_name: '',
     shift_days: '',
     day_type: 'NORMALES',
-    start: '',
+    start: 'STARTDATE',
     period_type: 'SEMESTER',
   }), []);
 
@@ -38,9 +38,6 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
     }
     if (!formData.shift_days.trim()) {
       newErrors.shift_days = 'Shift days is required';
-    }
-    if (!formData.start.trim()) {
-      newErrors.start = 'Start is required';
     }
 
     setErrors(newErrors);
@@ -114,33 +111,40 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="LABORABLES">Laborables</MenuItem>
           <MenuItem value="SABADOS">Sabados</MenuItem>
         </Select>
-        <TextField
+
+        <Select
           name="start"
-          label="Start"
           fullWidth
           value={formData.start}
           onChange={handleChange}
           style={{
             marginBottom: '15px',
-            borderColor: errors.start ? 'red' : undefined,
-          }}
-          error={!!errors.start}
-          helperText={errors.start || ''}
-        />
-        <Select
-          name="period_type"
-          value={formData.period_type}
-          onChange={handleChange}
-          fullWidth
-          style={{
-            marginBottom: '15px',
             color: theme.palette.text.primary,
           }}
-        >
-          <MenuItem value="SEMESTER">Semestre</MenuItem>
-          <MenuItem value="SUMMER">Verano Corto</MenuItem>
-          <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
-        </Select>
+          >
+            <option value="STARTDATE">STARTDATE</option>
+            <option value="ENDDATE">ENDDATE</option>
+            <option value="PERIODO DE REPASO">Periodo de Repaso</option>
+            <option value="PERIODO DE FINALES">Periodo de Finales</option>
+
+          </Select>      
+
+          <Select
+            name="period_type"
+            value={formData.period_type}
+            onChange={handleChange}
+            fullWidth
+            style={{
+              marginBottom: '15px',
+              color: theme.palette.text.primary,
+            }}
+          >
+            <MenuItem value="SEMESTER">Semestre</MenuItem>
+            <MenuItem value="SUMMER">Verano Corto</MenuItem>
+            <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
+          </Select>
+
+
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button
             onClick={onClose}
