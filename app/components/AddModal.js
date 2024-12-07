@@ -65,7 +65,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '65%',
+          width: '62%',
           borderRadius: '8px',
           boxShadow: theme.shadows[5],
         }}
@@ -92,12 +92,18 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
 
         <FormControl sx={{ 
           flex: '1',
-          flexDirection: 'column'
+          flexDirection: 'row'
           }} 
           size="small"
           > 
 
-        <p>¿Que periodo académico cae esta directriz?</p>
+        <FormControl sx={{ 
+          flex: '1',
+          flexDirection: 'column'
+          }} 
+          size="small"
+          > 
+        <p sx={{}}>¿Que periodo académico cae esta directriz?</p>
         <Select
           name="period_type"
           value={formData.period_type}
@@ -112,7 +118,14 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="SUMMER">Verano Corto</MenuItem>
           <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
         </Select>
+        </FormControl>
 
+        <FormControl sx={{ 
+          flex: '1',
+          flexDirection: 'column'
+          }} 
+          size="small"
+          > 
         <p>¿Que tipo de días cuentas para esta directriz?</p>
         <Select
           name="day_type"
@@ -128,6 +141,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="LABORABLES">Laborables</MenuItem>
           <MenuItem value="SABADOS">Sabados</MenuItem>
         </Select>
+        </FormControl>
 
         <p>¿Cuando es el punto de comienzo para esta directriz?</p>
         <Select
