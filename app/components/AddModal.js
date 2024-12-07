@@ -4,20 +4,6 @@ import { useTheme } from '@mui/material/styles';
 import styled from "styled-components";
 import FormControl from '@mui/material/FormControl';
 
-
-const BoxInModalStyle = {
-  padding: '20px',
-  background: theme.palette.background.paper,
-  color: theme.palette.text.primary,
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '60%',
-  borderRadius: '8px',
-  boxShadow: theme.shadows[5],
-}
-
 const BoxInModal = styled.div`
   padding: '20px';
   background: theme.palette.background.paper;
