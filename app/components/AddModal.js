@@ -97,51 +97,52 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           size="small"
           > 
 
-        <FormControl sx={{ 
-          flex: '1',
-          flexDirection: 'column'
-          }} 
-          size="small"
-          > 
-        <p sx={{}}>¿Que periodo académico cae esta directriz?</p>
-        <Select
-          name="period_type"
-          value={formData.period_type}
-          onChange={handleChange}
-          fullWidth
-          style={{
-            marginBottom: '15px',
-            color: theme.palette.text.primary,
-          }}
-        >
-          <MenuItem value="SEMESTER">Semestre</MenuItem>
-          <MenuItem value="SUMMER">Verano Corto</MenuItem>
-          <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
-        </Select>
-        </FormControl>
+          <FormControl sx={{ 
+            flex: '1',
+            flexDirection: 'column'
+            }} 
+            size="small"
+            > 
+          <p sx={{}}>¿Que periodo académico cae esta directriz?</p>
+          <Select
+            name="period_type"
+            value={formData.period_type}
+            onChange={handleChange}
+            fullWidth
+            style={{
+              marginBottom: '15px',
+              color: theme.palette.text.primary,
+            }}
+          >
+            <MenuItem value="SEMESTER">Semestre</MenuItem>
+            <MenuItem value="SUMMER">Verano Corto</MenuItem>
+            <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
+          </Select>
+          </FormControl>
 
-        <FormControl sx={{ 
-          flex: '1',
-          flexDirection: 'column'
-          }} 
-          size="small"
-          > 
-        <p>¿Que tipo de días cuentas para esta directriz?</p>
-        <Select
-          name="day_type"
-          value={formData.day_type}
-          onChange={handleChange}
-          fullWidth
-          style={{
-            marginBottom: '15px',
-            color: theme.palette.text.primary,
-          }}
-        >
-          <MenuItem value="NORMALES">Normales</MenuItem>
-          <MenuItem value="LABORABLES">Laborables</MenuItem>
-          <MenuItem value="SABADOS">Sabados</MenuItem>
-        </Select>
-        </FormControl>
+          <FormControl sx={{ 
+            flex: '1',
+            flexDirection: 'column'
+            }} 
+            size="small"
+            > 
+          <p>¿Que tipo de días cuentas para esta directriz?</p>
+          <Select
+            name="day_type"
+            value={formData.day_type}
+            onChange={handleChange}
+            fullWidth
+            style={{
+              marginBottom: '15px',
+              color: theme.palette.text.primary,
+            }}
+          >
+            <MenuItem value="NORMALES">Normales</MenuItem>
+            <MenuItem value="LABORABLES">Laborables</MenuItem>
+            <MenuItem value="SABADOS">Sabados</MenuItem>
+          </Select>
+          </FormControl>
+      </FormControl>
 
         <p>¿Cuando es el punto de comienzo para esta directriz?</p>
         <Select
@@ -175,7 +176,6 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           error={!!errors.shift_days}
           helperText={errors.shift_days || ''}
         />
-      </FormControl>
 
 
         {/* Buttons */}
