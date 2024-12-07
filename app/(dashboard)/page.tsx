@@ -75,7 +75,7 @@ export default function HomePage() {
 
     <>
     <PageContainer theme={theme}>
-    <SubHeader theme={theme}>Academic Calendar Generation Tool</SubHeader>
+    {/* <SubHeader theme={theme}>Academic Calendar Generation Tool</SubHeader> */}
               <Paragraph theme={theme}>
                 ¡Bienvenidos! Esta herramienta fue creada por el grupo de 
                 <strong> UPRM Calendar Generator Platform Team</strong> para
