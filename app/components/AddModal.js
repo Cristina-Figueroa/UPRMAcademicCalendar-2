@@ -61,7 +61,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           background: theme.palette.background.paper,
           color: theme.palette.text.primary,
           margin: '10% auto',
-          width: '400px',
+          width: '50%',
           borderRadius: '8px',
           boxShadow: theme.shadows[5],
         }}
