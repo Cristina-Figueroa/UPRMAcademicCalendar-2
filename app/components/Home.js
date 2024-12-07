@@ -412,7 +412,9 @@ function Home() {
         // Update the local state so the UI reflects the changes
         setImportantDates((prevDates) =>
           prevDates.map((date) =>
-            date.id === updatedDate.id ? updatedDate : date
+            date.id === updatedDate.id
+        ? { ...date, date: dateformatted, event: updatedDate.event, formatted_date: updatedDate.formatted_date }
+        : date
           )
         );
         setEditDate(null);
