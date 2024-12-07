@@ -27,6 +27,7 @@ def fetch_filtered_guidelines(academic_period):
         SELECT guideline_id, guideline_name, shift_days, day_type, start, period_type
         FROM guidelines
         WHERE period_type = %s
+        ORDER BY period_type, guideline_name
     """
 
     # Execute the query to get the filtered guidelines
