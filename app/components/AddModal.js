@@ -92,11 +92,10 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
 
         <FormControl sx={{ 
           flex: '1',
-          flexDirection: 'row'
+          flexDirection: 'column'
           }} 
           size="small"
           > 
-
 
         <p>¿Que periodo académico cae esta directriz?</p>
         <Select
@@ -130,8 +129,6 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="SABADOS">Sabados</MenuItem>
         </Select>
 
-
-        
         <p>¿Cuando es el punto de comienzo para esta directriz?</p>
         <Select
           name="start"
