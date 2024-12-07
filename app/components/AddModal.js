@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, TextField, Select, MenuItem } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import FormControl from '@mui/material/FormControl';
 
 const AddGuidelineModal = ({ show, onClose, onSave }) => {
   const theme = useTheme();
@@ -60,14 +61,23 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           padding: '20px',
           background: theme.palette.background.paper,
           color: theme.palette.text.primary,
-          // bottom: '20px',
-          margin: '10% auto',
-          marginTop: '-20px',
-          width: '50%',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '60%',
           borderRadius: '8px',
           boxShadow: theme.shadows[5],
         }}
       >
+
+        <FormControl sx={{ 
+          flex: '1',
+          flexDirection: 'row'
+          }} 
+          size="small"
+          > 
+
         <h2 style={{ color: theme.palette.text.primary }}>Añade una Directriz</h2>
         {notification && (
           <p style={{ color: 'red', marginBottom: '15px' }}>{notification}</p>
@@ -85,7 +95,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           error={!!errors.guideline_name}
           helperText={errors.guideline_name || ''}
         />
-
+        <>
         <p>¿Que periodo académico cae esta directriz?</p>
         <Select
           name="period_type"
@@ -101,7 +111,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="SUMMER">Verano Corto</MenuItem>
           <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
         </Select>
+        </>
 
+        <>
         <p>¿Que tipo de días cuentas para esta directriz?</p>
         <Select
           name="day_type"
@@ -117,7 +129,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="LABORABLES">Laborables</MenuItem>
           <MenuItem value="SABADOS">Sabados</MenuItem>
         </Select>
+        </>
 
+        <>
         <p>¿Cuando es el punto de comienzo para esta directriz?</p>
         <Select
           name="start"
@@ -134,7 +148,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
             <MenuItem value="PERIODO DE REPASO">Periodo de Repaso</MenuItem>
             <MenuItem value="PERIODO DE FINALES">Periodo de Finales</MenuItem>
           </Select>     
+        </>
 
+        <>
         <p>¿Cuantos días desde antes (-neg) o despues (pos) del punto de comienzo elegido cuentas para la directriz?</p>
         <TextField
           name="shift_days"
@@ -150,8 +166,12 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           error={!!errors.shift_days}
           helperText={errors.shift_days || ''}
         />
+        </>
+      </FormControl>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+
+        {/* Buttons */}
+        <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
           <Button
             onClick={onClose}
             color="secondary"
