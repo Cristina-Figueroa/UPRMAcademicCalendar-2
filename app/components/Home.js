@@ -587,14 +587,14 @@ function Home() {
               message="Are you sure you want to discard this generation?"
             />
           )}
-          {isDownloadModalOpen && (
+          {/* {isDownloadModalOpen && (
             <ConfirmationModal
               open={isDownloadModalOpen}
               onClose={closeModal}
               onConfirm={handleDownload}
               message="Are you sure you want to download the data?"
             />
-          )}
+          )} */}
 
 
       <Suspense fallback={<CircularSpinner loading={isLoading} />}>  
@@ -689,46 +689,47 @@ function Home() {
 
                                   {importantDates.map((date, index) => (
                                     <TableRow key={date.id} theme={theme}>
-   {editDate && editDate.id === date.id ? (
-              // Editing mode
-              <>
-                <TableCell theme={theme}>
-                  <input
-                    type="date"
-                    value={editDate.formatted_date || ""}
-                    onChange={(e) => handleInputChange('formatted_date', e.target.value)}
-                  />
-                </TableCell>
-                <TableCell theme={theme}>
-                  <input
-                    type="text"
-                    value={editDate.event || ""}
-                    onChange={(e) => handleInputChange('event', e.target.value)}
-                  />
-                </TableCell>
-                <ActionCell theme={theme}>
-                  <Button onClick={() => handleEditSave(editDate)}>Save</Button>
-                  <Button onClick={handleEditCancel}>Cancel</Button>
-                </ActionCell>
-              </>
-            ) : (
-              // View mode
-              <>
-                <DateCell theme={theme}>{date.date}</DateCell>
-                <DescriptionCell theme={theme}>{date.event}</DescriptionCell>
-                <ActionCell theme={theme}>
-                  <EditRowButton theme={theme} onClick={() => handleEditClick(date)}>
-                    <EditIcon />
-                  </EditRowButton>
-                  <DeleteButton
-                    theme={theme}
-                    onClick={handleDeleteClick}
-                  >
-                    <DeleteIcon />
-                  </DeleteButton>
-                </ActionCell>
-              </>
-            )}
+                                      {editDate && editDate.id === date.id ? (
+                                                  // Editing mode
+                                                  <>
+                                                    <TableCell theme={theme}>
+                                                      <input
+                                                        type="date"
+                                                        value={editDate.formatted_date || ""}
+                                                        onChange={(e) => handleInputChange('formatted_date', e.target.value)}
+                                                      />
+                                                    </TableCell>
+                                                    <TableCell theme={theme}>
+                                                      <input
+                                                        type="text"
+                                                        value={editDate.event || ""}
+                                                        onChange={(e) => handleInputChange('event', e.target.value)}
+                                                      />
+                                                    </TableCell>
+                                                    <ActionCell theme={theme}>
+                                                      <Button onClick={() => handleEditSave(editDate)}>Save</Button>
+                                                      <Button onClick={handleEditCancel}>Cancel</Button>
+                                                    </ActionCell>
+                                                  </>
+                                                ) : (
+                                                  // View mode
+                                                  <>
+                                                    <DateCell theme={theme}>{date.date}</DateCell>
+                                                    <DescriptionCell theme={theme}>{date.event}</DescriptionCell>
+                                                    <ActionCell theme={theme}>
+                                                      <EditRowButton theme={theme} onClick={() => handleEditClick(date)}>
+                                                        <EditIcon />
+                                                      </EditRowButton>
+                                                      <DeleteButton
+                                                        theme={theme}
+                                                        onClick={() => handleDeleteClick(date.id)}
+                                                        style={{ color: 'red' }}
+                                                      >
+                                                        <DeleteIcon />
+                                                      </DeleteButton>
+                                                    </ActionCell>
+                                                  </>
+                                                )}
                                     </TableRow>
                                   ))}
                                 </TableBody>
@@ -825,7 +826,7 @@ function Home() {
           borderRadius: '10px',
           zIndex: 1000,
       }}>
-          <h2>Are you sure you want to download the data?</h2>
+          <h2>You are downloading the data. Press Yes, Download to continue.</h2>
           <Button onClick={handleDownload} 
           style={{
             backgroundColor: theme.palette.mode === 'dark' 
