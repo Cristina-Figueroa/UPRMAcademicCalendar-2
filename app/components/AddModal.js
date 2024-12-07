@@ -34,10 +34,10 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
     const newErrors = {};
 
     if (!formData.guideline_name.trim()) {
-      newErrors.guideline_name = 'Guideline name is required';
+      newErrors.guideline_name = 'Nombre de Directriz es requerido';
     }
     if (!formData.shift_days.trim()) {
-      newErrors.shift_days = 'Shift days is required';
+      newErrors.shift_days = 'Días a mover es requerido';
     }
 
     setErrors(newErrors);
@@ -60,6 +60,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           padding: '20px',
           background: theme.palette.background.paper,
           color: theme.palette.text.primary,
+          bottom: '20px',
           margin: '10% auto',
           width: '50%',
           borderRadius: '8px',
