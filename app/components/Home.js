@@ -760,7 +760,7 @@ function Home() {
 
 
 
-                                  {importantDates.map((date, index) => (
+                                  {currentEvents.map((date, index) => (
                                     <TableRow key={date.id} theme={theme}>
                                       {editDate && editDate.id === date.id ? (
                                                   // Editing mode
