@@ -13,8 +13,6 @@ import Loading from '../loading';
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
   line-height: 1.6;
-  margin: 0;
-  padding: 20px;
   margin-top: -40px;
   color: ${({ theme }) =>
   theme.palette.mode === 'dark'
