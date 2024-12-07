@@ -310,7 +310,7 @@ const HolidaysTable = () => {
             formatted_date: newHoliday.formattedDate,
           }),
         });
-        console.log("Sending holiday:", {
+        console.log("Adding holiday to DB:", {
           holiday_date: newHoliday.holiday_date,
           holiday_name: newHoliday.description,
           formatted_date: newHoliday.formattedDate,
@@ -427,6 +427,12 @@ const HolidaysTable = () => {
             formatted_date: `${String(updatedHoliday.month).padStart(2, '0')}-${String(updatedHoliday.day).padStart(2, '0')}`,
           }),
         });
+        console.log("Updating holiday:", {
+          holiday_date: `${monthNamesInSpanish[updatedHoliday.month - 1]} ${updatedHoliday.day}`,
+          holiday_name: updatedHoliday.holiday_name,
+          formatted_date: `${String(updatedHoliday.month).padStart(2, '0')}-${String(updatedHoliday.day).padStart(2, '0')}`,
+
+        });
     
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -445,6 +451,7 @@ const HolidaysTable = () => {
         console.error('Error saving holiday:', err);
         showNotification("Failed to update the holiday. Please try again.", "error");
       }
+      // try {get route} goes here
     };
     
     const handleEditCancel = () => {

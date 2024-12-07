@@ -278,7 +278,9 @@ function Home() {
       const displayMonth = months[utcMonth];
       
       const dateformatted = `${dayOfWeek}, ${displayDay} ${displayMonth} ${utcYear}`;
-
+      console.log("dateformatted in Adding Date Function:", {
+        date: dateformatted
+      });
     
       try {
         // Send POST request to Flask API
@@ -294,7 +296,7 @@ function Home() {
             formatted_date: newEvent.formatted_date,
           }),
         });
-        console.log("Sending Date:", {
+        console.log("Adding Event to the DB:", {
           date: dateformatted,
           event: newEvent.event,
           formatted_date: newEvent.formatted_date,
@@ -377,7 +379,9 @@ function Home() {
         const displayMonth = months[utcMonth];
 
         const dateformatted = `${dayOfWeek}, ${displayDay} ${displayMonth} ${utcYear}`;
-
+        console.log("dateformatted in Updating Function:", {
+          date: dateformatted
+        });
 
         const response = await fetch(
           `https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates/${updatedDate.id}`, 
@@ -391,8 +395,12 @@ function Home() {
               event: updatedDate.event,
               formatted_date: updatedDate.formatted_date,
             }),
-          }
-        );
+          });
+          console.log("Updating this Event in the DB:", {
+            date: dateformatted,
+            event: updatedDate.event,
+            formatted_date: updatedDate.formatted_date,
+          });
     
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
