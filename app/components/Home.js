@@ -179,6 +179,7 @@ function Home() {
       .then((data) => {
         console.log('Response from Flask:', data);
         setResponseMessage(
+          data.message + ' - Dia de Comienzo de Clases:' + startDate + ' , Periodo Academico Elegido: ' + period
           // data.message + ' - Date:' + startDate + ' , Period: ' + period + ' , Weeks: ' + weeks
         );
         const processedDates = data.important_dates.map((dateItem) => {
@@ -652,8 +653,13 @@ function Home() {
 
 
                 {!isLoading && isSubmitPressed && (
-
               <>
+                  <Center>
+
+                    
+                  </Center>
+
+
                   {/* Important Dates */}
                               <TableContainer theme={theme}>
                               <StyledTable theme={theme}>
