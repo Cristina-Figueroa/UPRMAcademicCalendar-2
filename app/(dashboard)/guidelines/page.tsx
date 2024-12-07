@@ -42,7 +42,7 @@ export default function GuidelinesPage() {
 <>
     <PageContainer theme={theme}>
       <Paragraph theme={theme}>
-      Esta página proporciona una <strong>visión general </strong> 
+      Esta página proporciona una <strong>lista general </strong> 
       de las <strong>directrices</strong> seguidas en el <strong>
         proceso de generación del calendario académico</strong>. 
         Estas directrices aseguran que el calendario cumpla con 

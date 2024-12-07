@@ -66,13 +66,13 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           boxShadow: theme.shadows[5],
         }}
       >
-        <h2 style={{ color: theme.palette.text.primary }}>Add New Guideline</h2>
+        <h2 style={{ color: theme.palette.text.primary }}>Añade una Directriz</h2>
         {notification && (
           <p style={{ color: 'red', marginBottom: '15px' }}>{notification}</p>
         )}
         <TextField
           name="guideline_name"
-          label="Guideline Name"
+          label="Nombre de la Directriz"
           fullWidth
           value={formData.guideline_name}
           onChange={handleChange}
@@ -83,20 +83,24 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           error={!!errors.guideline_name}
           helperText={errors.guideline_name || ''}
         />
-        <TextField
-          name="shift_days"
-          label="Shift Days"
-          type="number"
-          fullWidth
-          value={formData.shift_days}
+
+        <p>¿Que periodo académico cae esta directriz?</p>
+        <Select
+          name="period_type"
+          value={formData.period_type}
           onChange={handleChange}
+          fullWidth
           style={{
             marginBottom: '15px',
-            borderColor: errors.shift_days ? 'red' : undefined,
+            color: theme.palette.text.primary,
           }}
-          error={!!errors.shift_days}
-          helperText={errors.shift_days || ''}
-        />
+        >
+          <MenuItem value="SEMESTER">Semestre</MenuItem>
+          <MenuItem value="SUMMER">Verano Corto</MenuItem>
+          <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
+        </Select>
+
+        <p>¿Que tipo de días cuentas para esta directriz?</p>
         <Select
           name="day_type"
           value={formData.day_type}
@@ -112,6 +116,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="SABADOS">Sabados</MenuItem>
         </Select>
 
+        <p>¿Cuando es el punto de comienzo para esta directriz?</p>
         <Select
           name="start"
           fullWidth
@@ -126,24 +131,23 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
             <MenuItem value="ENDDATE">ENDDATE</MenuItem>
             <MenuItem value="PERIODO DE REPASO">Periodo de Repaso</MenuItem>
             <MenuItem value="PERIODO DE FINALES">Periodo de Finales</MenuItem>
+          </Select>     
 
-          </Select>      
-
-          <Select
-            name="period_type"
-            value={formData.period_type}
-            onChange={handleChange}
-            fullWidth
-            style={{
-              marginBottom: '15px',
-              color: theme.palette.text.primary,
-            }}
-          >
-            <MenuItem value="SEMESTER">Semestre</MenuItem>
-            <MenuItem value="SUMMER">Verano Corto</MenuItem>
-            <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
-          </Select>
-
+        <p>¿Cuantos días desde antes (-neg) o despues (pos) del punto de comienzo elegido cuentas para la directriz?</p>
+        <TextField
+          name="shift_days"
+          label="Días a contar"
+          type="number"
+          fullWidth
+          value={formData.shift_days}
+          onChange={handleChange}
+          style={{
+            marginBottom: '15px',
+            borderColor: errors.shift_days ? 'red' : undefined,
+          }}
+          error={!!errors.shift_days}
+          helperText={errors.shift_days || ''}
+        />
 
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button
