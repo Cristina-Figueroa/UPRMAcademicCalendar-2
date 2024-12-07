@@ -71,13 +71,6 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
         }}
       >
 
-        <FormControl sx={{ 
-          flex: '1',
-          flexDirection: 'row'
-          }} 
-          size="small"
-          > 
-
         <h2 style={{ color: theme.palette.text.primary }}>Añade una Directriz</h2>
         {notification && (
           <p style={{ color: 'red', marginBottom: '15px' }}>{notification}</p>
@@ -95,6 +88,15 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           error={!!errors.guideline_name}
           helperText={errors.guideline_name || ''}
         />
+
+
+        <FormControl sx={{ 
+          flex: '1',
+          flexDirection: 'row'
+          }} 
+          size="small"
+          > 
+        <div>
         <>
         <p>¿Que periodo académico cae esta directriz?</p>
         <Select
@@ -130,7 +132,8 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="SABADOS">Sabados</MenuItem>
         </Select>
         </>
-
+        </div>
+        <div>
         <>
         <p>¿Cuando es el punto de comienzo para esta directriz?</p>
         <Select
@@ -167,6 +170,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           helperText={errors.shift_days || ''}
         />
         </>
+        </div>
       </FormControl>
 
 
