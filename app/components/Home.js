@@ -8,6 +8,8 @@ import DatePickerComponent from './DatePicker';
 import ButtonComponent from './Button';
 import DescriptionAlerts from './Alert';
 import CircularSpinner from './LoadingSpinner';
+import PaginationComponent from './Pagination';
+import RowsPerPage from './RowsPerPage'; 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ConfirmationModal from './ConfirmDelete';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -40,6 +42,10 @@ import {
   DownloadButton,
   CancelButton,
   StyledInput,
+  TableFooter,
+  TableFooterRow,
+  TableFooterCell,
+  Right,
 
 } from './DatesTableStyles';
 
@@ -90,7 +96,6 @@ function Home() {
   const [academicPeriod, setAcademicPeriod] = useState('fall');  // Default to 'fall'
   const [responseMessage, setResponseMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');  // For displaying error messages
-  const [holidays, setHolidays] = useState([]); //State to get holidays
   const [importantDates, setImportantDates] = useState([]);
 
 
@@ -108,6 +113,27 @@ function Home() {
       setNotificationType("");
     }, 3000);
   };
+
+
+    // Table Components - Rows per Page and Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(5); // Set 5 as default number of rows per page
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    const currentEvents = importantDates.slice(indexOfFirstRow, indexOfLastRow);
+    const totalPages = Math.ceil(importantDates.length / rowsPerPage);
+
+    const handlePageChange = useCallback((newPage) => {
+      if (newPage >= 1 && newPage <= totalPages) {
+        setCurrentPage(newPage);
+      }
+    }, [totalPages]);
+
+    const handleRowsPerPageChange = useCallback((event) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setCurrentPage(1);
+    }, []);
+
 
 
 /**
@@ -493,7 +519,6 @@ function Home() {
 
     const handleConfirmDelete = async () => {
       try {
-        // const response = await fetch(`https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/${holidayToDelete}`, {
           const response = await fetch(
             `https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/get-important-dates/${dateToDelete}`, 
             {
@@ -789,6 +814,30 @@ function Home() {
                                     </TableRow>
                                   ))}
                                 </TableBody>
+
+                                <TableFooter theme={theme}>
+            <TableFooterRow >
+                <TableFooterCell colSpan={3} theme={theme}>
+                  <Container>
+                    <RowsPerPage
+                        rowsPerPage={rowsPerPage}
+                        onRowsPerPageChange={handleRowsPerPageChange}
+                      />
+                    <Right>
+                        <PaginationComponent
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                          /> 
+                    </Right>
+                </Container>
+                </TableFooterCell>
+            </TableFooterRow>
+          </TableFooter>
+
+
+
+
                               </StyledTable>
                             </TableContainer>
 
