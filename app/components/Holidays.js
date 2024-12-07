@@ -439,19 +439,33 @@ const HolidaysTable = () => {
         }
     
         showNotification("Holiday updated successfully!", "success");
-    
-        // Only update the holiday list if PUT request was successful
+        
+        // Update the local state so the UI reflects the changes
         setHolidays((prev) =>
           prev.map((holiday) =>
-            holiday.holiday_id === updatedHoliday.holiday_id ? updatedHoliday : holiday
+            holiday.holiday_id === updatedHoliday.holiday_id 
+        ? {          
+          holiday_date: `${monthNamesInSpanish[updatedHoliday.month - 1]} ${updatedHoliday.day}`,
+          holiday_name: updatedHoliday.holiday_name,
+          formatted_date: `${String(updatedHoliday.month).padStart(2, '0')}-${String(updatedHoliday.day).padStart(2, '0')}`,
+          }
+        : holiday
           )
         );
+
         setEditHoliday(null); // Exit edit mode
       } catch (err) {
         console.error('Error saving holiday:', err);
         showNotification("Failed to update the holiday. Please try again.", "error");
       }
-      // try {get route} goes here
+      try {
+        const response = await fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/holidays/');
+        // const response = await fetch("http://127.0.0.1:5000/holidays/");
+        const data = await response.json();
+        setHolidays(data); // Refresh holidays list
+      } catch (error) {
+        console.error("Error refreshing holidays:", error);
+      }
     };
     
     const handleEditCancel = () => {
