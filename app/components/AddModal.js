@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Box, Button, TextField, Select, MenuItem } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import styled from "styled-components";
+import FormControl from '@mui/material/FormControl';
 
 
 const BoxInModalStyle = {
@@ -16,10 +17,6 @@ const BoxInModalStyle = {
   borderRadius: '8px',
   boxShadow: theme.shadows[5],
 }
-
-
-
-
 
 const AddGuidelineModal = ({ show, onClose, onSave }) => {
   const theme = useTheme();
@@ -73,11 +70,8 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
   };
 
   return (
-    <Modal open={show} onClose={onClose}>
-
-      
+    <Modal open={show} onClose={onClose}>    
       <Box style={BoxInModalStyle}>
-
         <h2 style={{ color: theme.palette.text.primary }}>Añade una Directriz</h2>
         {notification && (
           <p style={{ color: 'red', marginBottom: '15px' }}>{notification}</p>
@@ -97,89 +91,87 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           helperText={errors.guideline_name || ''}
         />
 
-<FormControl sx={{ 
+        <FormControl sx={{ 
           backgroundColor: 'pink',
           flex: '1',
           flexDirection: 'row'
           }} 
           size="small"
           >
-
-
-<div>
-        <>
-          <p>¿Que periodo académico cae esta directriz?</p>
-          <Select
-            name="period_type"
-            value={formData.period_type}
-            onChange={handleChange}
-            fullWidth
-            style={{
-              marginBottom: '15px',
-              color: theme.palette.text.primary,
-            }}
-          >
-            <MenuItem value="SEMESTER">Semestre</MenuItem>
-            <MenuItem value="SUMMER">Verano Corto</MenuItem>
-            <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
-          </Select>
-        </>
-        <>
-          <p>¿Que tipo de días cuentas para esta directriz?</p>
-          <Select
-            name="day_type"
-            value={formData.day_type}
-            onChange={handleChange}
-            fullWidth
-            style={{
-              marginBottom: '15px',
-              color: theme.palette.text.primary,
-            }}
-          >
-            <MenuItem value="NORMALES">Normales</MenuItem>
-            <MenuItem value="LABORABLES">Laborables</MenuItem>
-            <MenuItem value="SABADOS">Sabados</MenuItem>
-          </Select>
-          </>
-          </div>
-        <div>
-          <>
-          <p>¿Cuando es el punto de comienzo para esta directriz?</p>
-          <Select
-            name="start"
-            // fullWidth
-            value={formData.start}
-            onChange={handleChange}
-            style={{
-              marginBottom: '15px',
-              color: theme.palette.text.primary,
-            }}
-            >
-              <MenuItem value="STARTDATE">STARTDATE</MenuItem>
-              <MenuItem value="ENDDATE">ENDDATE</MenuItem>
-              <MenuItem value="PERIODO DE REPASO">Periodo de Repaso</MenuItem>
-              <MenuItem value="PERIODO DE FINALES">Periodo de Finales</MenuItem>
-            </Select>     
-          </>
-          <>
-          <p>¿Cuantos días desde antes (-neg) o despues (pos) del punto de comienzo elegido cuentas para la directriz?</p>
-          <TextField
-            name="shift_days"
-            label="Días a contar"
-            type="number"
-            // fullWidth
-            value={formData.shift_days}
-            onChange={handleChange}
-            style={{
-              marginBottom: '15px',
-              borderColor: errors.shift_days ? 'red' : undefined,
-            }}
-            error={!!errors.shift_days}
-            helperText={errors.shift_days || ''}
-          />
-          </>
-          </div>
-</FormControl>
+            <div>
+              <>
+                  <p>¿Que periodo académico cae esta directriz?</p>
+                  <Select
+                    name="period_type"
+                    value={formData.period_type}
+                    onChange={handleChange}
+                    fullWidth
+                    style={{
+                      marginBottom: '15px',
+                      color: theme.palette.text.primary,
+                    }}
+                  >
+                    <MenuItem value="SEMESTER">Semestre</MenuItem>
+                    <MenuItem value="SUMMER">Verano Corto</MenuItem>
+                    <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
+                  </Select>
+              </>
+              <>
+                  <p>¿Que tipo de días cuentas para esta directriz?</p>
+                  <Select
+                    name="day_type"
+                    value={formData.day_type}
+                    onChange={handleChange}
+                    fullWidth
+                    style={{
+                      marginBottom: '15px',
+                      color: theme.palette.text.primary,
+                    }}
+                  >
+                    <MenuItem value="NORMALES">Normales</MenuItem>
+                    <MenuItem value="LABORABLES">Laborables</MenuItem>
+                    <MenuItem value="SABADOS">Sabados</MenuItem>
+                  </Select>
+              </>
+            </div>
+            <div>
+              <>
+                <p>¿Cuando es el punto de comienzo para esta directriz?</p>
+                <Select
+                  name="start"
+                  // fullWidth
+                  value={formData.start}
+                  onChange={handleChange}
+                  style={{
+                    marginBottom: '15px',
+                    color: theme.palette.text.primary,
+                  }}
+                  >
+                    <MenuItem value="STARTDATE">STARTDATE</MenuItem>
+                    <MenuItem value="ENDDATE">ENDDATE</MenuItem>
+                    <MenuItem value="PERIODO DE REPASO">Periodo de Repaso</MenuItem>
+                    <MenuItem value="PERIODO DE FINALES">Periodo de Finales</MenuItem>
+                  </Select>     
+              </>
+              <>
+                <p>¿Cuantos días desde antes (-neg) o despues (pos) del punto de comienzo elegido cuentas para la directriz?</p>
+                <TextField
+                  name="shift_days"
+                  label="Días a contar"
+                  type="number"
+                  // fullWidth
+                  value={formData.shift_days}
+                  onChange={handleChange}
+                  style={{
+                    marginBottom: '15px',
+                    borderColor: errors.shift_days ? 'red' : undefined,
+                  }}
+                  error={!!errors.shift_days}
+                  helperText={errors.shift_days || ''}
+                />
+              </>
+              </div>
+    </FormControl>
 
           {/* Buttons */}
         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
