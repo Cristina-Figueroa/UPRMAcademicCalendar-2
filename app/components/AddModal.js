@@ -97,7 +97,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           size="small"
           > 
         <div>
-        <>
+        <div sx={{ width: '100px', height: '50px' }}>
         <p>¿Que periodo académico cae esta directriz?</p>
         <Select
           name="period_type"
@@ -113,9 +113,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="SUMMER">Verano Corto</MenuItem>
           <MenuItem value="EXTENDED SUMMER">Verano Extendido</MenuItem>
         </Select>
-        </>
+        </div>
 
-        <>
+        <div sx={{ width: '100px', height: '50px' }}>
         <p>¿Que tipo de días cuentas para esta directriz?</p>
         <Select
           name="day_type"
@@ -131,10 +131,14 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           <MenuItem value="LABORABLES">Laborables</MenuItem>
           <MenuItem value="SABADOS">Sabados</MenuItem>
         </Select>
-        </>
         </div>
+        </div>
+
+
+
+        
         <div>
-        <>
+        <div sx={{ width: '100px', height: '50px' }}>
         <p>¿Cuando es el punto de comienzo para esta directriz?</p>
         <Select
           name="start"
@@ -151,9 +155,9 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
             <MenuItem value="PERIODO DE REPASO">Periodo de Repaso</MenuItem>
             <MenuItem value="PERIODO DE FINALES">Periodo de Finales</MenuItem>
           </Select>     
-        </>
+        </div>
 
-        <>
+        <div sx={{ width: '100px', height: '50px' }}>
         <p>¿Cuantos días desde antes (-neg) o despues (pos) del punto de comienzo elegido cuentas para la directriz?</p>
         <TextField
           name="shift_days"
@@ -169,7 +173,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           error={!!errors.shift_days}
           helperText={errors.shift_days || ''}
         />
-        </>
+        </div>
         </div>
       </FormControl>
 
