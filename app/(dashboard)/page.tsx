@@ -75,14 +75,20 @@ export default function HomePage() {
 
     <>
     <PageContainer theme={theme}>
-    <SubHeader theme={theme}>Academic Calendar Generator</SubHeader>
+    <SubHeader theme={theme}>Academic Calendar Generation Tool</SubHeader>
               <Paragraph theme={theme}>
-                The <strong>Academic Calendar Generator</strong> is a tool created by{" "}
+                Bienvenidos! Esta herramienta fue creada por el grupo de 
+                <strong>UPRM Calendar Generator Platform Team</strong> para
+                simplificar la creación de calendarios académicos, automatizando
+                el proceso de cálculos de las fechas y agilizando el proceso de añadir las 
+                regulaciones institucionales.
+
+                {/* The <strong>Academic Calendar Generator</strong> is a tool created by{" "}
                 <strong>UPRM Calendar Generator Team</strong> to simplify academic
                 calendar planning. Built as part of our capstone project, this tool
                 addresses the challenges of manual calendar creation by automating date
                 calculations, following institutional guidelines, and adapting to
-                unexpected changes.
+                unexpected changes. */}
               </Paragraph>
     <Suspense fallback={<Loading/>}>
 

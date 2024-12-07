@@ -749,14 +749,14 @@ function Home() {
                                                   // Editing mode
                                                   <>
                                                     <TableCell theme={theme}>
-                                                      <input
+                                                      <StyledInput
                                                         type="date"
                                                         value={editDate.formatted_date || ""}
                                                         onChange={(e) => handleInputChange('formatted_date', e.target.value)}
                                                       />
                                                     </TableCell>
                                                     <TableCell theme={theme}>
-                                                      <input
+                                                      <StyledInput
                                                         type="text"
                                                         value={editDate.event || ""}
                                                         onChange={(e) => handleInputChange('event', e.target.value)}
