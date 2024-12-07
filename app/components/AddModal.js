@@ -18,6 +18,23 @@ const BoxInModalStyle = {
   boxShadow: theme.shadows[5],
 }
 
+const BoxInModal = styled.div`
+  padding: '20px';
+  background: theme.palette.background.paper;
+  color: theme.palette.text.primary;
+  position: 'absolute';
+  top: '50%';
+  left: '50%';
+  transform: 'translate(-50%, -50%)';
+  width: '60%';
+  border-radius: '8px';
+  box-shadow: theme.shadows[5];
+  color: ${({ theme }) =>
+  theme.palette.mode === 'dark'
+    ? theme.palette.text.primary
+    : theme.palette.text.primary};  
+`;
+
 const AddGuidelineModal = ({ show, onClose, onSave }) => {
   const theme = useTheme();
 
@@ -71,7 +88,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
 
   return (
     <Modal open={show} onClose={onClose}>    
-      <Box style={BoxInModalStyle}>
+      <BoxInModal>
         <h2 style={{ color: theme.palette.text.primary }}>Añade una Directriz</h2>
         {notification && (
           <p style={{ color: 'red', marginBottom: '15px' }}>{notification}</p>
@@ -197,7 +214,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
             Save
           </Button>
         </div>
-      </Box>
+      </BoxInModal>
     </Modal>
   );
 };
