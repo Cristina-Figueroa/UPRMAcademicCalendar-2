@@ -2,8 +2,10 @@
 # from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_app.services.utils import datetime, replace_important_dates
-from flask_app.services.academicPeriod import calculate_important_dates, calculate_important_dates_using_guidelines, calculate_important_dates_with_formatted_date, fetch_important_dates, fetch_filtered_and_add_year_to_holidays, add_date_to_db
-from flask_app.services.guidelines import fetch_guidelines, fetch_filtered_guidelines
+from flask_app.services.academicPeriod import calculate_important_dates_with_formatted_date, fetch_filtered_and_add_year_to_holidays
+from flask_app.services.academicPeriod import add_date_to_db, update_date_in_db, delete_date_from_db, fetch_important_dates
+
+from flask_app.services.guidelines import fetch_filtered_guidelines
 
 bp = Blueprint('submit-academic-period', __name__, url_prefix='/submit-academic-period')
 
@@ -92,3 +94,20 @@ def add_important_date():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@bp.route('/get-important-dates/<int:id>', methods=['PUT'])
+def update_date(id):
+    try:
+        data = request.json
+        update_date_in_db(id, data)
+        return jsonify({'message': 'Date updated successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@bp.route('/get-important-dates/<int:id>', methods=['DELETE'])
+def delete_date(id):
+    try:
+        delete_date_from_db(id)
+        return jsonify({'message': 'Date deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

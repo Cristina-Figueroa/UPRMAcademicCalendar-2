@@ -230,7 +230,14 @@ const GuidelinesTable = () => {
             period_type: newGuideline.period_type,
           })
         });
-    
+        console.log("Adding this Guideline into DB:", {
+          guideline_name: newGuideline.guideline_name,
+          shift_days: newGuideline.shift_days,
+          day_type: newGuideline.day_type,
+          start: newGuideline.start,
+          period_type: newGuideline.period_type,
+         });
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -315,7 +322,6 @@ const GuidelinesTable = () => {
         start: editedGuideline.start,              // Start value
         period_type: editedGuideline.period_type, // Period Type
       };
-      console.log(updatedGuideline); 
 
       try {
         const response = await fetch(`https://calendaruprm-0b385eeb2b1e.herokuapp.com/guidelines/${updatedGuideline.guideline_id}`, {
@@ -326,6 +332,9 @@ const GuidelinesTable = () => {
           },
           body: JSON.stringify(updatedGuideline), 
         });
+        console.log("Updating Guideline to DB:", {
+          updatedGuideline
+        }); 
     
         if (!response.ok) {
           throw new Error(`Failed to update guideline. Status: ${response.status}`);
