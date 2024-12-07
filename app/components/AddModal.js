@@ -49,7 +49,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
       onSave(formData);
       onClose();
     } else {
-      setNotification('Please fill out all required fields.');
+      setNotification('Favor llenar todos los campos.');
     }
   };
 
@@ -64,7 +64,7 @@ const AddGuidelineModal = ({ show, onClose, onSave }) => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '62%',
+          width: '60%',
           borderRadius: '8px',
           boxShadow: theme.shadows[5],
         }}
