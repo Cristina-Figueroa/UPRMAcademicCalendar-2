@@ -2,7 +2,7 @@
 
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Button, Container, } from '@mui/material';
+import { Box, Button, } from '@mui/material';
 import BasicSelect from './BasicSelect';
 import DatePickerComponent from './DatePicker';
 import ButtonComponent from './Button';
@@ -46,6 +46,7 @@ import {
   TableFooterRow,
   TableFooterCell,
   Right,
+  Container,
 
 } from './DatesTableStyles';
 
@@ -533,16 +534,12 @@ function Home() {
         }
     
         showNotification("Event deleted successfully!", "success");
-      // Refresh guidelines in state after deletion
-      // setGuidelines((prevDates) =>
-      //   prevGuidelines.filter((guideline) => guideline[0] !== guidelineToDelete)
-      // );
-      setImportantDates((prevDates) =>
-        prevDates.filter((date) => date.id !== dateToDelete)
-      );
+        setImportantDates((prevDates) =>
+          prevDates.filter((date) => date.id !== dateToDelete)
+        );
       } catch (error) {
         console.error('Error deleting event:', error);
-        showNotification("Failed to delete the date. Please try again.", "error");
+        showNotification("Failed to delete the event. Please try again.", "error");
       } finally {
         setIsDeleteModalOpen(false); // Close the modal
         setDateToDelete(null);
@@ -709,11 +706,6 @@ function Home() {
 
                 {!isLoading && isSubmitPressed && (
               <>
-                  <Center>
-
-                    
-                  </Center>
-
 
                   {/* Important Dates */}
                               <TableContainer theme={theme}>
