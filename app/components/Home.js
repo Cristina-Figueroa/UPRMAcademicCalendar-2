@@ -132,24 +132,29 @@ function Home() {
     const month = dateObject.getMonth(); 
     let period = academicPeriod; // To store the academic period
     let weeks = 0;   // To store the number of weeks
-
+    let academicPeriodFrontEnd = '';
     
 
     // Check the month and determine the period and weeks
     if (month === 7 && academicPeriod === 'fall' || month === 8 && academicPeriod === 'fall') { // August (7) or September (8)
       weeks = 15;
+      academicPeriodFrontEnd = "Primer Semestre";
       // weeks = 75;
     } else if (month === 0 && academicPeriod === 'spring'|| month === 1 && academicPeriod === 'spring') { // January (0) or February (1)
       weeks = 15;
+      academicPeriodFrontEnd = "Segundo Semestre";
       // weeks = 75;
     } else if (month === 4 && academicPeriod === 'summerV1'|| month === 5 && academicPeriod === 'summerV1') { // May (4) or June (5)
       weeks = 4;
+      academicPeriodFrontEnd = "Primera Sesión de Cuatro Semanas de Verano";
       // weeks = 19;
     } else if (month === 4 && academicPeriod === 'summerExtended'|| month === 5 && academicPeriod === 'summerExtended') { // May (4) or June (5)
       weeks = 6;
+      academicPeriodFrontEnd = "Verano Extendido";
       // weeks = 30;
     } else if (month === 5 && academicPeriod === 'summerV2'|| month === 6 && academicPeriod === 'summerV2') { // May (4) or June (5)
       weeks = 4;
+      academicPeriodFrontEnd = "Segunda Sesión de Cuatro Semanas de Verano";
       // weeks = 19;
     } else {
       period = 'unknown';
@@ -158,6 +163,31 @@ function Home() {
       return; // Exit if the date is invalid
     }
     setErrorMessage('');
+
+    // Format day in Mon, DD MM YYYY
+
+      // Creating date value for important_dates table (Mon, 02 Jan 2025)
+      const inputDate = startDate; // e.g. "2025-01-02"
+      const utcDateStr = inputDate + "T00:00:00Z"; 
+      const parsedDate = new Date(utcDateStr);
+      const utcDay = parsedDate.getUTCDate();       // Day of month (1-31)
+      const utcMonth = parsedDate.getUTCMonth();    // Month (0-11)
+      const utcYear = parsedDate.getUTCFullYear();  // Full year
+      const utcWeekday = parsedDate.getUTCDay();    // Day of week (0-6, Sun=0)
+      const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          
+      const dayOfWeek = weekdays[utcWeekday];
+      const displayDay = String(utcDay).padStart(2, '0'); // e.g., "02"
+      const displayMonth = months[utcMonth];
+      
+      const dateformatted = `${dayOfWeek}, ${displayDay} ${displayMonth} ${utcYear}`;
+      console.log("dateformatted in Adding Date Function:", {
+        date: dateformatted
+      });
+
+
     fetch('https://calendaruprm-0b385eeb2b1e.herokuapp.com/submit-academic-period/', {
     // fetch('http://127.0.0.1:5000/submit-academic-period/', {
       method: 'POST',
@@ -179,7 +209,7 @@ function Home() {
       .then((data) => {
         console.log('Response from Flask:', data);
         setResponseMessage(
-          data.message + ' - Dia de Comienzo de Clases:' + startDate + ' , Periodo Academico Elegido: ' + period
+          data.message + ' - Dia de Comienzo de Clases:' + dateformatted + ' , Periodo Academico Elegido: ' + academicPeriodFrontEnd
           // data.message + ' - Date:' + startDate + ' , Period: ' + period + ' , Weeks: ' + weeks
         );
         const processedDates = data.important_dates.map((dateItem) => {
