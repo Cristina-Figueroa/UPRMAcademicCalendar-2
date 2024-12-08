@@ -678,7 +678,7 @@ function Home() {
                 puedes crear tu propio calendario academico!
               </Paragraph>
                 <SubHeader theme={theme}>
-                ¡Escoga un día para comenzar!
+                Escoga un día para comenzar:
                 </SubHeader>
 
                 {/* Date Picker */}
