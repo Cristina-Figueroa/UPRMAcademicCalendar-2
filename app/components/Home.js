@@ -674,11 +674,11 @@ function Home() {
             {!isSubmitPressed && (
               <>
               <Paragraph>
-                Recuerda pasar por Holidays y Guidelines para verificar que todo este en orden, y 
+                Recuerda pasar por <strong> Holidays</strong> y <strong>Guidelines</strong> para verificar que todo este en orden, y 
                 puedes crear tu propio calendario academico!
               </Paragraph>
                 <SubHeader theme={theme}>
-                  Select a start date to get started
+                ¡Escoga un día para comenzar!
                 </SubHeader>
 
                 {/* Date Picker */}
