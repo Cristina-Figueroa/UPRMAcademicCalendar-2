@@ -70,10 +70,10 @@ def count_normal_days(start_date, end_date):
 def add_labor_days(start_date, num_days):
     current_date = start_date
     while num_days != 0:
-        current_date += timedelta(days=1) if num_days > 0 else timedelta(days=-1)
-        if is_labor_day(current_date) and num_days > 0:  # Only subtract labor days if positive
+        current_date += timedelta(days=1) if num_days > 0 else timedelta(days=-1) #Add labor days
+        if is_labor_day(current_date) and num_days > 0:  # If shift_day positive, subtract num_days
             num_days -= 1
-        elif is_labor_day(current_date) and num_days < 0:  # Subtract labor days if negative
+        elif is_labor_day(current_date) and num_days < 0:  # If shift_day negative, add num_days, until num_days = 0
             num_days += 1
     return current_date
 
@@ -219,7 +219,6 @@ def fetch_filtered_and_add_year_to_holidays(year, start_date):
             "holiday_name": holiday["holiday_name"]
         })
 
-
     # Filter the holidays that fall within the period range
     filtered_holidays = []
     
@@ -341,12 +340,16 @@ def calculate_important_dates_with_formatted_date(start_date, weeks_of_classes, 
             continue  # Skip if the day type doesn't match
 
         # Append the calculated date for this guideline
-        dates.append({"date": shift_if_holiday(adjusted_date, combined_holidays), "event": f"{guideline['guideline_name']}", "formatted_date": shift_if_holiday(adjusted_date, combined_holidays)})
+        dates.append({"date": shift_if_holiday(adjusted_date, combined_holidays), 
+                      "event": f"{guideline['guideline_name']}", 
+                      "formatted_date": shift_if_holiday(adjusted_date, combined_holidays)})
 
     dates.sort(key=lambda x: x["date"])
 
     # Format the dates after sorting and before sending the response
-    formatted_dates = [{"date": format_date_for_display(item['date']), "event": item['event'], "formatted_date": format_date_for_display_formatted_date(item['formatted_date']) } for item in dates]
+    formatted_dates = [{"date": format_date_for_display(item['date']), 
+                        "event": item['event'], 
+                        "formatted_date": format_date_for_display_formatted_date(item['formatted_date']) } for item in dates]
 
     return formatted_dates
 

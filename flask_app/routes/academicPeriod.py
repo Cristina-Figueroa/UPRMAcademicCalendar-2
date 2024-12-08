@@ -20,11 +20,6 @@ def submit_academic_period():
     start_date = data.get('startDate')
     academic_period = data.get('academicPeriod')
     weeks = data.get('weeks')
-    # Para ver la informacion en la consola de Flask
-    # Log the received date to the console
-    print(f"Received start date: {start_date}")
-    print(f"Received Academic Period: {academic_period}")
-    print(f"Received Weeks: {weeks}")
 
     # Backend validation
     if not start_date:

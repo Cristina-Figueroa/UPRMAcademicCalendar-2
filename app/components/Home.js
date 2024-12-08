@@ -699,13 +699,13 @@ function Home() {
                 {/* Messages */}
                 <Center>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                {responseMessage && <h3>{responseMessage}</h3>}
                 </Center>
 
 
 
                 {!isLoading && isSubmitPressed && (
               <>
+                    {responseMessage && <h3>{responseMessage}</h3>}
 
                   {/* Important Dates */}
                               <TableContainer theme={theme}>
