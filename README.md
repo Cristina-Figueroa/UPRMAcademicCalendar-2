@@ -4,6 +4,7 @@
 
 <strong>Deployed App URL: </strong> https://uprm-academic-calendar-2.vercel.app/
 
+<strong>Postman Collection:</strong> https://lively-meteor-128046.postman.co/workspace/My-Workspace~6792bef8-38d1-4dda-8c7a-22e4749d94df/collection/24401843-ffda2d04-425c-4546-baf0-ad92ece253ab?action=share&source=copy-link&creator=24401843
 
 <strong> Heroku Config: </strong>
 
